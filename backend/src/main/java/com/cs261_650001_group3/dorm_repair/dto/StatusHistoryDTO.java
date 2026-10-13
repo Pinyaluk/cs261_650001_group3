@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public record StatusHistoryDTO(
         String status,
+        String note,
         LocalDateTime changedAt,
         String changedByName
 ) {}

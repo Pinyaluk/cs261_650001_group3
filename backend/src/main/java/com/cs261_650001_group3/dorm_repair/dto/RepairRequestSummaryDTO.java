@@ -7,5 +7,7 @@ public record RepairRequestSummaryDTO(
         String title,
         String category,
         String status,
-        LocalDateTime createdAt
+        String technicianName,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {}
