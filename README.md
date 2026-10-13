@@ -1,20 +1,8 @@
-# 🛠️ ระบบแจ้งซ่อมภายในหอพัก (Dorm Repair Request System)
+# ระบบแจ้งซ่อมภายในหอพัก (Dorm Repair Request System)
 
 โครงงานรายวิชา **CS261 Software Engineering** — กลุ่มที่ 3, Section 650001 (ภาคพิเศษ)
 
 ระบบเว็บสำหรับให้ผู้พักอาศัยแจ้งซ่อมออนไลน์ แนบรูปภาพ นัดหมายเวลา และติดตามสถานะคำร้องได้ ส่วนเจ้าหน้าที่ใช้ตรวจสอบและมอบหมายงานให้ช่างซ่อม
-
----
-
-## 📌 สารบัญ
-- [ฟีเจอร์หลัก](#-ฟีเจอร์หลัก)
-- [บทบาทผู้ใช้](#-บทบาทผู้ใช้)
-- [เทคโนโลยีที่ใช้](#-เทคโนโลยีที่ใช้)
-- [โครงสร้างโปรเจกต์](#-โครงสร้างโปรเจกต์)
-- [การติดตั้งและรันโปรเจกต์](#-การติดตั้งและรันโปรเจกต์)
-- [การทำงานกับ Git (Git Flow)](#-การทำงานกับ-git-git-flow)
-- [แผนการพัฒนา (Sprint)](#-แผนการพัฒนา-sprint)
-- [สมาชิกในทีม](#-สมาชิกในทีม)
 
 ---
 
@@ -50,22 +38,6 @@
 | Database | Microsoft SQL Server |
 | DevOps | Docker, Docker Compose (3 services: database / backend / frontend) |
 | การจัดการงาน | Scrum + Trello |
-
----
-
-## 📁 โครงสร้างโปรเจกต์
-```
-Project_Cs261/
-├── backend/              # Spring Boot application (Maven)
-│   ├── src/
-│   ├── pom.xml
-│   └── Dockerfile
-├── frontend/             # หน้าเว็บ HTML / CSS / JavaScript
-│   └── js/
-├── docker-compose.yml    # รัน database + backend + frontend พร้อมกัน
-├── .gitignore
-└── README.md
-```
 
 ---
 
@@ -117,15 +89,6 @@ npm start
 
 ---
 
-## 🌿 การทำงานกับ Git (Git Flow)
-
-| Branch | ใช้ทำอะไร |
-|---|---|
-| `main` | โค้ดที่พร้อมส่ง/นำเสนอ ติด tag ทุก release (เช่น `v1.0.0`) |
-| `develop` | รวมงานของทุกคนก่อนออก release |
-| `feature/<ชื่องาน>` | งานแต่ละชิ้น แตกออกจาก `develop` (เช่น `feature/login`, `feature/docker-setup`) |
-| `release/<เวอร์ชัน>` | เตรียมออก release ก่อน merge เข้า `main` |
-
 ### ขั้นตอนทำงานแต่ละครั้ง
 ```bash
 # 1. อัปเดต develop ให้เป็นล่าสุด
@@ -157,18 +120,18 @@ git push -u origin feature/<ชื่องาน>
 | **Sprint 1 → Release 1** | U1 ส่งคำร้องแจ้งซ่อม (แนบรูป, นัดหมายเวลา), เข้าสู่ระบบ, U3 ตรวจสอบประวัติกับสถานะ — เฉพาะบทบาทผู้พักอาศัย | 20 ต.ค. 2569 |
 | **Sprint 2 → Release 2** | ตรวจสอบและมอบหมายงานให้ช่าง, ติดตามสถานะคำร้อง | 19 พ.ย. 2569 |
 
-📋 Trello Board: _ใส่ลิงก์ที่นี่_
+📋 Trello Board: https://trello.com/invite/6abf3ff22cb2aa2f3963ef93/ATTIc66f958c105982196a4539e71bbd12653A524C39
 
 ---
 
 ## 🧑‍💻 สมาชิกในทีม
 | ชื่อ - นามสกุล | รหัสนักศึกษา | หน้าที่ |
 |---|---|---|
-| ภิญญลักษณ์ พงษ์เขมภัคค์ | 6809650663 | Scrum Master |
-| | | Frontend |
-| | | Frontend |
-| | | Frontend |
-| | | Backend |
-| | | Backend |
-| | | Backend |
-| | | Backend |
+| ภิญญลักษณ์ พงษ์เขมภัคค์ | 6809650663 | Scrum Master,Backend |
+| นายฌิเฎฬา นาธัน วองวู | 6809650200   | Frontend |
+| นางสาวชัญนภัค กรัณทกาญจน์  | 6809650416 | Frontend |
+| นางสาวปภาดา สัมฤทธิ์  | 6809650259 | Frontend |
+| นายธนกร นาคอินทร์แจ้ง | 6809650234 | Backend |
+| นายรเดช โพธิพิทูรย์   |6809650671 | Backend |
+| นายภูมิ ภิญญาพงษ์| 6809650309 | Backend |
+
