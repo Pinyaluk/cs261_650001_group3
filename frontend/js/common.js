@@ -28,7 +28,7 @@ function formatDate(dateString) {
 const logoutBtn = document.getElementById("logout-btn");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
-    localStorage.clear();
+    localStorage.removeItem("user");
     window.location.href = "login.html";
   });
 }
