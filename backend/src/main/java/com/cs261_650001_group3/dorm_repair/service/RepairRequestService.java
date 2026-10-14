@@ -1,19 +1,24 @@
 package com.cs261_650001_group3.dorm_repair.service;
 
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.cs261_650001_group3.dorm_repair.dto.ContactDTO;
+import com.cs261_650001_group3.dorm_repair.dto.CreateRepairRequestDTO; 
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestResponseDTO;
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestSummaryDTO;
 import com.cs261_650001_group3.dorm_repair.dto.StatusHistoryDTO;
 import com.cs261_650001_group3.dorm_repair.entity.RepairRequest;
 import com.cs261_650001_group3.dorm_repair.entity.RequestImage;
+import com.cs261_650001_group3.dorm_repair.entity.RequestStatus;
 import com.cs261_650001_group3.dorm_repair.entity.User;
 import com.cs261_650001_group3.dorm_repair.repository.RepairRequestRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
+import com.cs261_650001_group3.dorm_repair.repository.UserRepository;
 
 /**
  * U3 ตรวจสอบประวัติกับสถานะ: ดึงคำร้องจาก DB แล้วแปลงเป็น DTO ตาม API spec
@@ -23,9 +28,69 @@ import java.util.List;
 public class RepairRequestService {
 
     private final RepairRequestRepository repairRequestRepository;
+    private final UserRepository userRepository; 
+    private final ImageStorageService imageStorageService; 
 
-    public RepairRequestService(RepairRequestRepository repairRequestRepository) {
+    // อัปเดต Constructor ให้รองรับการ Inject Dependency ครบถ้วน
+    public RepairRequestService(
+            RepairRequestRepository repairRequestRepository,
+            UserRepository userRepository,
+            ImageStorageService imageStorageService) {
         this.repairRequestRepository = repairRequestRepository;
+        this.userRepository = userRepository;
+        this.imageStorageService = imageStorageService;
+    }
+
+    /** U1: สร้างใบแจ้งซ่อม (POST) พร้อมตรวจสอบและบันทึกรูปภาพ 1-3 รูป */
+    @Transactional
+    public RepairRequestResponseDTO createRequest(CreateRepairRequestDTO dto, List<MultipartFile> images, Long userId) {
+        // 1. ตรวจสอบความถูกต้องของรูปภาพทั้งหมด (บังคับ 1-3 รูป ตามที่ปรับใน ImageStorageService)
+        imageStorageService.validateAll(images);
+
+        // 2. ค้นหา User ผู้แจ้งจาก Database
+        User resident = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ไม่พบข้อมูลผู้ใช้งานระบบ"));
+
+        // 3. สร้าง Entity และบันทึกลง Database ก่อนเพื่อให้ได้ requestId ออกมา
+        RepairRequest r = new RepairRequest(
+                resident,
+                dto.locationType(),
+                dto.building(),
+                dto.locationDetail(),
+                dto.category(),
+                dto.title(),
+                dto.description(),
+                dto.preferredDate1(),
+                dto.preferredSlot1(),
+                dto.contactPhone()
+                
+        );
+
+        // เซ็ตค่าพารามิเตอร์เพิ่มเติมผ่าน Setter ที่เพื่อนทำเตรียมไว้
+        if (dto.preferredDate2() != null && dto.preferredSlot2() != null) {
+            r.setPreferredSlot2(dto.preferredDate2(), dto.preferredSlot2());
+        }
+        if (dto.lineId() != null) {
+            r.setLineId(dto.lineId());
+        }
+        if (dto.urgency() != null) {
+            r.setUrgency(dto.urgency());
+        }
+
+        RepairRequest savedRequest = repairRequestRepository.save(r);
+
+        // 4. วนลูปบันทึกไฟล์รูปภาพ (ไม่ต้องเช็ก null ซ้ำเพราะผ่าน validateAll มาแล้ว)
+        int i = 1;
+        for (MultipartFile f : images) {
+            String url = imageStorageService.store(f, savedRequest.getRequestId() + "-" + i++);
+            savedRequest.addImage(url, f.getSize());
+        }
+
+        // 5. บันทึกประวัติสถานะเริ่มต้น PENDING พร้อมระบุจำนวนรูปภาพ
+        savedRequest.addHistory(RequestStatus.PENDING, resident, "สร้างคำร้องสำเร็จพร้อมรูปภาพ " + (i - 1) + " รูป");
+
+        // 6. แปลง Entity ที่บันทึกแล้วกลับเป็น ResponseDTO
+       return toResponse(savedRequest);
     }
 
     /** GET /api/repair-requests/my : คำร้องของผู้ใช้ เรียงล่าสุดก่อน ไม่มีคำร้องได้ [] */
