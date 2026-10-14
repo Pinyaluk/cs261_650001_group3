@@ -1,6 +1,5 @@
 package com.cs261_650001_group3.dorm_repair.controller;
 
-import com.cs261_650001_group3.dorm_repair.dto.ContactDTO;
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestResponseDTO;
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestSummaryDTO;
 import com.cs261_650001_group3.dorm_repair.dto.StatusHistoryDTO;
@@ -9,73 +8,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import com.cs261_650001_group3.dorm_repair.service.RepairRequestService;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/repair-requests")
 public class RepairRequestController {
 
-    
-    @GetMapping("/my")
-    public List<RepairRequestSummaryDTO> getMyRequests() {
-        return List.of(
-                new RepairRequestSummaryDTO(1024L, "ไฟห้องน้ำดับ", "ELECTRICAL", "PENDING", null,
-                        LocalDateTime.of(2026, 10, 12, 10, 0), LocalDateTime.of(2026, 10, 12, 10, 0)),
-                new RepairRequestSummaryDTO(1019L, "ก๊อกน้ำอ่างล้างหน้ารั่ว", "PLUMBING", "IN_PROGRESS", "วิชัย สายลม",
-                        LocalDateTime.of(2026, 10, 10, 8, 40), LocalDateTime.of(2026, 10, 10, 9, 15)),
-                new RepairRequestSummaryDTO(1003L, "แอร์ไม่เย็น", "AIR_CONDITIONER", "COMPLETED", "วิชัย สายลม",
-                        LocalDateTime.of(2026, 9, 20, 14, 0), LocalDateTime.of(2026, 9, 23, 16, 0)),
-                new RepairRequestSummaryDTO(987L, "บานพับตู้เสื้อผ้าหลุด", "FURNITURE", "COMPLETED", "วิชัย สายลม",
-                        LocalDateTime.of(2026, 9, 14, 9, 0), LocalDateTime.of(2026, 9, 16, 11, 0))
-        );
+    private final RepairRequestService repairRequestService;
+
+    public RepairRequestController(RepairRequestService repairRequestService) {
+        this.repairRequestService = repairRequestService;
     }
 
-    
-    @GetMapping("/{id}")
-    public RepairRequestResponseDTO getById(@PathVariable("id") Long id) {
-        if (id == 1019L) {
-            return new RepairRequestResponseDTO(
-                    1019L, "ROOM", "อาคาร A", "ชั้น 3 · ห้อง 305",
-                    "PLUMBING", "ก๊อกน้ำอ่างล้างหน้ารั่ว",
-                    "น้ำหยดจากก๊อกอ่างล้างหน้าตลอดเวลา ปิดสุดแล้วก็ยังไม่หยุด",
-                    LocalDate.of(2026, 10, 13), "MORNING",
-                    LocalDate.of(2026, 10, 14), "AFTERNOON",
-                    LocalDateTime.of(2026, 10, 14, 13, 0),
-                    "081-234-5678", "somchai305",
-                    "IN_PROGRESS", "URGENT",
-                    new ContactDTO("วิชัย สายลม", "089-555-0148"),
-                    List.of("/uploads/1019-1.jpg", "/uploads/1019-2.jpg"),
-                    List.of(
-                            new StatusHistoryDTO("PENDING", "ส่งคำร้องพร้อมรูปภาพ 2 รูป",
-                                    LocalDateTime.of(2026, 10, 10, 8, 40), "สมชาย ใจดี"),
-                            new StatusHistoryDTO("IN_PROGRESS", "รับเรื่องและมอบหมายช่าง นัดเข้าซ่อม 14/10/2569 13:00",
-                                    LocalDateTime.of(2026, 10, 10, 9, 15), "สุดา พรศรี")
-                    ),
-                    LocalDateTime.of(2026, 10, 10, 8, 40)
-            );
-        }
-        return new RepairRequestResponseDTO(
-                id, "ROOM", "อาคาร A", "ชั้น 3 · ห้อง 305",
-                "ELECTRICAL", "หลอดไฟห้องน้ำ",
-                "หลอดไฟในห้องน้ำไม่ติดตั้งแต่เมื่อวานตอนเย็น",
-                LocalDate.of(2026, 10, 13), "MORNING",
-                null, null,
-                null,
-                "081-234-5678", null,
-                "PENDING", "NORMAL",
-                null,
-                List.of("/uploads/1024-1.jpg"),
-                List.of(new StatusHistoryDTO("PENDING", "ส่งคำร้องพร้อมรูปภาพ 1 รูป",
-                        LocalDateTime.of(2026, 10, 12, 10, 0), "สมชาย ใจดี")),
-                LocalDateTime.of(2026, 10, 12, 10, 0)
-        );
+    // U3: รายการคำร้องของผู้ใช้ที่ login (ดึงจาก DB)
+    // TODO: เมื่อ Login ของ BE4 เสร็จ เปลี่ยนจาก X-User-Id เป็น userId จาก token
+    //       ตอนนี้ถ้าไม่ส่ง header มา = ผู้ใช้ 1 (resident01 สมชาย)
+    @GetMapping("/my")
+    public List<RepairRequestSummaryDTO> getMyRequests(
+            @RequestHeader(value = "X-User-Id", defaultValue = "1") Long userId) {
+        return repairRequestService.getMyRequests(userId);
     }
 
     // U1: API สำหรับสร้างใบแจ้งซ่อม (POST) จาก feature/u1-repair-request-api
@@ -129,5 +87,12 @@ public class RepairRequestController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body("สร้างใบแจ้งซ่อมสำเร็จ! สถานะระบบ: [" + defaultStatus + "]");
+    }
+    // U3: รายละเอียดคำร้อง รูป และประวัติสถานะ (ดึงจาก DB) ไม่ใช่ของตัวเอง → 404
+    @GetMapping("/{id}")
+    public RepairRequestResponseDTO getById(
+            @PathVariable("id") Long id,
+            @RequestHeader(value = "X-User-Id", defaultValue = "1") Long userId) {
+        return repairRequestService.getRequestDetail(id, userId);
     }
 }
