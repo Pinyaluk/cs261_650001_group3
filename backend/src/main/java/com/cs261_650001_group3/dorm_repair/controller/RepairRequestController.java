@@ -2,46 +2,39 @@ package com.cs261_650001_group3.dorm_repair.controller;
 
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestResponseDTO;
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestSummaryDTO;
-import com.cs261_650001_group3.dorm_repair.dto.StatusHistoryDTO;
+import com.cs261_650001_group3.dorm_repair.service.RepairRequestService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/repair-requests")
 public class RepairRequestController {
 
-    // TODO: เปลี่ยนไปเรียก RepairRequestService เมื่อ DAO ของ BE2 merge เข้า develop แล้ว
-    @GetMapping("/my")
-    public List<RepairRequestSummaryDTO> getMyRequests() {
-        return List.of(
-                new RepairRequestSummaryDTO(1024L, "ไฟห้องน้ำดับ", "ELECTRICAL", "PENDING",
-                        LocalDateTime.of(2026, 10, 9, 18, 20)),
-                new RepairRequestSummaryDTO(1019L, "ก๊อกน้ำอ่างล้างหน้ารั่ว", "PLUMBING", "IN_PROGRESS",
-                        LocalDateTime.of(2026, 10, 2, 9, 15)),
-                new RepairRequestSummaryDTO(1003L, "แอร์ไม่เย็น", "AIR_CONDITIONER", "COMPLETED",
-                        LocalDateTime.of(2026, 9, 21, 14, 0))
-        );
+    private final RepairRequestService repairRequestService;
+
+    public RepairRequestController(RepairRequestService repairRequestService) {
+        this.repairRequestService = repairRequestService;
     }
 
-    // TODO: เปลี่ยนไปเรียก RepairRequestService เมื่อ DAO ของ BE2 merge เข้า develop แล้ว
+    // U3: รายการคำร้องของผู้ใช้ที่ login (ดึงจาก DB)
+    // TODO: เมื่อ Login ของ BE4 เสร็จ เปลี่ยนจาก X-User-Id เป็น userId จาก token
+    //       ตอนนี้ถ้าไม่ส่ง header มา = ผู้ใช้ 1 (resident01 สมชาย)
+    @GetMapping("/my")
+    public List<RepairRequestSummaryDTO> getMyRequests(
+            @RequestHeader(value = "X-User-Id", defaultValue = "1") Long userId) {
+        return repairRequestService.getMyRequests(userId);
+    }
+
+    // U3: รายละเอียดคำร้อง รูป และประวัติสถานะ (ดึงจาก DB) ไม่ใช่ของตัวเอง → 404
     @GetMapping("/{id}")
-    public RepairRequestResponseDTO getById(@PathVariable("id") Long id) {
-        return new RepairRequestResponseDTO(
-                id,
-                "ไฟห้องน้ำดับ",
-                "ELECTRICAL",
-                "หลอดไฟในห้องน้ำไม่ติดตั้งแต่เมื่อวานตอนเย็น",
-                LocalDateTime.of(2026, 10, 12, 10, 0),
-                "PENDING",
-                List.of("/uploads/1024-1.jpg", "/uploads/1024-2.jpg"),
-                List.of(new StatusHistoryDTO("PENDING",
-                        LocalDateTime.of(2026, 10, 9, 18, 20), "สมชาย ใจดี")),
-                LocalDateTime.of(2026, 10, 9, 18, 20)
-        );
+    public RepairRequestResponseDTO getById(
+            @PathVariable("id") Long id,
+            @RequestHeader(value = "X-User-Id", defaultValue = "1") Long userId) {
+        return repairRequestService.getRequestDetail(id, userId);
     }
 }
