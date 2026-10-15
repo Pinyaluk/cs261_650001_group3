@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>รายละเอียดคำร้อง | ระบบแจ้งซ่อมหอพัก</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <a class="back-btn" id="back-btn" href="request-check.html" aria-label="กลับไปหน้าตรวจสอบคำร้อง">←</a>
+    <h1 class="top-bar__title">รายละเอียดคำร้อง</h1>
+    <span aria-hidden="true"></span>
+  </header>
+  <main class="page">
+    <header class="page-header">
+      <p class="eyebrow">ผู้พักอาศัย / รายละเอียดคำร้อง</p>
+      <h1 class="page-title" id="request-title">เครื่องปรับอากาศมีน้ำหยด</h1>
+      <p class="page-subtitle" id="request-meta">#1019 · ประปา · ห้อง A-305 · แจ้งเมื่อ 10/10/2569</p>
+      <p><span class="badge badge--pending" id="request-status">รอรับเรื่อง</span> <span class="request-item__meta" id="updated-at">อัปเดต 10/10 · 09:15</span></p>
+    </header>
+    <section class="card">
+      <h2 class="card__title">ประวัติสถานะ</h2>
+      <ol class="timeline" id="timeline">
+        <li class="timeline__item is-done"><p class="timeline__title">ส่งคำร้องแล้ว</p><p class="timeline__time">10/10/2569 · 09:15</p><p class="timeline__note">ระบบได้รับคำร้องเรียบร้อย</p></li>
+        <li class="timeline__item is-current"><p class="timeline__title">รอรับเรื่อง</p><p class="timeline__time">กำลังรอเจ้าหน้าที่ตรวจสอบ</p><p class="timeline__note">จะแสดงการเปลี่ยนสถานะเมื่อมีการอัปเดต</p></li>
+        <li class="timeline__item"><p class="timeline__title">กำลังดำเนินการ</p><p class="timeline__time">ยังไม่เริ่มดำเนินการ</p></li>
+        <li class="timeline__item"><p class="timeline__title">เสร็จสิ้น</p><p class="timeline__time">ยังไม่เสร็จสิ้น</p></li>
+      </ol>
+    </section>
+    <section class="card">
+      <h2 class="card__title">วันนัดหมาย</h2>
+      <p class="info-list__value" id="appointment-datetime">รอยืนยันวันและเวลา</p>
+      <p class="card__subtitle" id="appointment-note">เจ้าหน้าที่จะแจ้งยืนยันวันนัดหมายอีกครั้ง</p>
+    </section>
+    <section class="card">
+      <h2 class="card__title">ผู้รับผิดชอบ</h2>
+      <div class="contact-card">
+        <div aria-hidden="true">👷</div>
+        <div><p class="contact-card__role">ช่างผู้รับผิดชอบ</p><p class="contact-card__name" id="technician-name">รอการมอบหมาย</p><a class="contact-card__phone" id="technician-phone" href="tel:">ยังไม่มีเบอร์ติดต่อ</a></div>
+        <span aria-hidden="true">›</span>
+      </div>
+      <div class="contact-card">
+        <div aria-hidden="true">☎</div>
+        <div><p class="contact-card__role">เจ้าหน้าที่หอพัก</p><p class="contact-card__name" id="staff-name">สำนักงานหอพัก</p><a class="contact-card__phone" id="staff-phone" href="tel:025550180">02-555-0180</a></div>
+        <span aria-hidden="true">›</span>
+      </div>
+    </section>
+    <section class="card">
+      <h2 class="card__title">ข้อมูลคำร้อง</h2>
+      <dl class="info-list">
+        <div><dt class="info-list__label">รายละเอียดปัญหา</dt><dd class="info-list__value" id="request-description">มีน้ำหยดจากเครื่องปรับอากาศ</dd></div>
+        <div><dt class="info-list__label">หมวดปัญหา</dt><dd class="info-list__value" id="category">เครื่องปรับอากาศ</dd></div>
+        <div><dt class="info-list__label">ห้อง</dt><dd class="info-list__value" id="room">A-305</dd></div>
+        <div><dt class="info-list__label">เบอร์ติดต่อ</dt><dd class="info-list__value" id="contact-phone">081-234-5678</dd></div>
+      </dl>
+      <div class="image-grid" id="image-list" aria-label="รูปภาพประกอบ"></div>
+    </section>
+    <template id="timeline-item-template">
+      <li class="timeline__item">
+        <p class="timeline__title" data-field="title"></p>
+        <p class="timeline__time" data-field="time"></p>
+        <p class="timeline__note" data-field="note"></p>
+      </li>
+    </template>
+  </main>
+
+  <p class="footer-note">หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180</p>
+</body>
+</html>
