@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ประวัติคำร้อง | ระบบแจ้งซ่อมหอพัก</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <a class="back-btn" href="home.html" aria-label="กลับหน้าหลัก">←</a>
+    <h1 class="top-bar__title">ประวัติคำร้อง</h1>
+    <span aria-hidden="true"></span>
+  </header>
+  <main class="page">
+    <header class="page-header">
+      <p class="eyebrow">ผู้พักอาศัย / ประวัติคำร้อง</p>
+      <h1 class="page-title">คำร้องของฉัน</h1>
+      <p class="page-subtitle">ค้นหาและติดตามสถานะคำร้องแจ้งซ่อม</p>
+    </header>
+    <section class="card">
+      <div class="form-group">
+        <label class="form-label" for="search-input">ค้นหาคำร้อง</label>
+        <input class="form-control" id="search-input" type="search" placeholder="ค้นหาเลขคำร้องหรือชื่อปัญหา">
+      </div>
+      <div class="form-group">
+        <span class="form-label">กรองตามสถานะ</span>
+        <div class="chip-group" id="status-filter" role="group" aria-label="กรองตามสถานะ">
+          <button class="chip is-active" type="button" data-status="ALL">ทั้งหมด</button>
+          <button class="chip" type="button" data-status="PENDING">รอรับเรื่อง</button>
+          <button class="chip" type="button" data-status="IN_PROGRESS">กำลังดำเนินการ</button>
+          <button class="chip" type="button" data-status="COMPLETED">เสร็จสิ้น</button>
+        </div>
+      </div>
+      <p class="form-hint" id="result-count">ทั้งหมด 4 รายการ</p>
+    </section>
+    <section class="card">
+      <h2 class="card__title">รายการคำร้อง</h2>
+      <ul id="request-list">
+        <li><a class="request-item" href="request-detail.html"><div><h3 class="request-item__title">เครื่องปรับอากาศมีน้ำหยด</h3><p class="request-item__meta">#1024 · ห้อง A-305 · 12/10/2569</p></div><span class="badge badge--pending">รอรับเรื่อง</span></a></li>
+        <li><a class="request-item" href="request-detail.html"><div><h3 class="request-item__title">ไฟห้องน้ำไม่ติด</h3><p class="request-item__meta">#1023 · ห้อง A-305 · 10/10/2569</p></div><span class="badge badge--in-progress">กำลังดำเนินการ</span></a></li>
+        <li><a class="request-item" href="request-detail.html"><div><h3 class="request-item__title">ก๊อกน้ำรั่ว</h3><p class="request-item__meta">#1022 · ห้อง A-305 · 08/10/2569</p></div><span class="badge badge--completed">เสร็จสิ้น</span></a></li>
+      </ul>
+      <p class="is-hidden" id="empty-state">ไม่พบคำร้อง</p>
+      <a class="btn btn-primary btn-block" id="new-request-btn" href="repair-form.html">+ แจ้งซ่อมใหม่</a>
+    </section>
+    <template id="request-item-template">
+      <li>
+        <a class="request-item" data-field="link" href="request-detail.html">
+          <div>
+            <h3 class="request-item__title" data-field="title"></h3>
+            <p class="request-item__meta" data-field="meta"></p>
+          </div>
+          <span class="badge" data-field="status"></span>
+        </a>
+      </li>
+    </template>
+  </main>
+
+  <p class="footer-note">หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180</p>
+</body>
+</html>
