@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>หน้าหลัก | ระบบแจ้งซ่อมหอพัก</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/home.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div>
+      <p class="app-header__brand">ระบบแจ้งซ่อมหอพัก</p>
+      <p class="app-header__role">ผู้พักอาศัย</p>
+    </div>
+    <button class="btn btn-outline" id="logout-btn" type="button">ออกจากระบบ</button>
+  </header>
+  <nav class="tab-nav" aria-label="เมนูหลัก">
+    <a class="tab-nav__item is-active" href="home.html">หน้าหลัก</a>
+    <a class="tab-nav__item" href="repair-form.html">แจ้งซ่อม</a>
+    <a class="tab-nav__item" href="request-check.html">ตรวจสอบคำร้อง</a>
+    <a class="tab-nav__item" href="history.html">ประวัติคำร้อง</a>
+  </nav>
+  <main class="page">
+    <header class="page-header">
+      <p class="eyebrow">หน้าหลัก</p>
+      <h1 class="page-title">สวัสดี คุณ<span id="user-name">สมชาย</span></h1>
+      <p class="page-subtitle">ห้อง <span id="user-room">A-305</span></p>
+    </header>
+
+    <section class="summary-grid" aria-label="สรุปคำร้องของฉัน">
+      <article class="summary-box"><p class="summary-box__count" id="count-pending">1</p><p class="summary-box__label">รอรับเรื่อง</p></article>
+      <article class="summary-box"><p class="summary-box__count" id="count-in-progress">1</p><p class="summary-box__label">กำลังดำเนินการ</p></article>
+      <article class="summary-box"><p class="summary-box__count" id="count-completed">2</p><p class="summary-box__label">เสร็จสิ้น</p></article>
+    </section>
+
+    <div class="card">
+      <h2 class="card__title">เริ่มต้นใช้งาน</h2>
+      <p class="card__subtitle">แจ้งปัญหาภายในห้องพักหรือพื้นที่ส่วนกลาง</p>
+      <a class="btn btn-primary btn-block" id="new-request-link" href="repair-form.html">+ แจ้งซ่อม</a>
+      <a class="btn btn-outline btn-block" id="history-link" href="history.html">ประวัติคำร้อง</a>
+    </div>
+
+    <section class="card">
+      <h2 class="card__title">คำร้องล่าสุด</h2>
+      <div id="latest-request">
+        <a class="request-item" href="request-detail.html">
+          <div>
+            <h3 class="request-item__title">เครื่องปรับอากาศมีน้ำหยด</h3>
+            <p class="request-item__meta">#1024 · ห้อง A-305 · 12/10/2569</p>
+          </div>
+          <span class="badge badge--pending">รอรับเรื่อง</span>
+        </a>
+      </div>
+      <a class="link" id="latest-detail-link" href="request-detail.html">รายละเอียดคำร้อง &gt;</a>
+    </section>
+
+    <template id="request-item-template">
+      <li>
+        <a class="request-item" data-field="link" href="request-detail.html">
+          <div>
+            <h3 class="request-item__title" data-field="title"></h3>
+            <p class="request-item__meta" data-field="meta"></p>
+          </div>
+          <span class="badge" data-field="status"></span>
+        </a>
+      </li>
+    </template>
+  </main>
+
+  <p class="footer-note">หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180</p>
+</body>
+</html>
