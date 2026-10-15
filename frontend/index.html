@@ -1,5 +1,13 @@
 <!DOCTYPE html>
 <html lang="th">
-<head><meta charset="UTF-8"><title>แจ้งซ่อมหอพัก</title></head>
-<body><h1>ระบบแจ้งซ่อมหอพัก</h1></body>
+<head>
+  <meta charset="UTF-8">
+  <title>แจ้งซ่อมหอพัก</title>
+  <script>
+    // มี token แล้ว = ล็อกอินอยู่ ไปหน้าแรกเลย / ยังไม่มี = ไปหน้า login
+    const token = localStorage.getItem("token");
+    window.location.replace(token ? "pages/home.html" : "pages/login.html");
+  </script>
+</head>
+<body></body>
 </html>

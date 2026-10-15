@@ -20,6 +20,8 @@ services:
     depends_on:
       - db
     restart: on-failure
+    volumes:
+      - ./backend/uploads:/app/uploads
 
   frontend:
     image: nginx:alpine
