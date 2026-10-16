@@ -1,12 +1,14 @@
 // js/repair-form.js
-// หน้าแจ้งซ่อม: ตรวจฟอร์ม + เช็ครูป + เตือนวันเวลาในอดีต + แสดงตัวอย่างรูป
+// หน้าแจ้งซ่อม: ตรวจฟอร์ม + เช็ครูป + เตือนวันเวลาในอดีต + ตัวอย่างรูป + ส่ง FormData
+
+requireLogin();
 
 // ---------- ค่าคงที่ ----------
 const MAX_FILES = 3;
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png"];
 
-// ช่องที่ "ต้องกรอก" : [id, ข้อความเตือน]
+// ช่องที่ต้องกรอก: [id, ข้อความเตือน]
 const REQUIRED_FIELDS = [
   ["building", "กรุณาเลือกอาคาร"],
   ["location", "กรุณากรอกห้อง / จุดที่พบปัญหา"],
@@ -26,7 +28,9 @@ const imageCount = document.getElementById("image-count");
 const imagesError = document.getElementById("images-error");
 const submitBtn = document.getElementById("submit-btn");
 
-// ---------- ฟังก์ชันช่วย: โชว์ / ล้าง error ของแต่ละช่อง ----------
+repairForm.noValidate = true; // ปิดการตรวจของเบราว์เซอร์ ใช้ข้อความเตือนของเราแทน
+
+// ---------- โชว์ / ล้าง error ของแต่ละช่อง ----------
 function showError(fieldId, message) {
   const field = document.getElementById(fieldId);
   const errorEl = document.getElementById(fieldId + "-error");
@@ -56,7 +60,7 @@ function validateRequired() {
       clearError(id);
     }
   }
-  return firstInvalid; // ถ้าไม่มีช่องผิด จะเป็น null
+  return firstInvalid; // null = ผ่านหมด
 }
 
 // ---------- 2) เช็ครูป: ไม่เกิน 3 รูป, รูปละไม่เกิน 5MB ----------
@@ -66,17 +70,21 @@ function validateImages(files) {
     if (!ALLOWED_TYPES.includes(file.type)) return "รองรับเฉพาะไฟล์ JPG และ PNG";
     if (file.size > MAX_SIZE) return "รูปแต่ละรูปต้องมีขนาดไม่เกิน 5MB";
   }
-  return ""; // ผ่าน
+  return "";
 }
 
 // ---------- 3) เตือนเมื่อเลือกวันเวลาในอดีต ----------
-// ค่าของช่วงเวลา (select) ยังไม่รู้ว่าเพื่อน HTML ตั้งเป็นอะไร
-// ฟังก์ชันนี้ดึงเวลาแรกที่เจอ เช่น "09:00-12:00" -> 09:00 ถ้าไม่เจอจะเทียบแค่วันที่
-function isPast(dateValue, timeValue) {
+// ช่วงเวลามี 2 แบบ (MORNING / AFTERNOON) ตัดสินว่า "ผ่านไปแล้ว" แบบนี้ (สมมติเอง ปรับได้)
+//   วันก่อนวันนี้ = อดีต, วันนี้ + เช้า = อดีตถ้าเลย 12:00, วันนี้ + บ่าย = อดีตถ้าเลย 17:00
+function isPast(dateValue, slot) {
   if (!dateValue) return false;
-  const match = /(\d{1,2}):(\d{2})/.exec(timeValue || "");
-  const time = match ? `${match[1].padStart(2, "0")}:${match[2]}` : "23:59";
-  return new Date(`${dateValue}T${time}`) < new Date();
+  const now = new Date();
+  const todayStr = now.toISOString().split("T")[0]; // รูปแบบ 2026-10-20
+  if (dateValue < todayStr) return true;
+  if (dateValue > todayStr) return false;
+  if (slot === "MORNING") return now.getHours() >= 12;
+  if (slot === "AFTERNOON") return now.getHours() >= 17;
+  return false;
 }
 
 function checkPastDate(n) {
@@ -87,8 +95,19 @@ function checkPastDate(n) {
     showError(`preferred-date-${n}`, "ไม่สามารถเลือกวันเวลาที่ผ่านมาแล้วได้");
     return false;
   }
-  // ถ้าไม่ใช่ช่อง required จะยังไม่ถูกล้าง error จึงล้างตรงนี้
   clearError(`preferred-date-${n}`);
+  return true;
+}
+
+// วันที่สะดวกเพิ่มเติม: ต้องกรอกทั้งคู่หรือว่างทั้งคู่
+function checkSecondSlotPair() {
+  const date2 = document.getElementById("preferred-date-2");
+  const time2 = document.getElementById("preferred-time-2");
+  if (!date2 || !time2) return true;
+  if ((date2.value === "") !== (time2.value === "")) {
+    showError("preferred-date-2", "กรุณากรอกวันที่และช่วงเวลาให้ครบทั้งคู่ หรือเว้นว่างทั้งคู่");
+    return false;
+  }
   return true;
 }
 
@@ -117,23 +136,21 @@ imagesInput.addEventListener("change", () => {
 });
 
 // ---------- เตรียมหน้า ----------
-// ห้ามเลือกวันที่ย้อนหลัง (ปฏิทินจะเลือกวันที่ผ่านมาไม่ได้)
 const today = new Date().toISOString().split("T")[0];
 for (const n of [1, 2]) {
   const dateEl = document.getElementById(`preferred-date-${n}`);
+  const timeEl = document.getElementById(`preferred-time-${n}`);
   if (dateEl) {
-    dateEl.min = today;
+    dateEl.min = today; // ปฏิทินเลือกวันที่ผ่านมาไม่ได้
     dateEl.addEventListener("change", () => checkPastDate(n));
-    const timeEl = document.getElementById(`preferred-time-${n}`);
-    if (timeEl) timeEl.addEventListener("change", () => checkPastDate(n));
   }
+  if (timeEl) timeEl.addEventListener("change", () => checkPastDate(n));
 }
 
-// ใส่ชื่อ / ห้องของผู้พักอาศัย (ข้อมูลที่ login.js เก็บไว้)
+// ชื่อผู้พักอาศัย (เก็บไว้ตอน login)
 const residentInfo = document.getElementById("resident-info");
-const savedUser = JSON.parse(localStorage.getItem("user") || "null");
-if (residentInfo && savedUser) {
-  residentInfo.textContent = `${savedUser.name} · ห้อง ${savedUser.room}`;
+if (residentInfo && localStorage.getItem("fullName")) {
+  residentInfo.textContent = localStorage.getItem("fullName");
 }
 
 // ---------- ตอนกดส่ง ----------
@@ -142,7 +159,7 @@ repairForm.addEventListener("submit", async (event) => {
 
   const firstInvalid = validateRequired();
   const date1Ok = checkPastDate(1);
-  const date2Ok = checkPastDate(2);
+  const date2Ok = checkPastDate(2) && checkSecondSlotPair();
   const imageMsg = validateImages(Array.from(imagesInput.files));
   imagesError.textContent = imageMsg;
 
@@ -151,36 +168,47 @@ repairForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  const areaChecked = document.querySelector('input[name="area-type"]:checked');
-  const data = {
-    areaType: areaChecked ? areaChecked.value : "ROOM", // ROOM / COMMON
-    building: document.getElementById("building").value,
-    location: document.getElementById("location").value.trim(),
-    category: document.getElementById("category").value,
-    equipment: document.getElementById("equipment").value.trim(),
-    description: document.getElementById("description").value.trim(),
-    preferredDate1: document.getElementById("preferred-date-1").value,
-    preferredTime1: document.getElementById("preferred-time-1").value,
-    preferredDate2: document.getElementById("preferred-date-2").value,
-    preferredTime2: document.getElementById("preferred-time-2").value,
-    phone: document.getElementById("phone").value.trim(),
-    lineId: document.getElementById("line-id").value.trim(),
-    images: Array.from(imagesInput.files)
-  };
+  // ประกอบ FormData ตามชื่อช่องที่ backend กำหนด
+  const formData = new FormData();
+  const areaCommon = document.getElementById("area-common");
+  formData.append("locationType", areaCommon && areaCommon.checked ? "COMMON_AREA" : "ROOM");
+  formData.append("building", document.getElementById("building").value);
+  formData.append("locationDetail", document.getElementById("location").value.trim());
+  formData.append("category", document.getElementById("category").value);
+  formData.append("title", document.getElementById("equipment").value.trim());
+  formData.append("description", document.getElementById("description").value.trim());
+  formData.append("preferredDate1", document.getElementById("preferred-date-1").value);
+  formData.append("preferredSlot1", document.getElementById("preferred-time-1").value);
+
+  const date2 = document.getElementById("preferred-date-2").value;
+  const slot2 = document.getElementById("preferred-time-2").value;
+  if (date2 && slot2) { // ส่งเฉพาะตอนกรอกครบทั้งคู่
+    formData.append("preferredDate2", date2);
+    formData.append("preferredSlot2", slot2);
+  }
+
+  formData.append("contactPhone", document.getElementById("phone").value.trim());
+  formData.append("lineId", document.getElementById("line-id").value.trim());
+
+  const urgent = document.getElementById("urgent"); // nathan จะเพิ่ม checkbox นี้
+  formData.append("urgency", urgent && urgent.checked ? "URGENT" : "NORMAL");
+
+  for (const file of imagesInput.files) {
+    formData.append("images", file); // ชื่อ "images" ทีละรูป
+  }
 
   submitBtn.disabled = true; // กันกดซ้ำ
   try {
-    const result = await submitRequest(data);
-    // เก็บไว้ให้หน้า repair-success.html ใช้แสดงผล
-    sessionStorage.setItem("lastRequest", JSON.stringify({
-      id: result.id,
-      status: result.status,
-      date: data.preferredDate1,
-      time: data.preferredTime1
-    }));
-    window.location.href = "repair-success.html";
-  } catch (error) {
-    alert("ส่งคำร้องไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+    const created = await submitRequest(formData); // ห้ามตั้ง Content-Type เอง
+    window.location.href = "repair-success.html?id=" + created.requestId;
+  } catch (err) {
+    // 400 = ข้อมูลไม่ถูกต้อง backend ส่งข้อความไทยมาให้
+    const formError = document.getElementById("form-error");
+    if (formError) {
+      formError.textContent = err.message;
+    } else {
+      alert(err.message);
+    }
     submitBtn.disabled = false;
   }
 });
