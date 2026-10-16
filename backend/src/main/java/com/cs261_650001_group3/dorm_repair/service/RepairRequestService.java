@@ -44,18 +44,28 @@ public class RepairRequestService {
     /** U1: สร้างใบแจ้งซ่อม (POST) พร้อมตรวจสอบและบันทึกรูปภาพ 1-3 รูป */
     @Transactional
     public RepairRequestResponseDTO createRequest(CreateRepairRequestDTO dto, List<MultipartFile> images, Long userId) {
-        // 0. เช็กข้อมูลไม่ครบ -> 400 Bad Request
-    if (dto.title() == null || dto.title().isBlank() || 
-        dto.description() == null || dto.description().isBlank() || 
-        dto.preferredDate1() == null || dto.locationType() == null || 
-        dto.category() == null) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน");
-    }
+        
+    // 0. เช็กข้อมูลไม่ครบ -> 400 Bad Request
+if (dto.title() == null || dto.title().isBlank() || 
+    dto.description() == null || dto.description().isBlank() || 
+    dto.preferredDate1() == null || dto.locationType() == null || 
+    dto.category() == null || 
+    dto.building() == null || dto.building().isBlank() ||
+    dto.locationDetail() == null || dto.locationDetail().isBlank() ||
+    dto.contactPhone() == null || dto.contactPhone().isBlank() ||
+    dto.preferredSlot1() == null) {
+    throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน");
+}
 
     // 0. เช็กวันที่ย้อนหลัง -> 400 Bad Request
+    // 0. เช็กวันที่ย้อนหลัง -> 400 Bad Request
     if (dto.preferredDate1().isBefore(java.time.LocalDate.now())) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "วันที่นัดหมายต้องไม่เป็นอดีต");
-    }
+    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "วันที่นัดหมายต้องไม่เป็นอดีต");
+}
+
+    if (dto.preferredDate2() != null && dto.preferredDate2().isBefore(java.time.LocalDate.now())) {
+    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "วันที่นัดหมายต้องไม่เป็นอดีต");
+}
         // 1. ตรวจสอบความถูกต้องของรูปภาพทั้งหมด (บังคับ 1-3 รูป ตามที่ปรับใน ImageStorageService)
         imageStorageService.validateAll(images);
 
@@ -99,7 +109,7 @@ public class RepairRequestService {
         }
 
         // 5. บันทึกประวัติสถานะเริ่มต้น PENDING พร้อมระบุจำนวนรูปภาพ
-        savedRequest.addHistory(RequestStatus.PENDING, resident, "สร้างคำร้องสำเร็จพร้อมรูปภาพ " + (i - 1) + " รูป");
+        savedRequest.addHistory(RequestStatus.PENDING, resident, "สร้างคำร้องสำเร็จพร้อมรูปภาพ " + images.size() + " รูป");
 
         // 6. แปลง Entity ที่บันทึกแล้วกลับเป็น ResponseDTO
        return toResponse(savedRequest);

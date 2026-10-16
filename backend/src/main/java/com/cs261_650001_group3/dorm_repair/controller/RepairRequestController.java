@@ -1,21 +1,12 @@
 package com.cs261_650001_group3.dorm_repair.controller;
 
-import com.cs261_650001_group3.dorm_repair.dto.CreateRepairRequestDTO;
-import com.cs261_650001_group3.dorm_repair.dto.RepairRequestResponseDTO;
-import com.cs261_650001_group3.dorm_repair.dto.RepairRequestSummaryDTO;
-<<<<<<< HEAD
-import com.cs261_650001_group3.dorm_repair.dto.StatusHistoryDTO;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-=======
-import com.cs261_650001_group3.dorm_repair.service.AuthService;
-import com.cs261_650001_group3.dorm_repair.service.RepairRequestService;
->>>>>>> develop
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import com.cs261_650001_group3.dorm_repair.service.RepairRequestService;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,8 +14,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
-import java.util.List;
+import com.cs261_650001_group3.dorm_repair.dto.CreateRepairRequestDTO;
+import com.cs261_650001_group3.dorm_repair.dto.RepairRequestResponseDTO;
+import com.cs261_650001_group3.dorm_repair.dto.RepairRequestSummaryDTO;
+import com.cs261_650001_group3.dorm_repair.service.AuthService;
+import com.cs261_650001_group3.dorm_repair.service.RepairRequestService;
 
 
 @RestController
