@@ -44,6 +44,18 @@ public class RepairRequestService {
     /** U1: สร้างใบแจ้งซ่อม (POST) พร้อมตรวจสอบและบันทึกรูปภาพ 1-3 รูป */
     @Transactional
     public RepairRequestResponseDTO createRequest(CreateRepairRequestDTO dto, List<MultipartFile> images, Long userId) {
+        // 0. เช็กข้อมูลไม่ครบ -> 400 Bad Request
+    if (dto.title() == null || dto.title().isBlank() || 
+        dto.description() == null || dto.description().isBlank() || 
+        dto.preferredDate1() == null || dto.locationType() == null || 
+        dto.category() == null) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน");
+    }
+
+    // 0. เช็กวันที่ย้อนหลัง -> 400 Bad Request
+    if (dto.preferredDate1().isBefore(java.time.LocalDate.now())) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "วันที่นัดหมายต้องไม่เป็นอดีต");
+    }
         // 1. ตรวจสอบความถูกต้องของรูปภาพทั้งหมด (บังคับ 1-3 รูป ตามที่ปรับใน ImageStorageService)
         imageStorageService.validateAll(images);
 
