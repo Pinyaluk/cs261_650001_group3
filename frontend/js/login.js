@@ -1,5 +1,6 @@
 // js/login.js
 // หน้าเข้าสู่ระบบ: ตรวจว่ากรอกครบ → เรียก login() → ไปหน้า home.html
+// (login() ใน api-client.js เก็บ token ให้เองแล้ว)
 
 const loginForm = document.getElementById("login-form");
 const usernameInput = document.getElementById("username");
@@ -16,7 +17,7 @@ if (savedUsername) {
 }
 
 loginForm.addEventListener("submit", async (event) => {
-  event.preventDefault(); // กันไม่ให้หน้าเว็บรีโหลดเอง
+  event.preventDefault();
   loginError.textContent = "";
 
   const username = usernameInput.value.trim();
@@ -29,25 +30,20 @@ loginForm.addEventListener("submit", async (event) => {
   }
 
   // 2) เรียก login() จาก api-client.js
-  loginBtn.disabled = true; // กันกดซ้ำ
+  loginBtn.disabled = true;
   try {
     const result = await login(username, password);
 
     if (result.success) {
-      // จำบัญชีตามที่ติ๊ก
       if (rememberMe.checked) {
         localStorage.setItem("savedUsername", username);
       } else {
         localStorage.removeItem("savedUsername");
       }
-      // เก็บชื่อกับห้องไว้ให้หน้า home ใช้
-      localStorage.setItem("user", JSON.stringify({ name: result.name, room: result.room }));
       window.location.href = "home.html";
     } else {
-      loginError.textContent = "ชื่อบัญชีหรือรหัสผ่านไม่ถูกต้อง";
+      loginError.textContent = result.message;
     }
-  } catch (error) {
-    loginError.textContent = "เชื่อมต่อระบบไม่ได้ กรุณาลองใหม่อีกครั้ง";
   } finally {
     loginBtn.disabled = false;
   }
