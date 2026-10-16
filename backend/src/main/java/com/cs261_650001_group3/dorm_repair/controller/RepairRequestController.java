@@ -3,9 +3,14 @@ package com.cs261_650001_group3.dorm_repair.controller;
 import com.cs261_650001_group3.dorm_repair.dto.CreateRepairRequestDTO;
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestResponseDTO;
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestSummaryDTO;
+<<<<<<< HEAD
 import com.cs261_650001_group3.dorm_repair.dto.StatusHistoryDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+=======
+import com.cs261_650001_group3.dorm_repair.service.AuthService;
+import com.cs261_650001_group3.dorm_repair.service.RepairRequestService;
+>>>>>>> develop
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,22 +26,24 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/repair-requests")
 public class RepairRequestController {
 
     private final RepairRequestService repairRequestService;
+    private final AuthService authService;
 
-    public RepairRequestController(RepairRequestService repairRequestService) {
+    public RepairRequestController(RepairRequestService repairRequestService, AuthService authService) {
         this.repairRequestService = repairRequestService;
+        this.authService = authService;
     }
 
-    // U3: รายการคำร้องของผู้ใช้ที่ login (ดึงจาก DB)
-    // TODO: เมื่อ Login ของ BE4 เสร็จ เปลี่ยนจาก X-User-Id เป็น userId จาก token
-    //       ตอนนี้ถ้าไม่ส่ง header มา = ผู้ใช้ 1 (resident01 สมชาย)
+   
     @GetMapping("/my")
     public List<RepairRequestSummaryDTO> getMyRequests(
-            @RequestHeader(value = "X-User-Id", defaultValue = "1") Long userId) {
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        Long userId = authService.requireUserId(authHeader);
         return repairRequestService.getMyRequests(userId);
     }
 
@@ -44,10 +51,11 @@ public class RepairRequestController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED) // บังคับให้ตอบกลับเป็น HTTP 201 Created ตาม Spec
     public RepairRequestResponseDTO createRepairRequest(
-            @RequestHeader(value = "X-User-Id", defaultValue = "1") Long userId,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
             @ModelAttribute CreateRepairRequestDTO dto, // ใช้ @ModelAttribute เพื่อรับค่าฟอร์มแยกช่องจาก Postman
             @RequestParam("images") List<MultipartFile> images) {
         
+                Long userId = authService.requireUserId(authHeader);
         // ส่งต่อไปให้ Service บันทึกลงฐานข้อมูลและจัดการรูปภาพ
         return repairRequestService.createRequest(dto, images, userId);
     }
@@ -55,7 +63,8 @@ public class RepairRequestController {
     @GetMapping("/{id}")
     public RepairRequestResponseDTO getById(
             @PathVariable("id") Long id,
-            @RequestHeader(value = "X-User-Id", defaultValue = "1") Long userId) {
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        Long userId = authService.requireUserId(authHeader);
         return repairRequestService.getRequestDetail(id, userId);
     }
 }

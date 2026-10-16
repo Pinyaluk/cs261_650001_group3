@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ตรวจสอบคำร้อง | ระบบแจ้งซ่อมหอพัก</title>
+  <link rel="stylesheet" href="../css/style.css">
+  	<link rel="stylesheet" href="../css/request-check.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <a class="back-btn" href="home.html" aria-label="กลับหน้าหลัก">←</a>
+    <h1 class="top-bar__title">ตรวจสอบคำร้อง</h1>
+    <span aria-hidden="true"></span>
+  </header>
+  <main class="page">
+    <header class="page-header">
+      <p class="eyebrow">ผู้พักอาศัย / ตรวจสอบคำร้อง</p>
+      <h1 class="page-title">รายละเอียดคำร้อง</h1>
+      <p class="page-subtitle">ข้อมูลคำร้องแจ้งซ่อมของคุณ</p>
+    </header>
+    <section class="card">
+      <div class="row">
+        <h2 class="card__title" id="request-title">เครื่องปรับอากาศมีน้ำหยด</h2>
+        <span class="badge badge--pending" id="request-status">รอรับเรื่อง</span>
+      </div>
+      <p class="request-item__meta" id="request-code">#1024 · แจ้งเมื่อ 12/10/2569</p>
+      <p><span class="badge badge--urgent" id="request-urgency">เร่งด่วน</span></p>
+      <hr class="divider">
+      <dl class="info-list">
+        <div><dt class="info-list__label">พื้นที่</dt><dd class="info-list__value" id="area-type">ห้องพัก</dd></div>
+        <div><dt class="info-list__label">ตำแหน่ง</dt><dd class="info-list__value" id="location">ห้อง A-305</dd></div>
+        <div><dt class="info-list__label">หมวดปัญหา</dt><dd class="info-list__value" id="category">เครื่องปรับอากาศ</dd></div>
+        <div><dt class="info-list__label">อุปกรณ์ที่ชำรุด</dt><dd class="info-list__value" id="equipment">เครื่องปรับอากาศ</dd></div>
+        <div><dt class="info-list__label">รายละเอียดปัญหา</dt><dd class="info-list__value" id="description">มีน้ำหยดจากเครื่องปรับอากาศ</dd></div>
+        <div><dt class="info-list__label">ช่วงเวลาที่สะดวก</dt><dd class="info-list__value" id="preferred-times">13/10/2569 · 09:00–12:00</dd></div>
+        <div><dt class="info-list__label">ข้อมูลติดต่อ</dt><dd class="info-list__value" id="contact-info">081-234-5678</dd></div>
+      </dl>
+      <h3 class="card__title">รูปภาพประกอบ</h3>
+      <div class="image-grid" id="image-list">
+        <figure class="image-thumb"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="ตัวอย่างรูปที่แนบ"><figcaption class="image-thumb__caption">รูปประกอบคำร้อง</figcaption></figure>
+      </div>
+      <a class="btn btn-primary btn-block" id="detail-link" href="request-detail.html">ดูรายละเอียดและติดตามสถานะ</a>
+    </section>
+  </main>
+
+  <p class="footer-note">หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180</p>
+</body>
+</html>
