@@ -9,7 +9,7 @@
 <body>
 
   <header class="top-bar">
-    <a class="back-btn" id="back-btn" href="request-check.html" aria-label="กลับไปหน้าตรวจสอบคำร้อง">←</a>
+    <button class="back-btn" id="back-btn" type="button" aria-label="กลับไปหน้าประวัติคำร้อง">←</button>
     <h1 class="top-bar__title">รายละเอียดคำร้อง</h1>
     <span aria-hidden="true"></span>
   </header>
@@ -32,21 +32,7 @@
     <section class="card">
       <h2 class="card__title">ประวัติสถานะ</h2>
       
-      <ol class="timeline" id="timeline">
-        <li class="timeline__item is-current">
-          <p class="timeline__title">รอรับเรื่อง</p>
-          <p class="timeline__time">10/10/2569 · 09:15</p>
-          <p class="timeline__note">ส่งคำร้องแล้ว รอเจ้าหน้าที่ตรวจสอบ</p>
-        </li>
-        <li class="timeline__item">
-          <p class="timeline__title">กำลังดำเนินการ</p>
-          <p class="timeline__time">ยังไม่เริ่มดำเนินการ</p>
-        </li>
-        <li class="timeline__item">
-          <p class="timeline__title">เสร็จสิ้น</p>
-          <p class="timeline__time">ยังไม่เสร็จสิ้น</p>
-        </li>
-      </ol>
+      <ol class="timeline" id="timeline" aria-live="polite"></ol>
 
     </section>
     <section class="card">
@@ -84,8 +70,18 @@
         <p class="timeline__note" data-field="note"></p>
       </li>
     </template>
+    <template id="image-thumb-template">
+      <figure class="image-thumb">
+        <img data-field="img" alt="">
+        <figcaption class="image-thumb__caption" data-field="caption"></figcaption>
+      </figure>
+    </template>
   </main>
 
   <p class="footer-note">หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180</p>
+
+  <script src="../js/api-client.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/request-detail.js"></script>
 </body>
 </html>

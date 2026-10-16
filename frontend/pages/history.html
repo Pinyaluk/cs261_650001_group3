@@ -9,7 +9,7 @@
 <body>
 
   <header class="top-bar">
-    <a class="back-btn" href="home.html" aria-label="กลับหน้าหลัก">←</a>
+    <button class="back-btn" id="back-btn" type="button" aria-label="กลับหน้าหลัก">←</button>
     <h1 class="top-bar__title">ประวัติคำร้อง</h1>
     <span aria-hidden="true"></span>
   </header>
@@ -33,15 +33,11 @@
           <button class="chip" type="button" data-status="COMPLETED">เสร็จสิ้น</button>
         </div>
       </div>
-      <p class="form-hint" id="result-count">ทั้งหมด 4 รายการ</p>
+      <p class="form-hint" id="result-count" aria-live="polite">กำลังโหลดรายการ...</p>
     </section>
     <section class="card">
       <h2 class="card__title">รายการคำร้อง</h2>
-      <ul id="request-list">
-        <li><a class="request-item" href="request-detail.html"><div><h3 class="request-item__title">เครื่องปรับอากาศมีน้ำหยด</h3><p class="request-item__meta">#1024 · ห้อง A-305 · 12/10/2569</p></div><span class="badge badge--pending">รอรับเรื่อง</span></a></li>
-        <li><a class="request-item" href="request-detail.html"><div><h3 class="request-item__title">ไฟห้องน้ำไม่ติด</h3><p class="request-item__meta">#1023 · ห้อง A-305 · 10/10/2569</p></div><span class="badge badge--in-progress">กำลังดำเนินการ</span></a></li>
-        <li><a class="request-item" href="request-detail.html"><div><h3 class="request-item__title">ก๊อกน้ำรั่ว</h3><p class="request-item__meta">#1022 · ห้อง A-305 · 08/10/2569</p></div><span class="badge badge--completed">เสร็จสิ้น</span></a></li>
-      </ul>
+      <ul id="request-list" aria-live="polite"></ul>
       <p class="is-hidden" id="empty-state">ไม่พบคำร้อง</p>
       <a class="btn btn-primary btn-block" id="new-request-btn" href="repair-form.html">+ แจ้งซ่อมใหม่</a>
     </section>
@@ -59,5 +55,9 @@
   </main>
 
   <p class="footer-note">หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180</p>
+
+  <script src="../js/api-client.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/history.js"></script>
 </body>
 </html>
