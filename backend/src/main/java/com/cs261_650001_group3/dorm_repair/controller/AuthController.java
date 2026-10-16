@@ -1,11 +1,12 @@
 package com.cs261_650001_group3.dorm_repair.controller;
 
-import com.cs261_650001_group3.dorm_repair.entity.User;
+import com.cs261_650001_group3.dorm_repair.dto.LoginResponseDTO;
 import com.cs261_650001_group3.dorm_repair.service.AuthService;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -13,25 +14,23 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> request, HttpSession session) {
-        String username = request.get("username");
-        String password = request.get("password");
-
-        User user = authService.authenticate(username, password);
-        if (user != null) {
-            session.setAttribute("currentUser", user);
-            return ResponseEntity.ok(Map.of("message", "Login successful", "user", user));
-        }
-        return ResponseEntity.status(401).body(Map.of("error", "Invalid username or password"));
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
+    /** POST /api/auth/login  { username, password } → 200 { token, userId, fullName, role } / 401 */
+    @PostMapping("/login")
+    public LoginResponseDTO login(@RequestBody Map<String, String> body) {
+        return authService.login(body.get("username"), body.get("password"));
+    }
+
+    /** POST /api/auth/logout  header Authorization: Bearer <token> → 200 */
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession session) {
-        session.invalidate();
-        return ResponseEntity.ok(Map.of("message", "Logout successful"));
+    public Map<String, String> logout(
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        authService.logout(authHeader);
+        return Map.of("message", "ออกจากระบบแล้ว");
     }
 }
