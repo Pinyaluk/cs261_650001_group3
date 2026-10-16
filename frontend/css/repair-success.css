@@ -1,0 +1,8 @@
+@media (min-width: 768px) {
+  .page {
+    width: 100%;
+    max-width: 720px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
