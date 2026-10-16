@@ -1,5 +1,20 @@
 package com.cs261_650001_group3.dorm_repair.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestResponseDTO;
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestSummaryDTO;
 import com.cs261_650001_group3.dorm_repair.dto.StatusHistoryDTO;
@@ -11,28 +26,13 @@ import com.cs261_650001_group3.dorm_repair.entity.Role;
 import com.cs261_650001_group3.dorm_repair.entity.TimeSlot;
 import com.cs261_650001_group3.dorm_repair.entity.Urgency;
 import com.cs261_650001_group3.dorm_repair.entity.User;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Unit test ของ RepairRequestService (U3 ช่วง 2: ดึงข้อมูลจาก DB จริง)
  * ใช้ H2 ในหน่วยความจำ ไม่ต้องเปิด Docker
  */
 @DataJpaTest(properties = "spring.jpa.hibernate.ddl-auto=create-drop")
-@Import(RepairRequestService.class)
+@Import({RepairRequestService.class, ImageStorageService.class})
 class RepairRequestServiceTest {
 
     @Autowired TestEntityManager em;
