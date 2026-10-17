@@ -1,3 +1,87 @@
+.page > .card + .contact-card,
+.page > .contact-card + .card,
+.page > .contact-card + .contact-card {
+  margin-top: 20px;
+}
+
+.detail-title {
+  margin: 10px 0 4px;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.card-head .card__title {
+  margin: 0;
+}
+
+.card__title + .appointment-row,
+.card__title + .detail-description {
+  margin-top: 12px;
+}
+
+.appointment-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.appointment-datetime {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.icon-box {
+  display: grid;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  font-size: 20px;
+  background: var(--color-primary-light);
+  border-radius: 12px;
+}
+
+.detail-description {
+  margin: 0 0 12px;
+  line-height: 1.6;
+}
+
+.detail-rows {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+
+.detail-rows > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.detail-rows dt {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.detail-rows dd {
+  margin: 0;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: right;
+}
+
+
 @media (min-width: 768px) {
   .top-bar {
     margin-left: 0;

@@ -15,33 +15,23 @@
     <span aria-hidden="true"></span>
   </header>
   <main class="page">
-    <header class="page-header">
-      <p class="eyebrow">ผู้พักอาศัย / ประวัติคำร้อง</p>
-      <h1 class="page-title">คำร้องของฉัน</h1>
-      <p class="page-subtitle">ค้นหาและติดตามสถานะคำร้องแจ้งซ่อม</p>
-    </header>
-    <section class="card">
-      <div class="form-group">
-        <label class="form-label" for="search-input">ค้นหาคำร้อง</label>
-        <input class="form-control" id="search-input" type="search" placeholder="ค้นหาเลขคำร้องหรือชื่อปัญหา">
-      </div>
-      <div class="form-group">
-        <span class="form-label">กรองตามสถานะ</span>
-        <div class="chip-group" id="status-filter" role="group" aria-label="กรองตามสถานะ">
-          <button class="chip is-active" type="button" data-status="ALL">ทั้งหมด</button>
-          <button class="chip" type="button" data-status="PENDING">รอรับเรื่อง</button>
-          <button class="chip" type="button" data-status="IN_PROGRESS">กำลังดำเนินการ</button>
-          <button class="chip" type="button" data-status="COMPLETED">เสร็จสิ้น</button>
-        </div>
-      </div>
-      <p class="form-hint" id="result-count" aria-live="polite">กำลังโหลดรายการ...</p>
-    </section>
-    <section class="card">
-      <h2 class="card__title">รายการคำร้อง</h2>
-      <ul id="request-list" aria-live="polite"></ul>
-      <p class="is-hidden" id="empty-state">ไม่พบคำร้อง</p>
-      <a class="btn btn-primary btn-block" id="new-request-btn" href="repair-form.html">+ แจ้งซ่อมใหม่</a>
-    </section>
+       <input class="form-control history-search" id="search-input" type="search" placeholder="🔍 ค้นหาหัวข้อหรือเลขคำร้อง" aria-label="ค้นหาคำร้อง">
+
+    <div class="chip-group history-filter" id="status-filter" role="group" aria-label="กรองตามสถานะ">
+      <button class="chip is-active" type="button" data-status="ALL">ทั้งหมด</button>
+      <button class="chip" type="button" data-status="PENDING">รอรับเรื่อง</button>
+      <button class="chip" type="button" data-status="IN_PROGRESS">กำลังดำเนินการ</button>
+      <button class="chip" type="button" data-status="COMPLETED">เสร็จสิ้น</button>
+    </div>
+
+    <p class="form-hint" id="result-count" aria-live="polite">กำลังโหลดรายการ...</p>
+
+    <ul class="history-list" id="request-list" aria-live="polite"></ul>
+    <p class="is-hidden" id="empty-state">ไม่พบคำร้อง</p>
+
+    <div class="notice notice--info history-notice"><span>สถานะมี 3 ขั้น: รอรับเรื่อง → กำลังดำเนินการ → เสร็จสิ้น</span></div>
+
+    <a class="btn btn-primary btn-block" id="new-request-btn" href="repair-form.html">+ แจ้งซ่อมใหม่</a>
     <template id="request-item-template">
       <li>
         <a class="request-item" data-field="link" href="request-detail.html">

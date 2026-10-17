@@ -1,3 +1,40 @@
+.check-section-title {
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.check-request-title {
+  margin: 12px 0 4px;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.check-request-title + .request-item__meta {
+  margin: 0 0 20px;
+}
+
+.info-list + .check-section-title {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+/* รูปไม่ใหญ่เกินไปบนจอคอม */
+#image-list {
+  max-width: 480px;
+}
+
+.check-notice {
+  margin: 20px 0;
+}
+
 @media (min-width: 768px) {
   .top-bar {
     margin-left: 0;

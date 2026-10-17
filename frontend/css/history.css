@@ -1,3 +1,27 @@
+.history-search {
+  margin-bottom: 12px;
+}
+
+.history-filter {
+  margin-bottom: 8px;
+}
+
+.history-filter .chip {
+  border-color: var(--color-border);
+}
+
+.history-list {
+  display: grid;
+  gap: 12px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-notice {
+  margin: 20px 0;
+}
+
 @media (min-width: 768px) {
   .top-bar {
     margin-left: 0;
