@@ -45,6 +45,7 @@
           <input class="form-control" id="location" name="location" type="text" placeholder="เช่น ห้อง A-305" required>
           <p class="error-msg" id="location-error">กรุณาระบุตำแหน่งที่พบปัญหา</p>
         </div>
+
         <div class="form-group">
           <label class="form-label" for="category">หมวดปัญหา <span class="required">*</span></label>
           <select class="form-control" id="category" name="category" required>
@@ -63,6 +64,15 @@
           <textarea class="form-control" id="description" name="description" placeholder="อธิบายอาการหรือสิ่งที่พบ" required></textarea>
           <p class="error-msg" id="description-error">กรุณาระบุรายละเอียดปัญหา</p>
         </div>
+
+              <div class="form-group">
+          <label class="checkbox" for="urgent">
+            <input type="checkbox" id="urgent" name="urgent">
+            แจ้งว่าเร่งด่วน
+          </label>
+          <p class="form-hint">ติ๊กเมื่อปัญหาส่งผลต่อความปลอดภัยหรือใช้งานไม่ได้เลย เจ้าหน้าที่จะพิจารณาความเร่งด่วนอีกครั้ง</p>
+        </div>
+
         <div class="form-group">
           <label class="form-label" for="preferred-date-1">วันที่สะดวก <span class="required">*</span></label>
           <input class="form-control" id="preferred-date-1" name="preferred-date-1" type="date" required>
@@ -71,7 +81,7 @@
         <div class="form-group">
           <label class="form-label" for="preferred-time-1">ช่วงเวลา <span class="required">*</span></label>
           <select class="form-control" id="preferred-time-1" name="preferred-time-1" required>
-            <option value="">เลือกช่วงเวลา</option><option value="MORNING">09:00–12:00</option><option value="AFTERNOON">13:00–16:00</option><option value="EVENING">16:00–18:00</option>
+              <option value="">เลือกช่วงเวลา</option><option value="MORNING">09:00–12:00</option><option value="AFTERNOON">13:00–16:00</option>
           </select>
           <p class="error-msg" id="preferred-time-1-error">กรุณาเลือกช่วงเวลา</p>
         </div>
@@ -82,7 +92,7 @@
         <div class="form-group">
           <label class="form-label" for="preferred-time-2">ช่วงเวลาเพิ่มเติม</label>
           <select class="form-control" id="preferred-time-2" name="preferred-time-2">
-            <option value="">เลือกช่วงเวลา</option><option value="MORNING">09:00–12:00</option><option value="AFTERNOON">13:00–16:00</option><option value="EVENING">16:00–18:00</option>
+               <option value="">เลือกช่วงเวลา</option><option value="MORNING">09:00–12:00</option><option value="AFTERNOON">13:00–16:00</option>
           </select>
         </div>
         <div class="form-group">
@@ -94,6 +104,14 @@
             <span id="image-count">แนบรูปแล้ว 0 จาก 3 รูป</span>
           </label>
           <div class="image-grid" id="image-preview" aria-label="ตัวอย่างรูปภาพที่แนบ"></div>
+
+                    <template id="image-thumb-template">
+            <figure class="image-thumb">
+              <img data-field="img" alt="">
+              <figcaption class="image-thumb__caption" data-field="caption"></figcaption>
+            </figure>
+          </template>
+          
           <p class="error-msg" id="images-error">รูปภาพต้องไม่เกิน 5 MB ต่อรูป และแนบได้ไม่เกิน 3 รูป</p>
         </div>
         <div class="form-group">
@@ -109,12 +127,7 @@
           <label class="form-label" for="line-id">LINE ID</label>
           <input class="form-control" id="line-id" name="line-id" type="text" placeholder="กรอก LINE ID (ถ้ามี)">
         </div>
-        <div class="form-group">
-  <label class="checkbox" for="urgent">
-    <input type="checkbox" id="urgent" name="urgent">
-    เร่งด่วน
-  </label>
-</div>
+        
         <button class="btn btn-primary btn-block" id="submit-btn" type="submit">ส่งคำร้องแจ้งซ่อม</button>
       </form>
     </section>
