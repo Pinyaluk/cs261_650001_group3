@@ -5,6 +5,12 @@ requireLogin();
 
 const id = getQueryParam("id");
 
+const backBtn = document.querySelector(".back-btn");
+if (backBtn && document.referrer.includes("home.html")) {
+  backBtn.href = "home.html";
+  backBtn.setAttribute("aria-label", "กลับหน้าหลัก");
+}
+
 function setText(elId, text) {
   const el = document.getElementById(elId);
   if (el) el.textContent = text;

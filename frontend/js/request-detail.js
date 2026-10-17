@@ -6,7 +6,11 @@ requireLogin();
 const id = getQueryParam("id");
 
 const backBtn = document.getElementById("back-btn");
-if (backBtn && id) backBtn.href = "request-check.html?id=" + encodeURIComponent(id);
+if (backBtn) {
+  backBtn.addEventListener("click", () => {
+    window.location.href = id ? "request-check.html?id=" + encodeURIComponent(id) : "history.html";
+  });
+}
 
 // ใส่ข้อความลง element ตาม id (ถ้าหน้านั้นไม่มี element นี้ ก็ข้ามไป)
 function setText(elId, text) {
