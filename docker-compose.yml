@@ -8,6 +8,39 @@ services:
       - "1433:1433"
     volumes:
       - dbdata:/var/opt/mssql
+    # รอจน SQL Server พร้อมรับ connection จริง ๆ ก่อนให้ service อื่นเริ่ม
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q \"SELECT 1\" -b"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  # สร้างฐานข้อมูลจาก database/init.sql ให้อัตโนมัติ
+  # รันเฉพาะตอนที่ยังไม่มีตารางในเครื่องนั้น (เช่น เครื่อง Lab ที่เพิ่ง clone) ข้อมูลเดิมจะไม่ถูกลบ
+  db-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SA_PASSWORD: "DormRepair#2569"
+    volumes:
+      - ./database:/scripts:ro
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        set -e
+        SQLCMD=/opt/mssql-tools18/bin/sqlcmd
+        READY=$$($$SQLCMD -S db -U sa -P "$$SA_PASSWORD" -C -h -1 -W -Q "SET NOCOUNT ON; SELECT CASE WHEN OBJECT_ID('dorm_repair.dbo.request_status_history') IS NULL THEN 0 ELSE 1 END" | tr -d '[:space:]')
+        if [ "$$READY" = "0" ]; then
+          echo "[db-init] ยังไม่มีฐานข้อมูล dorm_repair -> รัน init.sql"
+          $$SQLCMD -S db -U sa -P "$$SA_PASSWORD" -C -b -f 65001 -i /scripts/init.sql
+          echo "[db-init] สร้างฐานข้อมูลเสร็จแล้ว"
+        else
+          echo "[db-init] มีฐานข้อมูลอยู่แล้ว -> ข้าม"
+        fi
+    restart: "no"
 
   backend:
     build: ./backend
@@ -19,7 +52,8 @@ services:
       SPRING_DATASOURCE_USERNAME: sa
       SPRING_DATASOURCE_PASSWORD: "DormRepair#2569"
     depends_on:
-      - db
+      db-init:
+        condition: service_completed_successfully
     restart: on-failure
     volumes:
       - ./backend/uploads:/app/uploads
