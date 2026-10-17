@@ -1,0 +1,50 @@
+// js/login.js
+// หน้าเข้าสู่ระบบ: ตรวจว่ากรอกครบ → เรียก login() → ไปหน้า home.html
+// (login() ใน api-client.js เก็บ token ให้เองแล้ว)
+
+const loginForm = document.getElementById("login-form");
+const usernameInput = document.getElementById("username");
+const passwordInput = document.getElementById("password");
+const rememberMe = document.getElementById("remember-me");
+const loginError = document.getElementById("login-error");
+const loginBtn = document.getElementById("login-btn");
+
+// ถ้าเคยติ๊ก "จดจำบัญชี" ไว้ ให้ใส่ชื่อบัญชีรอไว้ให้เลย
+const savedUsername = localStorage.getItem("savedUsername");
+if (savedUsername) {
+  usernameInput.value = savedUsername;
+  rememberMe.checked = true;
+}
+
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  loginError.textContent = "";
+
+  const username = usernameInput.value.trim();
+  const password = passwordInput.value;
+
+  // 1) ตรวจว่ากรอกครบไหม
+  if (username === "" || password === "") {
+    loginError.textContent = "กรุณากรอกชื่อบัญชีผู้ใช้และรหัสผ่าน";
+    return;
+  }
+
+  // 2) เรียก login() จาก api-client.js
+  loginBtn.disabled = true;
+  try {
+    const result = await login(username, password);
+
+    if (result.success) {
+      if (rememberMe.checked) {
+        localStorage.setItem("savedUsername", username);
+      } else {
+        localStorage.removeItem("savedUsername");
+      }
+      window.location.href = "home.html";
+    } else {
+      loginError.textContent = result.message;
+    }
+  } finally {
+    loginBtn.disabled = false;
+  }
+});
