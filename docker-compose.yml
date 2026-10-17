@@ -14,6 +14,7 @@ services:
     ports:
       - "8080:8080"
     environment:
+      TZ: Asia/Bangkok
       SPRING_DATASOURCE_URL: jdbc:sqlserver://db:1433;databaseName=dorm_repair;encrypt=true;trustServerCertificate=true
       SPRING_DATASOURCE_USERNAME: sa
       SPRING_DATASOURCE_PASSWORD: "DormRepair#2569"

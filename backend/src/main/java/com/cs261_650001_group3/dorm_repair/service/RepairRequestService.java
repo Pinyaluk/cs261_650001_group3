@@ -44,28 +44,40 @@ public class RepairRequestService {
     /** U1: สร้างใบแจ้งซ่อม (POST) พร้อมตรวจสอบและบันทึกรูปภาพ 1-3 รูป */
     @Transactional
     public RepairRequestResponseDTO createRequest(CreateRepairRequestDTO dto, List<MultipartFile> images, Long userId) {
-        
-    // 0. เช็กข้อมูลไม่ครบ -> 400 Bad Request
-if (dto.title() == null || dto.title().isBlank() || 
-    dto.description() == null || dto.description().isBlank() || 
-    dto.preferredDate1() == null || dto.locationType() == null || 
-    dto.category() == null || 
-    dto.building() == null || dto.building().isBlank() ||
-    dto.locationDetail() == null || dto.locationDetail().isBlank() ||
-    dto.contactPhone() == null || dto.contactPhone().isBlank() ||
-    dto.preferredSlot1() == null) {
-    throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน");
-}
 
-    // 0. เช็กวันที่ย้อนหลัง -> 400 Bad Request
-    // 0. เช็กวันที่ย้อนหลัง -> 400 Bad Request
-    if (dto.preferredDate1().isBefore(java.time.LocalDate.now())) {
-    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "วันที่นัดหมายต้องไม่เป็นอดีต");
-}
+        // 0. เช็กข้อมูลไม่ครบ -> 400 Bad Request
+        if (dto.title() == null || dto.title().isBlank() ||
+                dto.description() == null || dto.description().isBlank() ||
+                dto.preferredDate1() == null || dto.locationType() == null ||
+                dto.category() == null ||
+                dto.building() == null || dto.building().isBlank() ||
+                dto.locationDetail() == null || dto.locationDetail().isBlank() ||
+                dto.contactPhone() == null || dto.contactPhone().isBlank() ||
+                dto.preferredSlot1() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน");
+        }
 
-    if (dto.preferredDate2() != null && dto.preferredDate2().isBefore(java.time.LocalDate.now())) {
-    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "วันที่นัดหมายต้องไม่เป็นอดีต");
-}
+        // 0. เช็กความยาวไม่ให้เกินคอลัมน์ใน DB -> 400 (ถ้าปล่อยไป DB จะ error แล้วได้ 500)
+        checkMaxLength(dto.title(), 100, "อุปกรณ์ที่ชำรุด");
+        checkMaxLength(dto.building(), 50, "อาคาร");
+        checkMaxLength(dto.locationDetail(), 100, "รายละเอียดสถานที่");
+        checkMaxLength(dto.description(), 1000, "รายละเอียดปัญหา");
+        checkMaxLength(dto.contactPhone(), 20, "เบอร์โทรศัพท์");
+        checkMaxLength(dto.lineId(), 50, "LINE ID");
+
+        // 0. ช่วงที่ 2 ต้องกรอกทั้งวันและช่วงเวลา หรือว่างทั้งคู่ -> 400
+        if ((dto.preferredDate2() == null) != (dto.preferredSlot2() == null)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "กรุณากรอกวันและช่วงเวลาที่สะดวกช่วงที่ 2 ให้ครบ");
+        }
+
+        // 0. เช็กวันที่ย้อนหลัง -> 400 Bad Request
+        if (dto.preferredDate1().isBefore(java.time.LocalDate.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "วันที่นัดหมายต้องไม่เป็นอดีต");
+        }
+        if (dto.preferredDate2() != null && dto.preferredDate2().isBefore(java.time.LocalDate.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "วันที่นัดหมายต้องไม่เป็นอดีต");
+        }
+
         // 1. ตรวจสอบความถูกต้องของรูปภาพทั้งหมด (บังคับ 1-3 รูป ตามที่ปรับใน ImageStorageService)
         imageStorageService.validateAll(images);
 
@@ -111,8 +123,19 @@ if (dto.title() == null || dto.title().isBlank() ||
         // 5. บันทึกประวัติสถานะเริ่มต้น PENDING พร้อมระบุจำนวนรูปภาพ
         savedRequest.addHistory(RequestStatus.PENDING, resident, "สร้างคำร้องสำเร็จพร้อมรูปภาพ " + images.size() + " รูป");
 
-        // 6. แปลง Entity ที่บันทึกแล้วกลับเป็น ResponseDTO
-       return toResponse(savedRequest);
+        // 6. บันทึกรูปและประวัติลง DB ทันที ให้ changedAt มีค่าก่อนสร้าง response (ไม่งั้นจะได้ null)
+        repairRequestRepository.saveAndFlush(savedRequest);
+
+        // 7. แปลง Entity ที่บันทึกแล้วกลับเป็น ResponseDTO
+        return toResponse(savedRequest);
+    }
+
+    /** ข้อความยาวเกินขนาดคอลัมน์ใน DB → 400 */
+    private static void checkMaxLength(String value, int max, String fieldName) {
+        if (value != null && value.length() > max) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "ช่อง" + fieldName + " ยาวเกิน " + max + " ตัวอักษร");
+        }
     }
 
     /** GET /api/repair-requests/my : คำร้องของผู้ใช้ เรียงล่าสุดก่อน ไม่มีคำร้องได้ [] */
