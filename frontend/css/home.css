@@ -72,3 +72,7 @@
     min-height: 80px;
   }
 }
+
+#latest-request > li {
+  list-style: none;
+}

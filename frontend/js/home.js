@@ -23,7 +23,7 @@ function renderLatest(r) {
   renderStatusBadge(clone.querySelector('[data-field="status"]'), r.status);
   latestRequest.innerHTML = "";
   latestRequest.appendChild(clone);
-  latestDetailLink.href = "request-detail.html?id=" + r.requestId;
+  latestDetailLink.href = "request-check.html?id=" + r.requestId;
 }
 
 async function init() {
