@@ -5,6 +5,9 @@ requireLogin();
 
 const id = getQueryParam("id");
 
+const backBtn = document.getElementById("back-btn");
+if (backBtn && id) backBtn.href = "request-check.html?id=" + encodeURIComponent(id);
+
 // ใส่ข้อความลง element ตาม id (ถ้าหน้านั้นไม่มี element นี้ ก็ข้ามไป)
 function setText(elId, text) {
   const el = document.getElementById(elId);
@@ -84,7 +87,12 @@ function renderRequest(r) {
 
   setText("request-meta",
     `#${r.requestId} · ${categoryText(r.category)} · ${room} · แจ้งเมื่อ ${formatDate(r.createdAt)}`);
-  if (r.updatedAt) setText("updated-at", "อัปเดต " + formatDateTime(r.updatedAt));
+  const sortedHistory = [...(r.statusHistory || [])].sort(
+  (a, b) => new Date(a.changedAt) - new Date(b.changedAt)
+  );
+  if (sortedHistory.length > 0) {
+  setText("updated-at", "อัปเดต " + formatDateTime(sortedHistory[sortedHistory.length - 1].changedAt));
+  }
 
   setText("request-description", r.description);
   setText("category", categoryText(r.category));

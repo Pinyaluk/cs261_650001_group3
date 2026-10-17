@@ -16,7 +16,7 @@ function countByStatus(list, status) {
 
 function renderLatest(r) {
   const clone = itemTemplate.content.cloneNode(true);
-  clone.querySelector('[data-field="link"]').href = "request-detail.html?id=" + r.requestId;
+  clone.querySelector('[data-field="link"]').href = "request-check.html?id=" + r.requestId;
   clone.querySelector('[data-field="title"]').textContent = r.title;
   clone.querySelector('[data-field="meta"]').textContent =
     `#${r.requestId} · ${categoryText(r.category)} · แจ้งเมื่อ ${formatDate(r.createdAt)}`;

@@ -30,6 +30,6 @@ if (!id) {
   window.location.replace("home.html");
 } else {
   requestIdEl.textContent = "#" + id;
-  checkRequestLink.href = "request-detail.html?id=" + encodeURIComponent(id);
+  checkRequestLink.href = "request-check.html?id=" + encodeURIComponent(id);
   loadDetails();
 }

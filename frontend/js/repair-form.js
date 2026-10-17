@@ -64,7 +64,8 @@ function validateRequired() {
 }
 
 // ---------- 2) เช็ครูป: ไม่เกิน 3 รูป, รูปละไม่เกิน 5MB ----------
-function validateImages(files) {
+function validateImages(files, requireOne = false) {
+  if (requireOne && files.length === 0) return "กรุณาแนบรูปอย่างน้อย 1 รูป";
   if (files.length > MAX_FILES) return "แนบรูปได้ไม่เกิน 3 รูป";
   for (const file of files) {
     if (!ALLOWED_TYPES.includes(file.type)) return "รองรับเฉพาะไฟล์ JPG และ PNG";
@@ -160,7 +161,7 @@ repairForm.addEventListener("submit", async (event) => {
   const firstInvalid = validateRequired();
   const date1Ok = checkPastDate(1);
   const date2Ok = checkPastDate(2) && checkSecondSlotPair();
-  const imageMsg = validateImages(Array.from(imagesInput.files));
+  const imageMsg = validateImages(Array.from(imagesInput.files), true);
   imagesError.textContent = imageMsg;
 
   if (firstInvalid || !date1Ok || !date2Ok || imageMsg) {
