@@ -40,7 +40,7 @@ public class AuthService {
 
         String token = UUID.randomUUID().toString();
         tokens.put(token, user.getUserId());
-        return new LoginResponseDTO(token, user.getUserId(), user.getFullName(), user.getRole().name());
+        return new LoginResponseDTO(token, user.getUserId(), user.getFullName(), user.getRole().name(), user.getRoomNumber());
     }
 
     public void logout(String authHeader) {

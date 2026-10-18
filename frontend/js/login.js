@@ -9,6 +9,12 @@ const rememberMe = document.getElementById("remember-me");
 const loginError = document.getElementById("login-error");
 const loginBtn = document.getElementById("login-btn");
 
+// .error-msg ถูกซ่อนไว้ใน style.css ต้องเติม class is-visible ตอนมีข้อความ ไม่งั้นผู้ใช้มองไม่เห็น
+function setLoginError(message) {
+  loginError.textContent = message;
+  loginError.classList.toggle("is-visible", message !== "");
+}
+
 // ถ้าเคยติ๊ก "จดจำบัญชี" ไว้ ให้ใส่ชื่อบัญชีรอไว้ให้เลย
 const savedUsername = localStorage.getItem("savedUsername");
 if (savedUsername) {
@@ -18,14 +24,14 @@ if (savedUsername) {
 
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  loginError.textContent = "";
+  setLoginError("");
 
   const username = usernameInput.value.trim();
   const password = passwordInput.value;
 
   // 1) ตรวจว่ากรอกครบไหม
   if (username === "" || password === "") {
-    loginError.textContent = "กรุณากรอกชื่อบัญชีผู้ใช้และรหัสผ่าน";
+    setLoginError("กรุณากรอกชื่อบัญชีผู้ใช้และรหัสผ่าน");
     return;
   }
 
@@ -42,7 +48,7 @@ loginForm.addEventListener("submit", async (event) => {
       }
       window.location.href = "home.html";
     } else {
-      loginError.textContent = result.message;
+      setLoginError(result.message);
     }
   } finally {
     loginBtn.disabled = false;

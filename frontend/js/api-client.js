@@ -74,7 +74,7 @@ async function apiFetch(path, options = {}) {
 // ---------- U2 Login / Logout ----------
 
 /**
- * สำเร็จ → { success: true, userId, fullName, role } และเก็บ token ไว้แล้ว
+ * สำเร็จ → { success: true, userId, fullName, role, roomNumber } และเก็บ token ไว้แล้ว
  * ไม่สำเร็จ → { success: false, message }
  */
 async function login(username, password) {
@@ -87,6 +87,7 @@ async function login(username, password) {
     localStorage.setItem("userId", data.userId);
     localStorage.setItem("fullName", data.fullName);
     localStorage.setItem("role", data.role);
+    localStorage.setItem("roomNumber", data.roomNumber || "");
     return { success: true, ...data };
   } catch (err) {
     const message = err.status === 401 ? "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" : err.message;

@@ -19,6 +19,7 @@ public class CorsConfig implements WebMvcConfigurer {
 
     @Override
    public void addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
-       registry.addResourceHandler("/uploads/**").addResourceLocations("file:uploads/");
+       // หาใน uploads/ ก่อน (รูปที่ผู้ใช้อัปโหลด) ไม่เจอค่อยใช้รูปตัวอย่างของข้อมูลใน init.sql ที่อยู่ใน resources/seed-uploads
+       registry.addResourceHandler("/uploads/**").addResourceLocations("file:uploads/", "classpath:/seed-uploads/");
    }
 }

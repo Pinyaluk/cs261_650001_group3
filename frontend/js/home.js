@@ -10,6 +10,10 @@ const latestRequest = document.getElementById("latest-request");
 const latestDetailLink = document.getElementById("latest-detail-link");
 const itemTemplate = document.getElementById("request-item-template");
 
+// เลขห้องของผู้ที่ login (เก็บไว้ตอน login) แทนข้อความตัวอย่างใน HTML
+const userRoom = document.getElementById("user-room");
+if (userRoom) userRoom.textContent = localStorage.getItem("roomNumber") || "-";
+
 function countByStatus(list, status) {
   return list.filter((r) => r.status === status).length;
 }
