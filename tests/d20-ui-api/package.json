@@ -1,0 +1,13 @@
+{
+  "name": "d20-ui-api-integration-test",
+  "private": true,
+  "description": "D20 Integration Test UI <-> API (Sprint 1) ระบบแจ้งซ่อมหอพัก CS261 กลุ่ม 3",
+  "type": "module",
+  "scripts": {
+    "test": "node run-d20.mjs",
+    "test:headed": "node run-d20.mjs --headed"
+  },
+  "dependencies": {
+    "playwright-core": "^1.56.0"
+  }
+}

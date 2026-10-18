@@ -5,5 +5,6 @@ public record LoginResponseDTO(
         String token,
         Long userId,
         String fullName,
-        String role
+        String role,
+        String roomNumber
 ) {}

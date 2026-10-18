@@ -20,7 +20,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    /** POST /api/auth/login  { username, password } → 200 { token, userId, fullName, role } / 401 */
+    /** POST /api/auth/login  { username, password } → 200 { token, userId, fullName, role, roomNumber } / 401 */
     @PostMapping("/login")
     public LoginResponseDTO login(@RequestBody Map<String, String> body) {
         return authService.login(body.get("username"), body.get("password"));

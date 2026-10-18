@@ -349,7 +349,8 @@ textarea.form-control {
   border-color: var(--color-danger);
 }
  
-.form-group.is-invalid .error-msg {
+.form-group.is-invalid .error-msg,
+.error-msg.is-visible {
   display: block;
 }
  

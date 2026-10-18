@@ -47,6 +47,13 @@ function clearError(fieldId) {
   if (group) group.classList.remove("is-invalid");
 }
 
+// ข้อความเตือนเรื่องรูป: ต้องใส่ is-invalid ให้กลุ่มด้วย ไม่งั้น .error-msg ถูกซ่อน มองไม่เห็น
+function setImagesError(message) {
+  imagesError.textContent = message;
+  const group = imagesError.closest(".form-group");
+  if (group) group.classList.toggle("is-invalid", message !== "");
+}
+
 // ---------- 1) ตรวจว่ากรอกครบไหม ----------
 function validateRequired() {
   let firstInvalid = null;
@@ -120,11 +127,11 @@ imagesInput.addEventListener("change", () => {
 
   const message = validateImages(files);
   if (message) {
-    imagesError.textContent = message;
+    setImagesError(message);
     imagesInput.value = ""; // ล้างไฟล์ที่ไม่ผ่านทิ้ง
     return;
   }
-  imagesError.textContent = "";
+  setImagesError("");
 
   const template = document.getElementById("image-thumb-template");
   for (const file of files) {
@@ -162,7 +169,7 @@ repairForm.addEventListener("submit", async (event) => {
   const date1Ok = checkPastDate(1);
   const date2Ok = checkPastDate(2) && checkSecondSlotPair();
   const imageMsg = validateImages(Array.from(imagesInput.files), true);
-  imagesError.textContent = imageMsg;
+  setImagesError(imageMsg);
 
   if (firstInvalid || !date1Ok || !date2Ok || imageMsg) {
     if (firstInvalid) firstInvalid.focus();
