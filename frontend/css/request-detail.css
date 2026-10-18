@@ -1,3 +1,9 @@
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .detail-home-btn {
   margin-top: 20px;
 }

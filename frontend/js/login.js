@@ -15,6 +15,9 @@ function setLoginError(message) {
   loginError.classList.toggle("is-visible", message !== "");
 }
 
+// ปิดการเตือนของเบราว์เซอร์ (attribute required) ให้ใช้ข้อความของระบบใน #login-error แทน
+loginForm.noValidate = true;
+
 // ถ้าเคยติ๊ก "จดจำบัญชี" ไว้ ให้ใส่ชื่อบัญชีรอไว้ให้เลย
 const savedUsername = localStorage.getItem("savedUsername");
 if (savedUsername) {
@@ -31,7 +34,7 @@ loginForm.addEventListener("submit", async (event) => {
 
   // 1) ตรวจว่ากรอกครบไหม
   if (username === "" || password === "") {
-    setLoginError("กรุณากรอกชื่อบัญชีผู้ใช้และรหัสผ่าน");
+    setLoginError("กรุณากรอกชื่อผู้ใช้และรหัสผ่าน");
     return;
   }
 

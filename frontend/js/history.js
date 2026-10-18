@@ -30,13 +30,14 @@ function renderList() {
     const clone = itemTemplate.content.cloneNode(true);
     clone.querySelector('[data-field="link"]').href = "request-check.html?id=" + r.requestId;
     clone.querySelector('[data-field="title"]').textContent = r.title;
-    clone.querySelector('[data-field="meta"]').textContent =
-      `#${r.requestId} · ${categoryText(r.category)} · แจ้งเมื่อ ${formatDate(r.createdAt)}`;
+    clone.querySelector('[data-field="meta"]').textContent = requestMetaText(r);
     renderStatusBadge(clone.querySelector('[data-field="status"]'), r.status);
     requestList.appendChild(clone);
   }
 
   resultCount.textContent = `ทั้งหมด ${filtered.length} รายการ`;
+  // ยังไม่เคยแจ้งเลย กับ ค้นหา/กรองแล้วไม่เจอ ใช้ข้อความต่างกัน
+  emptyState.textContent = allRequests.length === 0 ? "ยังไม่มีคำร้อง" : "ไม่พบคำร้องที่ตรงกับการค้นหา";
   emptyState.classList.toggle("is-hidden", filtered.length > 0);
 }
 

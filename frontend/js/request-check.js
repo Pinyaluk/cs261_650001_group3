@@ -72,7 +72,8 @@ function renderRequest(r) {
   setText("preferred-times", times.length ? times.join(" / ") : "-");
 
   const name = localStorage.getItem("fullName") || "";
-  setText("contact-info", `${name} ${r.contactPhone || ""}`.trim() || "-");
+  const line = r.lineId ? ` · LINE ${r.lineId}` : "";
+  setText("contact-info", (`${name} ${r.contactPhone || ""}`.trim() + line) || "-");
 
   renderImages(r.imageUrls);
 

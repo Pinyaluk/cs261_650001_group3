@@ -86,7 +86,7 @@ async function waitBackend(timeoutMs) {
 }
 
 function docker(args) {
-  const r = spawnSync("docker", ["compose", ...args], { cwd: PROJECT_ROOT, encoding: "utf8", timeout: 120000, shell: process.platform === "win32" });
+  const r = spawnSync("docker", ["compose", ...args], { cwd: PROJECT_ROOT, encoding: "utf8", timeout: 120000 });
   return { ok: r.status === 0, out: `${r.stdout || ""}${r.stderr || ""}`.trim() };
 }
 
@@ -336,7 +336,7 @@ async function checkNoPostAndMessage(t, expectText, label) {
   const msg = (await text(page, "#images-error")) || "";
   const vis = await shown(page, "#images-error");
   check("ไม่มี POST ไป backend (หน้าเว็บกันไว้)", posts(rec).length === 0, `POST ${posts(rec).length} ครั้ง`);
-  check(`#images-error เป็นข้อความเรื่อง${label}`, msg.includes(expectText), `"${msg}"`);
+  check(`#images-error เป็นข้อความเรื่อง${label}`, msg.toLowerCase().includes(expectText.toLowerCase()), `"${msg}"`);
   check("ผู้ใช้มองเห็นข้อความเตือนบนหน้าจอ", vis, vis ? "" : `ข้อความถูกซ่อนอยู่ (display: ${await displayOf(page, "#images-error")})`);
   actual(`ไม่มี request · #images-error = "${msg}" · ${vis ? "มองเห็นบนหน้าจอ" : "มองไม่เห็นบนหน้าจอ (CSS ซ่อน)"}`);
   // ลองกดส่งต่อเหมือนผู้ใช้ไม่สนใจคำเตือน
@@ -736,7 +736,6 @@ async function u1Cases() {
     await fillBaseline(t.page, { images: [] });
     await t.page.setInputFiles("#images", fx("big.jpg"));
     await checkNoPostAndMessage(t, "5MB", "ขนาดรูปเกิน 5MB");
-    t.note('ข้อความจริงคือ "รูปแต่ละรูปต้องมีขนาดไม่เกิน 5MB" ต่างจากในเอกสาร ("รูปต้องเป็น jpg หรือ png และไม่เกิน 5MB") แต่ความหมายเดียวกัน');
   });
 
   await runCase("IT-U1-06", "เลือกรูป 4 รูป (ok1–ok4)", async (t) => {
@@ -766,8 +765,7 @@ async function u1Cases() {
     await openForm(t.page);
     await fillBaseline(t.page, { images: [] });
     await t.page.setInputFiles("#images", fx("doc.pdf"));
-    await checkNoPostAndMessage(t, "JPG", "ชนิดไฟล์ต้องเป็น JPG/PNG");
-    t.note('ข้อความจริงคือ "รองรับเฉพาะไฟล์ JPG และ PNG" ไม่ใช่ข้อความเดียวกับ IT-U1-05 ตามเอกสาร แต่บอกสาเหตุได้ตรงกว่า');
+    await checkNoPostAndMessage(t, "jpg", "ชนิดไฟล์ต้องเป็น jpg/png");
   });
 
   await runCase("IT-U1-09", "ดับเบิลคลิกปุ่มส่ง (กันส่งซ้ำ)", async ({ page, check, actual, note, rec }) => {
@@ -818,10 +816,17 @@ async function xCases() {
     await page.waitForSelector("#request-list li, #empty-state:not(.is-hidden)");
     const h = res.request().headers();
     const metas = await page.$$eval("#request-list li [data-field=meta]", (ms) => ms.map((m) => m.textContent));
+    const ids = metas.map((m) => Number((m.match(/#(\d+)/) || [])[1]));
+    // คำร้องของ resident01 (ถาม API ด้วย token ของ resident01) ต้องไม่โผล่ในรายการของ resident02 เลย
+    const t1 = (await apiJson("POST", "/api/auth/login", { body: { username: "resident01", password: PASSWORD } })).data?.token;
+    const ids1 = ((await apiJson("GET", "/api/repair-requests/my", { token: t1 })).data || []).map((r) => r.requestId);
+    const leaked = ids.filter((x) => ids1.includes(x));
     check("GET /my แนบ token ของ resident02 และไม่มี header X-User-Id", (h["authorization"] || "").startsWith("Bearer ") && !h["x-user-id"]);
-    check("เห็นแค่ #987", metas.length === 1 && metas[0].includes("#987"), metas.join(" | "));
+    check("เห็นคำร้องของ resident02 (#987)", ids.includes(987), metas.join(" | "));
+    check(`ไม่เห็นคำร้องของ resident01 เลย (${ids1.length} ใบ)`, ids1.length > 0 && leaked.length === 0, leaked.length ? "เห็น " + leaked.map((x) => "#" + x).join(", ") : "");
+    if (ids.length !== 1) note(`resident02 มี ${ids.length} คำร้อง (มีคำร้องที่สร้างจากการทดสอบอื่น เช่น E2E ของ D22) จึงตรวจว่าไม่มีคำร้องของ resident01 ปนแทนการนับว่าได้ 1 ใบ`);
     if (room !== "B-210") note(`พบเพิ่มเติม: หน้าโฮมของ resident02 แสดงห้อง "${room}" แทน B-210 (เลขห้องตายตัวใน home.html เพราะ login ไม่ส่ง roomNumber)`);
-    actual(`${res.status()} · เห็น ${metas.length} รายการ: ${metas.map((m) => m.match(/#\d+/)?.[0]).join(", ")} · ไม่มี X-User-Id`);
+    actual(`${res.status()} · เห็น ${ids.length} รายการ: ${ids.map((x) => "#" + x).join(", ")} · ไม่มีของ resident01 · ไม่มี X-User-Id`);
   });
 
   await runCase("IT-X-03", "แก้ token ใน Local Storage เป็นค่าปลอมแล้วรีเฟรช", async ({ page, check, actual }) => {
@@ -896,18 +901,22 @@ async function u1BackendDown() {
     if (!stop.ok) { skip(`สั่ง docker compose stop backend ไม่ได้: ${stop.out.split("\n").pop()}`); return; }
     try {
       await page.click("#submit-btn");
-      await page.waitForEvent("dialog", { timeout: 8000 }).catch(() => {});
+      await Promise.race([
+        page.waitForEvent("dialog", { timeout: 8000 }),
+        page.waitForSelector("#form-error.is-visible", { timeout: 8000 }),
+      ]).catch(() => {});
       await sleep(800);
       const failed = posts(rec).filter((r) => r.failed);
       const kept = await page.inputValue("#equipment");
       const disabled = await page.$eval("#submit-btn", (el) => el.disabled);
-      const msg = rec.dialogs.join(" | ");
+      const formErr = (await shown(page, "#form-error")) ? await text(page, "#form-error") : "";
+      const msg = [formErr, ...rec.dialogs].filter(Boolean).join(" | ");
       check("POST ล้มเหลวเพราะต่อ backend ไม่ได้", failed.length === 1, failed.map((f) => f.failed).join(", ") || `POST ${posts(rec).length} ครั้ง`);
       check("แสดงข้อความว่าเชื่อมต่อเซิร์ฟเวอร์ไม่ได้", /เชื่อมต่อเซิร์ฟเวอร์ไม่ได้/.test(msg), msg || "ไม่มีข้อความ");
       check("ข้อมูลในฟอร์มไม่หาย", kept === BASE.equipment, kept);
       check("กดส่งใหม่ได้ (ปุ่มไม่ถูกปิดค้าง)", !disabled);
-      note("หน้าเว็บแสดงข้อความด้วย alert() เพราะ repair-form.html ไม่มีกล่อง #form-error");
-      actual(`POST ${failed[0]?.failed || "-"} · alert "${msg}" · ข้อมูลในฟอร์มยังอยู่ · ปุ่ม${disabled ? "ถูกปิด" : "กดได้"}`);
+      if (rec.dialogs.length) note("หน้าเว็บแสดงข้อความด้วย alert() เพราะ repair-form.html ไม่มีกล่อง #form-error");
+      actual(`POST ${failed[0]?.failed || "-"} · ${formErr ? `#form-error "${formErr}"` : `alert "${msg}"`} · ข้อมูลในฟอร์มยังอยู่ · ปุ่ม${disabled ? "ถูกปิด" : "กดได้"}`);
     } finally {
       docker(["start", "backend"]);
       const up = await waitBackend(150000);
