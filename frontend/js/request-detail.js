@@ -105,7 +105,7 @@ function renderRequest(r) {
 
   // วันนัดหมาย (null = รอยืนยัน)
   setText("appointment-datetime",
-    r.appointmentDateTime ? formatDateTime(r.appointmentDateTime) : "รอเจ้าหน้าที่ยืนยัน");
+    r.appointmentDateTime ? formatDateTime(r.appointmentDateTime) : "รอเจ้าหน้าที่ยืนยันเวลานัด");
 
   // ช่าง (technician เป็น null = ยังไม่มอบหมาย)
   const techPhone = document.getElementById("technician-phone");
@@ -123,8 +123,10 @@ function renderRequest(r) {
     }
   }
 
-  // เจ้าหน้าที่หอพัก: API ยังไม่มีข้อมูล ใช้เบอร์สำนักงานไปก่อน
-  setText("staff-name", "สำนักงานหอพัก");
+  // เจ้าหน้าที่ที่รับเรื่อง = คนที่เปลี่ยนสถานะเป็น "กำลังดำเนินการ" ในประวัติ (ยังไม่รับเรื่อง → สำนักงานหอพัก)
+  // API ยังไม่มีเบอร์ของเจ้าหน้าที่ จึงใช้เบอร์สำนักงานไปก่อน
+  const acceptedBy = sortedHistory.find((h) => h.status === "IN_PROGRESS");
+  setText("staff-name", acceptedBy && acceptedBy.changedByName ? acceptedBy.changedByName : "สำนักงานหอพัก");
   const staffPhone = document.getElementById("staff-phone");
   if (staffPhone) {
     staffPhone.textContent = "02-555-0180";
@@ -141,8 +143,9 @@ function showNotFound() {
   if (box) {
     box.classList.remove("is-hidden");
   }
-  // กันไม่ให้เห็นข้อมูลตัวอย่างที่ค้างอยู่ใน HTML
-  setText("request-title", "ไม่พบคำร้อง");
+  // ซ่อนทุกส่วนของรายละเอียด ไม่ให้เห็นข้อมูลตัวอย่างที่ค้างอยู่ใน HTML
+  document.querySelectorAll("main > section").forEach((s) => s.classList.add("is-hidden"));
+  setText("request-title", "ไม่พบคำร้องนี้");
   setText("request-meta", "");
 }
 

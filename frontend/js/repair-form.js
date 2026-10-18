@@ -27,6 +27,7 @@ const imagePreview = document.getElementById("image-preview");
 const imageCount = document.getElementById("image-count");
 const imagesError = document.getElementById("images-error");
 const submitBtn = document.getElementById("submit-btn");
+const formError = document.getElementById("form-error");
 
 repairForm.noValidate = true; // ปิดการตรวจของเบราว์เซอร์ ใช้ข้อความเตือนของเราแทน
 
@@ -54,6 +55,21 @@ function setImagesError(message) {
   if (group) group.classList.toggle("is-invalid", message !== "");
 }
 
+// ข้อความรวมเหนือปุ่มส่ง (กรอกไม่ครบ หรือ error จาก backend)
+function setFormError(message) {
+  if (!formError) {
+    if (message) alert(message);
+    return;
+  }
+  formError.textContent = message;
+  formError.classList.toggle("is-visible", message !== "");
+}
+
+// วันที่ตามเวลาเครื่อง (ไม่ใช้ toISOString เพราะเป็นเวลา UTC ช่วงตี 0–7 จะได้วันของเมื่อวาน)
+function localDateString(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 // ---------- 1) ตรวจว่ากรอกครบไหม ----------
 function validateRequired() {
   let firstInvalid = null;
@@ -72,11 +88,10 @@ function validateRequired() {
 
 // ---------- 2) เช็ครูป: ไม่เกิน 3 รูป, รูปละไม่เกิน 5MB ----------
 function validateImages(files, requireOne = false) {
-  if (requireOne && files.length === 0) return "กรุณาแนบรูปอย่างน้อย 1 รูป";
+  if (requireOne && files.length === 0) return "กรุณาแนบรูปภาพอย่างน้อย 1 รูป";
   if (files.length > MAX_FILES) return "แนบรูปได้ไม่เกิน 3 รูป";
   for (const file of files) {
-    if (!ALLOWED_TYPES.includes(file.type)) return "รองรับเฉพาะไฟล์ JPG และ PNG";
-    if (file.size > MAX_SIZE) return "รูปแต่ละรูปต้องมีขนาดไม่เกิน 5MB";
+    if (!ALLOWED_TYPES.includes(file.type) || file.size > MAX_SIZE) return "รูปต้องเป็น jpg หรือ png และไม่เกิน 5MB";
   }
   return "";
 }
@@ -87,7 +102,7 @@ function validateImages(files, requireOne = false) {
 function isPast(dateValue, slot) {
   if (!dateValue) return false;
   const now = new Date();
-  const todayStr = now.toISOString().split("T")[0]; // รูปแบบ 2026-10-20
+  const todayStr = localDateString(now); // รูปแบบ 2026-10-20
   if (dateValue < todayStr) return true;
   if (dateValue > todayStr) return false;
   if (slot === "MORNING") return now.getHours() >= 12;
@@ -100,7 +115,7 @@ function checkPastDate(n) {
   const timeEl = document.getElementById(`preferred-time-${n}`);
   if (!dateEl || !dateEl.value) return true;
   if (isPast(dateEl.value, timeEl ? timeEl.value : "")) {
-    showError(`preferred-date-${n}`, "ไม่สามารถเลือกวันเวลาที่ผ่านมาแล้วได้");
+    showError(`preferred-date-${n}`, "กรุณาเลือกวันเวลาในอนาคต");
     return false;
   }
   clearError(`preferred-date-${n}`);
@@ -113,11 +128,41 @@ function checkSecondSlotPair() {
   const time2 = document.getElementById("preferred-time-2");
   if (!date2 || !time2) return true;
   if ((date2.value === "") !== (time2.value === "")) {
-    showError("preferred-date-2", "กรุณากรอกวันที่และช่วงเวลาให้ครบทั้งคู่ หรือเว้นว่างทั้งคู่");
+    showError("preferred-date-2", "กรุณากรอกวันและช่วงเวลาเพิ่มเติมให้ครบ หรือเว้นว่างทั้งคู่");
+    return false;
+  }
+  if (date2.value === "") clearError("preferred-date-2");
+  return true;
+}
+
+// ช่วงที่ 2 ต้องไม่ใช่วันและช่วงเวลาเดียวกับช่วงแรก
+function checkNotDuplicateSlot() {
+  const date1 = document.getElementById("preferred-date-1").value;
+  const time1 = document.getElementById("preferred-time-1").value;
+  const date2 = document.getElementById("preferred-date-2").value;
+  const time2 = document.getElementById("preferred-time-2").value;
+  if (date2 && time2 && date2 === date1 && time2 === time1) {
+    showError("preferred-date-2", "ช่วงเวลาเพิ่มเติมต้องไม่ซ้ำกับช่วงแรก");
     return false;
   }
   return true;
 }
+
+// เบอร์โทร: ขึ้นต้นด้วย 0 ยาว 9–10 หลัก (เว้นวรรคหรือขีดได้) เช่น 081-234-5678, 02-555-0180
+function checkPhone() {
+  const phone = document.getElementById("phone");
+  if (!phone || phone.value.trim() === "") return true; // ช่องว่างให้ validateRequired เตือนแทน
+  const digits = phone.value.replace(/[\s-]/g, "");
+  if (!/^0\d{8,9}$/.test(digits)) {
+    showError("phone", "เบอร์โทรศัพท์ไม่ถูกต้อง");
+    return false;
+  }
+  return true;
+}
+
+// เหตุผลที่รูปชุดล่าสุดถูกปฏิเสธ (ใหญ่เกิน / ไม่ใช่รูป / เกิน 3 รูป)
+// เก็บไว้แสดงต่อตอนกดส่ง จนกว่าจะเลือกรูปที่ใช้ได้ ผู้ใช้จะได้รู้ว่าทำไมส่งไม่ได้
+let rejectedImagesMessage = "";
 
 // ---------- 4) แสดงตัวอย่างรูปก่อนส่ง ----------
 imagesInput.addEventListener("change", () => {
@@ -127,10 +172,12 @@ imagesInput.addEventListener("change", () => {
 
   const message = validateImages(files);
   if (message) {
+    rejectedImagesMessage = message;
     setImagesError(message);
     imagesInput.value = ""; // ล้างไฟล์ที่ไม่ผ่านทิ้ง
     return;
   }
+  rejectedImagesMessage = "";
   setImagesError("");
 
   const template = document.getElementById("image-thumb-template");
@@ -144,7 +191,7 @@ imagesInput.addEventListener("change", () => {
 });
 
 // ---------- เตรียมหน้า ----------
-const today = new Date().toISOString().split("T")[0];
+const today = localDateString();
 for (const n of [1, 2]) {
   const dateEl = document.getElementById(`preferred-date-${n}`);
   const timeEl = document.getElementById(`preferred-time-${n}`);
@@ -167,11 +214,14 @@ repairForm.addEventListener("submit", async (event) => {
 
   const firstInvalid = validateRequired();
   const date1Ok = checkPastDate(1);
-  const date2Ok = checkPastDate(2) && checkSecondSlotPair();
-  const imageMsg = validateImages(Array.from(imagesInput.files), true);
+  const date2Ok = checkPastDate(2) && checkSecondSlotPair() && checkNotDuplicateSlot();
+  const phoneOk = checkPhone();
+  const files = Array.from(imagesInput.files);
+  const imageMsg = files.length === 0 && rejectedImagesMessage ? rejectedImagesMessage : validateImages(files, true);
   setImagesError(imageMsg);
+  setFormError(firstInvalid ? "กรุณากรอกข้อมูลให้ครบ" : "");
 
-  if (firstInvalid || !date1Ok || !date2Ok || imageMsg) {
+  if (firstInvalid || !date1Ok || !date2Ok || !phoneOk || imageMsg) {
     if (firstInvalid) firstInvalid.focus();
     return;
   }
@@ -210,13 +260,8 @@ repairForm.addEventListener("submit", async (event) => {
     const created = await submitRequest(formData); // ห้ามตั้ง Content-Type เอง
     window.location.href = "repair-success.html?id=" + created.requestId;
   } catch (err) {
-    // 400 = ข้อมูลไม่ถูกต้อง backend ส่งข้อความไทยมาให้
-    const formError = document.getElementById("form-error");
-    if (formError) {
-      formError.textContent = err.message;
-    } else {
-      alert(err.message);
-    }
+    // 400 = ข้อมูลไม่ถูกต้อง backend ส่งข้อความไทยมาให้ · 0 = เชื่อมต่อเซิร์ฟเวอร์ไม่ได้
+    setFormError(err.message);
     submitBtn.disabled = false;
   }
 });

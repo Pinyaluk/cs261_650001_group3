@@ -65,6 +65,17 @@ function formatDateTime(dateString) {
   return `${formatDate(dateString)} · ${hh}:${mm}`;
 }
 
+/**
+ * บรรทัดย่อยใต้ชื่อคำร้องในรายการ
+ * รอรับเรื่อง → วันที่แจ้ง · กำลังดำเนินการ → ชื่อช่าง · เสร็จสิ้น → วันที่เสร็จ (updatedAt)
+ */
+function requestMetaText(r) {
+  const head = `#${r.requestId} · ${categoryText(r.category)}`;
+  if (r.status === "IN_PROGRESS") return `${head} · ช่าง ${r.technicianName || "ยังไม่มอบหมาย"}`;
+  if (r.status === "COMPLETED") return `${head} · เสร็จ ${formatDate(r.updatedAt)}`;
+  return `${head} · แจ้งเมื่อ ${formatDate(r.createdAt)}`;
+}
+
 /** อ่านค่าจาก URL เช่น request-detail.html?id=1019 → getQueryParam("id") = "1019" */
 function getQueryParam(name) {
   return new URLSearchParams(window.location.search).get(name);

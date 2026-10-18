@@ -18,3 +18,9 @@
 .form-control--select {
   padding-right: 36px;
 }
+/* ข้อความรวมเหนือปุ่มส่ง (กรอกไม่ครบ / error จาก backend) */
+#form-error {
+  margin-bottom: 8px;
+  font-size: 14px;
+  text-align: center;
+}

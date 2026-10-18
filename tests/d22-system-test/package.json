@@ -1,0 +1,13 @@
+{
+  "name": "d22-system-test",
+  "private": true,
+  "description": "D22 System Test (Sprint 1) ระบบแจ้งซ่อมหอพัก CS261 กลุ่ม 3",
+  "type": "module",
+  "scripts": {
+    "test": "node run-d22.mjs",
+    "test:headed": "node run-d22.mjs --headed"
+  },
+  "dependencies": {
+    "playwright-core": "^1.56.0"
+  }
+}
