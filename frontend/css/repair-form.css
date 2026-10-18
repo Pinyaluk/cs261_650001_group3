@@ -1,0 +1,26 @@
+@media (min-width: 768px) {
+  .top-bar {
+    margin-left: 0;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 1280px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
+
+.form-group + .btn-block {
+  margin-top: 20px;
+}
+
+.form-control--select {
+  padding-right: 36px;
+}
+/* ข้อความรวมเหนือปุ่มส่ง (กรอกไม่ครบ / error จาก backend) */
+#form-error {
+  margin-bottom: 8px;
+  font-size: 14px;
+  text-align: center;
+}

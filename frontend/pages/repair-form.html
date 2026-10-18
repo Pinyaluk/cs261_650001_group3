@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>แจ้งซ่อม | ระบบแจ้งซ่อมหอพัก</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/repair-form.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <a class="back-btn" href="home.html" aria-label="กลับหน้าหลัก">←</a>
+    <h1 class="top-bar__title">แจ้งซ่อม</h1>
+    <span aria-hidden="true"></span>
+  </header>
+  <main class="page">
+    <header class="page-header">
+      <p class="eyebrow">ผู้พักอาศัย / แจ้งซ่อม</p>
+      <h1 class="page-title">ส่งคำร้องแจ้งซ่อม</h1>
+      <p class="page-subtitle">กรอกรายละเอียดปัญหาและแนบรูปภาพประกอบ</p>
+    </header>
+
+    <div class="notice notice--info"><span>โปรดกรอกข้อมูลที่มีเครื่องหมาย * ให้ครบถ้วน และแนบรูปภาพ 1–3 รูป</span></div>
+
+    <section class="card">
+      <form id="repair-form">
+        <div class="form-group">
+          <span class="form-label">พื้นที่ที่พบปัญหา <span class="required">*</span></span>
+          <div class="choice-group">
+            <label class="choice" for="area-room"><input id="area-room" name="area-type" type="radio" value="ROOM" checked> ห้องพัก</label>
+            <label class="choice" for="area-common"><input id="area-common" name="area-type" type="radio" value="COMMON"> พื้นที่ส่วนกลาง</label>
+          </div>
+          <p class="error-msg" id="area-type-error">กรุณาเลือกพื้นที่ที่พบปัญหา</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="building">อาคาร <span class="required">*</span></label>
+          <select class="form-control" id="building" name="building" required>
+                        <option value="">เลือกอาคาร</option><option value="อาคาร A">อาคาร A</option><option value="อาคาร B">อาคาร B</option><option value="พื้นที่ส่วนกลาง">พื้นที่ส่วนกลาง</option>
+          </select>
+          <p class="error-msg" id="building-error">กรุณาเลือกอาคาร</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="location">ห้อง / จุดที่พบปัญหา <span class="required">*</span></label>
+          <input class="form-control" id="location" name="location" type="text" placeholder="เช่น ห้อง A-305" required>
+          <p class="error-msg" id="location-error">กรุณาระบุตำแหน่งที่พบปัญหา</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="category">หมวดปัญหา <span class="required">*</span></label>
+          <select class="form-control" id="category" name="category" required>
+                        <option value="">เลือกหมวดปัญหา</option><option value="ELECTRICAL">ไฟฟ้า</option><option value="PLUMBING">ประปา</option><option value="AIR_CONDITIONER">เครื่องปรับอากาศ</option><option value="FURNITURE">เฟอร์นิเจอร์</option><option value="OTHER">อื่น ๆ</option>
+          </select>
+          <p class="error-msg" id="category-error">กรุณาเลือกหมวดปัญหา</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="equipment">อุปกรณ์ที่ชำรุด <span class="required">*</span></label>
+          <input class="form-control" id="equipment" name="equipment" type="text" placeholder="เช่น เครื่องปรับอากาศ" required>
+          <p class="form-hint">ข้อมูลนี้จะใช้เป็นชื่อคำร้อง</p>
+          <p class="error-msg" id="equipment-error">กรุณาระบุอุปกรณ์ที่ชำรุด</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="description">รายละเอียดปัญหา <span class="required">*</span></label>
+          <textarea class="form-control" id="description" name="description" placeholder="อธิบายอาการหรือสิ่งที่พบ" required></textarea>
+          <p class="error-msg" id="description-error">กรุณาระบุรายละเอียดปัญหา</p>
+        </div>
+
+              <div class="form-group">
+          <label class="checkbox" for="urgent">
+            <input type="checkbox" id="urgent" name="urgent">
+            แจ้งว่าเร่งด่วน
+          </label>
+          <p class="form-hint">ติ๊กเมื่อปัญหาส่งผลต่อความปลอดภัยหรือใช้งานไม่ได้เลย เจ้าหน้าที่จะพิจารณาความเร่งด่วนอีกครั้ง</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="preferred-date-1">วันที่สะดวก <span class="required">*</span></label>
+          <input class="form-control" id="preferred-date-1" name="preferred-date-1" type="date" required>
+          <p class="error-msg" id="preferred-date-1-error">กรุณาเลือกวันที่สะดวก</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="preferred-time-1">ช่วงเวลา <span class="required">*</span></label>
+          <select class="form-control" id="preferred-time-1" name="preferred-time-1" required>
+              <option value="">เลือกช่วงเวลา</option><option value="MORNING">09:00–12:00</option><option value="AFTERNOON">13:00–16:00</option>
+          </select>
+          <p class="error-msg" id="preferred-time-1-error">กรุณาเลือกช่วงเวลา</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="preferred-date-2">วันที่สะดวกเพิ่มเติม</label>
+          <input class="form-control" id="preferred-date-2" name="preferred-date-2" type="date">
+          <p class="error-msg" id="preferred-date-2-error"></p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="preferred-time-2">ช่วงเวลาเพิ่มเติม</label>
+          <select class="form-control" id="preferred-time-2" name="preferred-time-2">
+               <option value="">เลือกช่วงเวลา</option><option value="MORNING">09:00–12:00</option><option value="AFTERNOON">13:00–16:00</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="images">รูปภาพประกอบ <span class="required">*</span></label>
+          <input class="form-control" id="images" name="images" type="file" accept="image/jpeg,image/png" multiple>
+          <label class="dropzone" id="image-dropzone" for="images">
+            <strong>แนบรูปภาพ</strong>
+            <span>เลือกไฟล์ JPG หรือ PNG (สูงสุด 3 รูป รูปละไม่เกิน 5 MB)</span>
+            <span id="image-count">แนบรูปแล้ว 0 จาก 3 รูป</span>
+          </label>
+          <div class="image-grid" id="image-preview" aria-label="ตัวอย่างรูปภาพที่แนบ"></div>
+
+                    <template id="image-thumb-template">
+            <figure class="image-thumb">
+              <img data-field="img" alt="">
+              <figcaption class="image-thumb__caption" data-field="caption"></figcaption>
+            </figure>
+          </template>
+          
+          <p class="error-msg" id="images-error">รูปภาพต้องไม่เกิน 5 MB ต่อรูป และแนบได้ไม่เกิน 3 รูป</p>
+        </div>
+        <div class="form-group">
+          <p class="form-label">ข้อมูลผู้พักอาศัย</p>
+          <p id="resident-info">คุณสมชาย · อาคาร A · ห้อง A-305</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="phone">เบอร์โทรศัพท์ที่ติดต่อได้ <span class="required">*</span></label>
+          <input class="form-control" id="phone" name="phone" type="tel" autocomplete="tel" placeholder="กรอกเบอร์โทรศัพท์" required>
+          <p class="error-msg" id="phone-error">กรุณากรอกเบอร์โทรศัพท์</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="line-id">LINE ID</label>
+          <input class="form-control" id="line-id" name="line-id" type="text" placeholder="กรอก LINE ID (ถ้ามี)">
+        </div>
+        
+        <p class="error-msg" id="form-error" role="alert"></p>
+        <button class="btn btn-primary btn-block" id="submit-btn" type="submit">ส่งคำร้องแจ้งซ่อม</button>
+      </form>
+    </section>
+  </main>
+
+  <p class="footer-note">หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180</p>
+  <script src="../js/api-client.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/repair-form.js"></script>
+</body>
+</html>

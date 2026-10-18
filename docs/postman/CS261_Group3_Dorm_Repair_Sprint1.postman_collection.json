@@ -1,0 +1,852 @@
+{
+  "info": {
+    "_postman_id": "ec64754a-82bd-4c10-9f1a-e1dcd617c993",
+    "name": "CS261 Group3 - Dorm Repair API (Sprint 1)",
+    "description": "ทดสอบ API Sprint 1 (U1 ส่งคำร้อง, U2 Login/Logout, U3 ประวัติและสถานะ)\n\nก่อนรัน: docker compose up -d --build และรัน database/init.sql แล้ว\nกด Run collection ตามลำดับ (request 01 เก็บ token ให้อัตโนมัติ)\nrequest ที่ส่งคำร้อง (07-10) ต้องเลือกไฟล์รูป .jpg ในช่อง images ก่อนรัน",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "newId",
+      "value": ""
+    },
+    {
+      "key": "newImage",
+      "value": ""
+    },
+    {
+      "key": "futureDate",
+      "value": ""
+    },
+    {
+      "key": "pastDate",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "U2 Login",
+      "item": [
+        {
+          "name": "01 Login สำเร็จ (resident01)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"มี token\", () => pm.expect(j.token).to.be.a(\"string\"));",
+                  "pm.test(\"role = RESIDENT\", () => pm.expect(j.role).to.eql(\"RESIDENT\"));",
+                  "pm.test(\"ไม่ส่ง passwordHash ออกมา\", () => pm.expect(j).to.not.have.property(\"passwordHash\"));",
+                  "pm.collectionVariables.set(\"token\", j.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "U2: รหัสถูก → 200 ได้ token เก็บไว้ใช้ทุก request",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"resident01\", \"password\": \"password123\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "02 Login รหัสผิด",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "U2: รหัสผิด → 401",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"resident01\", \"password\": \"wrong-password\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "U3 ประวัติและสถานะ",
+      "item": [
+        {
+          "name": "03 ประวัติ ไม่ส่ง token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/repair-requests/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "repair-requests",
+                "my"
+              ]
+            },
+            "description": "U3: ไม่มี token → 401",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "04 ประวัติคำร้องของฉัน",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const list = pm.response.json();",
+                  "pm.test(\"เป็น array\", () => pm.expect(list).to.be.an(\"array\"));",
+                  "pm.test(\"มีคำร้อง 1019 และ 1024\", () => { const ids = list.map(r => r.requestId); pm.expect(ids).to.include.members([1019, 1024]); });",
+                  "pm.test(\"ไม่มีคำร้องของคนอื่น (987)\", () => pm.expect(list.map(r => r.requestId)).to.not.include(987));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/repair-requests/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "repair-requests",
+                "my"
+              ]
+            },
+            "description": "U3: ได้รายการคำร้องของ resident01 เรียงใหม่ไปเก่า"
+          },
+          "response": []
+        },
+        {
+          "name": "05 รายละเอียดคำร้อง 1019",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json();",
+                  "pm.test(\"status = IN_PROGRESS\", () => pm.expect(r.status).to.eql(\"IN_PROGRESS\"));",
+                  "pm.test(\"มีข้อมูลช่าง\", () => pm.expect(r.technician).to.have.property(\"name\"));",
+                  "pm.test(\"มีรูป 2 รูป\", () => pm.expect(r.imageUrls).to.have.lengthOf(2));",
+                  "pm.test(\"ประวัติสถานะอย่างน้อย 2 แถว\", () => pm.expect(r.statusHistory.length).to.be.at.least(2));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/repair-requests/1019",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "repair-requests",
+                "1019"
+              ]
+            },
+            "description": "U3: รายละเอียด + ช่าง + รูป + ประวัติสถานะ"
+          },
+          "response": []
+        },
+        {
+          "name": "06 รายละเอียดคำร้องของคนอื่น (987)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/repair-requests/987",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "repair-requests",
+                "987"
+              ]
+            },
+            "description": "U3: คำร้องของ resident02 → 404"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "U1 ส่งคำร้อง",
+      "item": [
+        {
+          "name": "07 ส่งคำร้อง ไม่ส่ง token",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = (n) => { const t = new Date(); t.setDate(t.getDate() + n); return t.toISOString().slice(0, 10); };",
+                  "pm.collectionVariables.set(\"futureDate\", d(7));",
+                  "pm.collectionVariables.set(\"pastDate\", d(-1));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/repair-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "repair-requests"
+              ]
+            },
+            "description": "U1: ไม่มี token → 401",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "locationType",
+                  "value": "ROOM",
+                  "type": "text"
+                },
+                {
+                  "key": "building",
+                  "value": "อาคาร A",
+                  "type": "text"
+                },
+                {
+                  "key": "locationDetail",
+                  "value": "ชั้น 4 · ห้อง 402",
+                  "type": "text"
+                },
+                {
+                  "key": "category",
+                  "value": "PLUMBING",
+                  "type": "text"
+                },
+                {
+                  "key": "title",
+                  "value": "ฝักบัวห้องน้ำ",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "น้ำหยดตลอดเวลาแม้ปิดวาล์วสนิท",
+                  "type": "text"
+                },
+                {
+                  "key": "preferredDate1",
+                  "value": "{{futureDate}}",
+                  "type": "text"
+                },
+                {
+                  "key": "preferredSlot1",
+                  "value": "MORNING",
+                  "type": "text"
+                },
+                {
+                  "key": "contactPhone",
+                  "value": "081-234-5678",
+                  "type": "text"
+                },
+                {
+                  "key": "lineId",
+                  "value": "somchai305",
+                  "type": "text"
+                },
+                {
+                  "key": "urgency",
+                  "value": "NORMAL",
+                  "type": "text"
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": [],
+                  "description": "เลือกรูป .jpg 1 รูป (≤5MB)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "08 ส่งคำร้อง ข้อมูลไม่ครบ (ไม่มี building)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = (n) => { const t = new Date(); t.setDate(t.getDate() + n); return t.toISOString().slice(0, 10); };",
+                  "pm.collectionVariables.set(\"futureDate\", d(7));",
+                  "pm.collectionVariables.set(\"pastDate\", d(-1));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"มีข้อความเตือน\", () => pm.expect(pm.response.json().message).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/repair-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "repair-requests"
+              ]
+            },
+            "description": "U1 TC: ข้อมูลไม่ครบ → 400 พร้อมข้อความเตือน",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "locationType",
+                  "value": "ROOM",
+                  "type": "text"
+                },
+                {
+                  "key": "locationDetail",
+                  "value": "ชั้น 4 · ห้อง 402",
+                  "type": "text"
+                },
+                {
+                  "key": "category",
+                  "value": "PLUMBING",
+                  "type": "text"
+                },
+                {
+                  "key": "title",
+                  "value": "ฝักบัวห้องน้ำ",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "น้ำหยดตลอดเวลาแม้ปิดวาล์วสนิท",
+                  "type": "text"
+                },
+                {
+                  "key": "preferredDate1",
+                  "value": "{{futureDate}}",
+                  "type": "text"
+                },
+                {
+                  "key": "preferredSlot1",
+                  "value": "MORNING",
+                  "type": "text"
+                },
+                {
+                  "key": "contactPhone",
+                  "value": "081-234-5678",
+                  "type": "text"
+                },
+                {
+                  "key": "lineId",
+                  "value": "somchai305",
+                  "type": "text"
+                },
+                {
+                  "key": "urgency",
+                  "value": "NORMAL",
+                  "type": "text"
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": [],
+                  "description": "เลือกรูป .jpg 1 รูป (≤5MB)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "09 ส่งคำร้อง วันที่เป็นอดีต",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = (n) => { const t = new Date(); t.setDate(t.getDate() + n); return t.toISOString().slice(0, 10); };",
+                  "pm.collectionVariables.set(\"futureDate\", d(7));",
+                  "pm.collectionVariables.set(\"pastDate\", d(-1));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/repair-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "repair-requests"
+              ]
+            },
+            "description": "U1 TC: วันที่เป็นอดีต → 400",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "locationType",
+                  "value": "ROOM",
+                  "type": "text"
+                },
+                {
+                  "key": "building",
+                  "value": "อาคาร A",
+                  "type": "text"
+                },
+                {
+                  "key": "locationDetail",
+                  "value": "ชั้น 4 · ห้อง 402",
+                  "type": "text"
+                },
+                {
+                  "key": "category",
+                  "value": "PLUMBING",
+                  "type": "text"
+                },
+                {
+                  "key": "title",
+                  "value": "ฝักบัวห้องน้ำ",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "น้ำหยดตลอดเวลาแม้ปิดวาล์วสนิท",
+                  "type": "text"
+                },
+                {
+                  "key": "preferredDate1",
+                  "value": "{{pastDate}}",
+                  "type": "text"
+                },
+                {
+                  "key": "preferredSlot1",
+                  "value": "MORNING",
+                  "type": "text"
+                },
+                {
+                  "key": "contactPhone",
+                  "value": "081-234-5678",
+                  "type": "text"
+                },
+                {
+                  "key": "lineId",
+                  "value": "somchai305",
+                  "type": "text"
+                },
+                {
+                  "key": "urgency",
+                  "value": "NORMAL",
+                  "type": "text"
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": [],
+                  "description": "เลือกรูป .jpg 1 รูป (≤5MB)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "10 ส่งคำร้อง สำเร็จ",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = (n) => { const t = new Date(); t.setDate(t.getDate() + n); return t.toISOString().slice(0, 10); };",
+                  "pm.collectionVariables.set(\"futureDate\", d(7));",
+                  "pm.collectionVariables.set(\"pastDate\", d(-1));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 201\", () => pm.response.to.have.status(201));",
+                  "const r = pm.response.json();",
+                  "pm.test(\"ได้ requestId\", () => pm.expect(r.requestId).to.be.a(\"number\"));",
+                  "pm.test(\"status = PENDING\", () => pm.expect(r.status).to.eql(\"PENDING\"));",
+                  "pm.test(\"บันทึกรูป 1 รูป\", () => pm.expect(r.imageUrls).to.have.lengthOf(1));",
+                  "pm.collectionVariables.set(\"newId\", r.requestId);",
+                  "pm.collectionVariables.set(\"newImage\", r.imageUrls[0]);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/repair-requests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "repair-requests"
+              ]
+            },
+            "description": "U1 TC: ข้อมูลครบ → 201 สถานะรอรับเรื่อง (PENDING)",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "locationType",
+                  "value": "ROOM",
+                  "type": "text"
+                },
+                {
+                  "key": "building",
+                  "value": "อาคาร A",
+                  "type": "text"
+                },
+                {
+                  "key": "locationDetail",
+                  "value": "ชั้น 4 · ห้อง 402",
+                  "type": "text"
+                },
+                {
+                  "key": "category",
+                  "value": "PLUMBING",
+                  "type": "text"
+                },
+                {
+                  "key": "title",
+                  "value": "ฝักบัวห้องน้ำ",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "น้ำหยดตลอดเวลาแม้ปิดวาล์วสนิท",
+                  "type": "text"
+                },
+                {
+                  "key": "preferredDate1",
+                  "value": "{{futureDate}}",
+                  "type": "text"
+                },
+                {
+                  "key": "preferredSlot1",
+                  "value": "MORNING",
+                  "type": "text"
+                },
+                {
+                  "key": "contactPhone",
+                  "value": "081-234-5678",
+                  "type": "text"
+                },
+                {
+                  "key": "lineId",
+                  "value": "somchai305",
+                  "type": "text"
+                },
+                {
+                  "key": "urgency",
+                  "value": "NORMAL",
+                  "type": "text"
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": [],
+                  "description": "เลือกรูป .jpg 1 รูป (≤5MB)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "11 ดูคำร้องที่เพิ่งส่ง",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json();",
+                  "pm.test(\"status = PENDING\", () => pm.expect(r.status).to.eql(\"PENDING\"));",
+                  "pm.test(\"ประวัติสถานะ 1 แถว\", () => pm.expect(r.statusHistory).to.have.lengthOf(1));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/repair-requests/{{newId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "repair-requests",
+                "{{newId}}"
+              ]
+            },
+            "description": "U1→U3: คำร้องใหม่เห็นในรายละเอียด"
+          },
+          "response": []
+        },
+        {
+          "name": "12 เปิดรูปของคำร้องที่เพิ่งส่ง",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"เป็นไฟล์รูป\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"image\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}{{newImage}}",
+              "host": [
+                "{{baseUrl}}{{newImage}}"
+              ]
+            },
+            "description": "เปิดรูปผ่าน /uploads/... ได้",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "U2 Logout",
+      "item": [
+        {
+          "name": "13 Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "U2: ออกจากระบบ"
+          },
+          "response": []
+        },
+        {
+          "name": "14 ใช้ token เดิมหลัง logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/repair-requests/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "repair-requests",
+                "my"
+              ]
+            },
+            "description": "U2: หลัง logout token ใช้ไม่ได้ → 401"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

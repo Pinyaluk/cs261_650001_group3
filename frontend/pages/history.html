@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ประวัติคำร้อง | ระบบแจ้งซ่อมหอพัก</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/history.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <button class="back-btn" id="back-btn" type="button" aria-label="กลับหน้าหลัก">←</button>
+    <h1 class="top-bar__title">ประวัติคำร้อง</h1>
+    <span aria-hidden="true"></span>
+  </header>
+  <main class="page">
+       <input class="form-control history-search" id="search-input" type="search" placeholder="🔍 ค้นหาหัวข้อหรือเลขคำร้อง" aria-label="ค้นหาคำร้อง">
+
+    <div class="chip-group history-filter" id="status-filter" role="group" aria-label="กรองตามสถานะ">
+      <button class="chip is-active" type="button" data-status="ALL">ทั้งหมด</button>
+      <button class="chip" type="button" data-status="PENDING">รอรับเรื่อง</button>
+      <button class="chip" type="button" data-status="IN_PROGRESS">กำลังดำเนินการ</button>
+      <button class="chip" type="button" data-status="COMPLETED">เสร็จสิ้น</button>
+    </div>
+
+    <p class="form-hint" id="result-count" aria-live="polite">กำลังโหลดรายการ...</p>
+
+    <ul class="history-list" id="request-list" aria-live="polite"></ul>
+    <p class="is-hidden" id="empty-state">ไม่พบคำร้อง</p>
+
+    <div class="notice notice--info history-notice"><span>สถานะมี 3 ขั้น: รอรับเรื่อง → กำลังดำเนินการ → เสร็จสิ้น</span></div>
+
+    <a class="btn btn-primary btn-block" id="new-request-btn" href="repair-form.html">+ แจ้งซ่อมใหม่</a>
+    <template id="request-item-template">
+      <li>
+        <a class="request-item" data-field="link" href="request-detail.html">
+          <div>
+            <h3 class="request-item__title" data-field="title"></h3>
+            <p class="request-item__meta" data-field="meta"></p>
+          </div>
+          <span class="badge" data-field="status"></span>
+        </a>
+      </li>
+    </template>
+  </main>
+
+  <p class="footer-note">หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180</p>
+  <script src="../js/api-client.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/history.js"></script>
+</body>
+</html>

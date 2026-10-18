@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ส่งคำร้องสำเร็จ | ระบบแจ้งซ่อมหอพัก</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/repair-success.css">
+</head>
+<body>
+
+   <main class="page success-page">
+    <div class="success-icon" aria-hidden="true">✓</div>
+    <h1 class="success-title">ส่งคำร้องสำเร็จ</h1>
+
+    <section class="card success-summary">
+      <dl class="summary-rows">
+        <div><dt>เลขคำร้อง</dt><dd id="request-id">#1024</dd></div>
+        <div><dt>สถานะ</dt><dd><span class="badge badge--pending" id="request-status">รอรับเรื่อง</span></dd></div>
+        <div><dt>ช่วงเวลาที่สะดวก</dt><dd id="preferred-time-text">-</dd></div>
+      </dl>
+    </section>
+
+    <p class="success-note">เจ้าหน้าที่จะตรวจสอบคำร้องและมอบหมายช่าง<br>ติดตามสถานะได้ที่หน้าประวัติคำร้อง</p>
+
+    <div class="success-actions">
+      <a class="btn btn-primary btn-block" id="check-request-link" href="request-check.html">ตรวจสอบคำร้อง</a>
+      <a class="btn btn-outline btn-block" id="home-link" href="home.html">กลับหน้าหลัก</a>
+    </div>
+  </main>
+
+  <p class="footer-note">หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180</p>
+  <script src="../js/api-client.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/repair-success.js"></script>
+</body>
+</html>

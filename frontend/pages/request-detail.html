@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>รายละเอียดคำร้อง | ระบบแจ้งซ่อมหอพัก</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/request-detail.css">
+</head>
+<body>
+
+  <header class="top-bar">
+    <button class="back-btn" id="back-btn" type="button" aria-label="กลับไปหน้าประวัติคำร้อง">←</button>
+    <h1 class="top-bar__title">รายละเอียดคำร้อง</h1>
+    <span aria-hidden="true"></span>
+  </header>
+  <main class="page">
+      <div id="not-found" class="notice notice--danger is-hidden" role="alert">ไม่พบคำร้องนี้</div>
+
+    <section class="card">
+      <div class="badge-row">
+        <span class="badge badge--pending" id="request-status">รอรับเรื่อง</span>
+        <span class="badge badge--urgent is-hidden" id="request-urgency">เร่งด่วน</span>
+      </div>
+      <h2 class="detail-title" id="request-title">เครื่องปรับอากาศมีน้ำหยด</h2>
+      <p class="request-item__meta" id="request-meta">#1019 · ประปา · ห้อง A-305 · แจ้งเมื่อ 10/10/2569</p>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2 class="card__title">ติดตามสถานะ</h2>
+        <span class="request-item__meta" id="updated-at">อัปเดต 10/10 · 09:15</span>
+      </div>
+      <ol class="timeline" id="timeline" aria-live="polite"></ol>
+    </section>
+
+    <section class="card">
+      <h2 class="card__title">นัดหมายเข้าซ่อม</h2>
+      <div class="appointment-row">
+        <span class="icon-box" aria-hidden="true">📅</span>
+        <div>
+          <p class="appointment-datetime" id="appointment-datetime">รอยืนยันวันและเวลา</p>
+          <p class="card__subtitle" id="appointment-note">เจ้าหน้าที่จะแจ้งยืนยันวันนัดหมายอีกครั้ง</p>
+        </div>
+      </div>
+      <div class="notice notice--info"><span><strong>ต้องการเลื่อนนัด?</strong><br>โทรหาช่างหรือสำนักงานล่วงหน้าอย่างน้อย 1 วัน</span></div>
+    </section>
+
+    <section class="contact-card">
+      <span class="icon-box" aria-hidden="true">🔧</span>
+      <div><p class="contact-card__role">ช่างผู้รับผิดชอบ</p><p class="contact-card__name" id="technician-name">รอการมอบหมาย</p><a class="contact-card__phone" id="technician-phone" href="tel:">ยังไม่มีเบอร์ติดต่อ</a></div>
+      <span aria-hidden="true"></span>
+    </section>
+
+    <section class="card">
+      <h2 class="card__title">รายละเอียดที่แจ้ง</h2>
+      <p class="detail-description" id="request-description">มีน้ำหยดจากเครื่องปรับอากาศ</p>
+      <div class="image-grid" id="image-list" aria-label="รูปภาพประกอบ"></div>
+      <hr class="divider">
+      <dl class="detail-rows">
+        <div><dt>ประเภทปัญหา</dt><dd id="category">เครื่องปรับอากาศ</dd></div>
+        <div><dt>ห้อง</dt><dd id="room">A-305</dd></div>
+        <div><dt>เบอร์ติดต่อของคุณ</dt><dd id="contact-phone">081-234-5678</dd></div>
+      </dl>
+    </section>
+
+    <section class="contact-card">
+      <span class="icon-box" aria-hidden="true">🏢</span>
+      <div><p class="contact-card__role">รับเรื่องโดยเจ้าหน้าที่</p><p class="contact-card__name" id="staff-name">สำนักงานหอพัก</p><a class="contact-card__phone" id="staff-phone" href="tel:025550180">02-555-0180</a></div>
+      <span aria-hidden="true"></span>
+    </section>
+    
+    <a class="btn btn-outline btn-block detail-home-btn" href="home.html">กลับหน้าหลัก</a>
+    <template id="timeline-item-template">
+      <li class="timeline__item">
+        <p class="timeline__title" data-field="title"></p>
+        <p class="timeline__time" data-field="time"></p>
+        <p class="timeline__note" data-field="note"></p>
+      </li>
+    </template>
+    <template id="image-thumb-template">
+      <figure class="image-thumb">
+        <img data-field="img" alt="">
+        <figcaption class="image-thumb__caption" data-field="caption"></figcaption>
+      </figure>
+    </template>
+  </main>
+
+  <p class="footer-note">หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180</p>
+
+  <script src="../js/api-client.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/request-detail.js"></script>
+</body>
+</html>
