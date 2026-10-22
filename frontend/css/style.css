@@ -706,10 +706,39 @@ textarea.form-control {
 .is-hidden {
   display: none !important;
 }
+
+/* Desktop sidebar shell is used on authenticated pages; mobile keeps each page's top bar. */
+.desktop-shell-header,
+.desktop-sidebar {
+  display: none;
+}
+
+/* Task 26: make the logout action distinct in the navigation. */
+.sidebar-logout {
+  flex: 0 0 auto;
+  color: #c0392b;
+  background: #fff0f0;
+  border: 1px solid #c0392b;
+  white-space: nowrap;
+}
+
+.sidebar-logout:hover {
+  color: #fff;
+  background: #c0392b;
+}
  
 @media (min-width: 768px) {
   body {
     font-family: "Noto Sans Thai", sans-serif;
+  }
+
+  .desktop-shell-header,
+  .desktop-sidebar {
+    display: flex;
+  }
+
+  .top-bar {
+    display: none;
   }
  
   .app-header {
@@ -735,6 +764,8 @@ textarea.form-control {
     padding: 24px;
     flex-direction: column;
     gap: 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
     border-right: 1px solid var(--color-border);
     border-bottom: 0;
   }
@@ -745,6 +776,12 @@ textarea.form-control {
     padding: 13px 12px;
     border-radius: 10px;
     font-size: 13px;
+  }
+
+  .sidebar-logout {
+    width: 100%;
+    margin-top: auto;
+    min-height: 44px;
   }
  
   .tab-nav__item.is-active {
@@ -780,4 +817,3 @@ textarea.form-control {
     line-height: 1.55;
   }
 }
- 

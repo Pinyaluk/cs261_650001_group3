@@ -8,6 +8,20 @@
 </head>
 <body>
 
+  <header class="app-header desktop-shell-header">
+    <div>
+      <p class="app-header__brand">ระบบแจ้งซ่อมหอพัก</p>
+      <p class="app-header__role">ผู้พักอาศัย</p>
+    </div>
+  </header>
+  <nav class="tab-nav desktop-sidebar" aria-label="เมนูหลัก">
+    <a class="tab-nav__item" href="home.html">หน้าหลัก</a>
+    <a class="tab-nav__item" href="repair-form.html">แจ้งซ่อม</a>
+    <a class="tab-nav__item" href="request-check.html">ตรวจสอบคำร้อง</a>
+    <a class="tab-nav__item is-active" href="history.html">ประวัติคำร้อง</a>
+    <button class="btn btn-outline sidebar-logout" id="logout-btn" type="button">ออกจากระบบ</button>
+  </nav>
+
   <header class="top-bar">
     <button class="back-btn" id="back-btn" type="button" aria-label="กลับหน้าหลัก">←</button>
     <h1 class="top-bar__title">ประวัติคำร้อง</h1>
