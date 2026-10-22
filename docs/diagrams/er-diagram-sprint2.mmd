@@ -1,0 +1,60 @@
+erDiagram
+    users ||--o{ repair_requests : "แจ้งซ่อม"
+    users |o--o{ repair_requests : "รับงานซ่อม"
+    users ||--o{ request_status_history : "เปลี่ยนสถานะ"
+    repair_requests ||--|{ request_images : "มีรูป"
+    repair_requests ||--|{ request_status_history : "มีประวัติ"
+
+    users {
+        int user_id PK
+        varchar username UK
+        varchar password_hash
+        nvarchar full_name
+        varchar role "RESIDENT, STAFF, TECHNICIAN"
+        varchar specialty "[S2] เฉพาะช่าง: ELECTRICAL, PLUMBING, AIR_CONDITIONER, FURNITURE, OTHER"
+        varchar room_number "เฉพาะผู้พักอาศัย"
+        varchar phone "เบอร์ช่างและเจ้าหน้าที่"
+        datetime created_at
+    }
+
+    repair_requests {
+        int request_id PK
+        int resident_id FK "ผู้แจ้ง"
+        int technician_id FK "ช่างที่ได้รับมอบหมาย ว่างได้จนกว่าจะมอบหมาย"
+        varchar location_type "ROOM, COMMON_AREA"
+        nvarchar building
+        nvarchar location_detail "เช่น ชั้น 3 ห้อง 305"
+        varchar category "ELECTRICAL, PLUMBING, AIR_CONDITIONER, FURNITURE, OTHER"
+        nvarchar title "ช่องอุปกรณ์ที่ชำรุด"
+        nvarchar description
+        date preferred_date_1
+        varchar preferred_slot_1 "MORNING, AFTERNOON"
+        date preferred_date_2 "ว่างได้"
+        varchar preferred_slot_2 "ว่างได้"
+        datetime appointment_datetime "วันนัดที่เจ้าหน้าที่ยืนยัน ก่อน 12:00 = MORNING"
+        nvarchar appointment_note "[S2] หมายเหตุวันนัด ว่างได้"
+        varchar contact_phone
+        varchar line_id "ว่างได้"
+        varchar status "PENDING, IN_PROGRESS, COMPLETED"
+        varchar urgency "NORMAL, URGENT ผู้แจ้งติ๊ก เจ้าหน้าที่ยืนยัน"
+        datetime created_at
+        datetime updated_at
+    }
+
+    request_images {
+        int image_id PK
+        int request_id FK
+        varchar image_type "[S2] BEFORE ผู้แจ้งแนบ, AFTER ช่างแนบ"
+        varchar file_path
+        int file_size "ไม่เกิน 5MB"
+        datetime uploaded_at
+    }
+
+    request_status_history {
+        int history_id PK
+        int request_id FK
+        varchar status "PENDING, IN_PROGRESS, COMPLETED"
+        nvarchar note "COMPLETED = ผลการซ่อม"
+        int changed_by FK "ผู้เปลี่ยนสถานะ"
+        datetime changed_at
+    }
