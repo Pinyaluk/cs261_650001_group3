@@ -55,6 +55,7 @@ CREATE TABLE repair_requests (
     preferred_date_2      DATE           NULL,
     preferred_slot_2      VARCHAR(20)    NULL,
     appointment_datetime  DATETIME2      NULL,      -- เจ้าหน้าที่ยืนยัน (< 12:00 = MORNING, >= 12:00 = AFTERNOON)
+    appointment_note      NVARCHAR(500)  NULL,     -- หมายเหตุวันนัดจากเจ้าหน้าที่ (U6)
     contact_phone         VARCHAR(20)    NOT NULL,
     line_id               VARCHAR(50)    NULL,
     status                VARCHAR(20)    NOT NULL CONSTRAINT df_rr_status     DEFAULT 'PENDING',
@@ -79,6 +80,12 @@ GO
 
 -- ใช้กับ GET /api/repair-requests/my (คำร้องของผู้ใช้ เรียงล่าสุดก่อน)
 CREATE INDEX ix_rr_resident_created ON repair_requests (resident_id, created_at DESC);
+GO
+
+CREATE INDEX ix_rr_technician_appt ON repair_requests (technician_id, appointment_datetime);
+GO
+
+CREATE INDEX ix_rr_status_created ON repair_requests (status, created_at DESC);
 GO
 
 /* ---------- request_images ---------- */
@@ -146,11 +153,13 @@ SET IDENTITY_INSERT users OFF;
 GO
 
 /* ---------- คำร้องตั้งต้น ----------
-   1024: ELECTRICAL (PENDING - ยังไม่มอบหมายช่าง)
-   1019: PLUMBING (IN_PROGRESS - ช่าง ชาญชัย tech03 นัด 14/10/2569 13:00)
-   1020: PLUMBING (IN_PROGRESS - ช่าง ชาญชัย tech03 นัด 14/10/2569 14:30) *** เคสนัดซ้อนช่วงบ่ายวันเดียวกัน สำหรับ Test case 6 ของ U6 ***
+   1024: ELECTRICAL (PENDING - ยังไม่มอบหมายช่าง ผู้แจ้งขอ 30/11/2569 ช่วงเช้า)
+   1021: PLUMBING (PENDING - ผู้แจ้งขอ 30/11/2569 ช่วงบ่าย) *** ใช้เทส Test case 6 ของ U6: มอบหมายแล้วเห็นว่า tech03 มีนัด 2 งาน ***
+   1019: PLUMBING (IN_PROGRESS - ช่าง ชาญชัย tech03 นัด 30/11/2569 13:00)
+   1020: PLUMBING (IN_PROGRESS - ช่าง ชาญชัย tech03 นัด 30/11/2569 14:30)
    1003: AIR_CONDITIONER (COMPLETED - ช่าง เกรียงไกร tech05)
    987:  FURNITURE (COMPLETED - ช่าง บรรพต tech07)
+   resident03 ไม่มีคำร้อง (ใช้เทสหน้าประวัติว่าง)
 */
 SET IDENTITY_INSERT repair_requests ON;
 INSERT INTO repair_requests
@@ -160,18 +169,23 @@ INSERT INTO repair_requests
 VALUES
  (1024, 1, NULL, 'ROOM', N'อาคาร A', N'ชั้น 3 · ห้อง 305', 'ELECTRICAL', N'ไฟห้องน้ำดับ',
   N'หลอดไฟในห้องน้ำไม่ติดตั้งแต่เมื่อวานตอนเย็น',
-  '2026-10-14', 'MORNING', NULL, NULL, NULL,
+  '2026-11-30', 'MORNING', NULL, NULL, NULL,
   '081-234-5678', NULL, 'PENDING', 'NORMAL', '2026-10-12T10:00:00', '2026-10-12T10:00:00'),
+
+   (1021, 2, NULL, 'COMMON_AREA', N'อาคาร B', N'ชั้น 1 · ห้องน้ำรวม', 'PLUMBING', N'ชักโครกน้ำไหลไม่หยุด',
+  N'กดชักโครกแล้วน้ำไหลไม่หยุด ต้องปิดวาล์วเอง',
+  '2026-11-30', 'AFTERNOON', NULL, NULL, NULL,
+  '082-345-6789', NULL, 'PENDING', 'NORMAL', '2026-10-21T09:00:00', '2026-10-21T09:00:00'),
 
  (1019, 1, 7, 'ROOM', N'อาคาร A', N'ชั้น 3 · ห้อง 305', 'PLUMBING', N'ก๊อกน้ำอ่างล้างหน้ารั่ว',
   N'น้ำหยดจากก๊อกอ่างล้างหน้าตลอดเวลา ปิดสุดแล้วก็ยังไม่หยุด',
-  '2026-10-13', 'MORNING', '2026-10-14', 'AFTERNOON', '2026-10-14T13:00:00',
+  '2026-11-28', 'MORNING', '2026-11-30', 'AFTERNOON', '2026-11-30T13:00:00',
   '081-234-5678', 'somchai305', 'IN_PROGRESS', 'URGENT', '2026-10-10T08:40:00', '2026-10-10T09:15:00'),
 
- -- คำร้อง 1020: ใช้ทดสอบ Test case 6 ของ U6 (ช่าง tech03 มีนัดซ้อนวันที่ 14/10/2569 ช่วงบ่ายเหมือนกัน)
+ -- คำร้อง 1020: ใช้ทดสอบ Test case 6 ของ U6 (ช่าง tech03 มีนัดซ้อนวันที่ 30/11/2569 ช่วงบ่ายเหมือนกัน)
  (1020, 2, 7, 'ROOM', N'อาคาร B', N'ชั้น 2 · ห้อง 210', 'PLUMBING', N'ท่อน้ำทิ้งใต้อ่างรั่วซึม',
   N'ท่อน้ำทิ้งใต้อ่างล้างจานมีน้ำซึมหยดลงพื้นตู้',
-  '2026-10-14', 'AFTERNOON', NULL, NULL, '2026-10-14T14:30:00',
+  '2026-11-30', 'AFTERNOON', NULL, NULL, '2026-11-30T14:30:00',
   '082-345-6789', NULL, 'IN_PROGRESS', 'NORMAL', '2026-10-11T09:00:00', '2026-10-11T10:30:00'),
 
  (1003, 1, 9, 'ROOM', N'อาคาร A', N'ชั้น 3 · ห้อง 305', 'AIR_CONDITIONER', N'แอร์ไม่เย็น',
@@ -192,25 +206,28 @@ GO
 
 /* ---------- รูปประกอบ (แยก BEFORE ก่อนซ่อม / AFTER หลังซ่อม) ---------- */
 INSERT INTO request_images (request_id, image_type, file_path, file_size, uploaded_at) VALUES
- (1024, 'BEFORE', '/uploads/1024-1.jpg',     524288, '2026-10-12T10:00:00'),
- (1019, 'BEFORE', '/uploads/1019-1.jpg',     612352, '2026-10-10T08:40:00'),
- (1019, 'BEFORE', '/uploads/1019-2.jpg',     487424, '2026-10-10T08:40:00'),
- (1020, 'BEFORE', '/uploads/1020-1.jpg',     512000, '2026-10-11T09:00:00'),
- (1003, 'BEFORE', '/uploads/1003-1.jpg',     702464, '2026-09-20T14:00:00'),
- (1003, 'AFTER',  '/uploads/1003-after.jpg', 680000, '2026-09-23T16:00:00'),
- (987,  'BEFORE', '/uploads/987-1.jpg',      398336, '2026-09-14T09:00:00'),
- (987,  'AFTER',  '/uploads/987-after.jpg',  420000, '2026-09-16T11:00:00');
+ (1024, 'BEFORE', '/uploads/1024-1.jpg',     14960, '2026-10-12T10:00:00'),
+ (1019, 'BEFORE', '/uploads/1019-1.jpg',     18354, '2026-10-10T08:40:00'),
+ (1019, 'BEFORE', '/uploads/1019-2.jpg',     16521, '2026-10-10T08:40:00'),
+ (1020, 'BEFORE', '/uploads/1020-1.jpg',     18354, '2026-10-11T09:00:00'),
+ (1021, 'BEFORE', '/uploads/1021-1.jpg',     16521, '2026-10-21T09:00:00'),
+ (1003, 'BEFORE', '/uploads/1003-1.jpg',     18318, '2026-09-20T14:00:00'),
+ (1003, 'AFTER',  '/uploads/1003-after.jpg', 18318, '2026-09-23T16:00:00'),
+ (987,  'BEFORE', '/uploads/987-1.jpg',      17359, '2026-09-14T09:00:00'),
+ (987,  'AFTER',  '/uploads/987-after.jpg',  17359, '2026-09-16T11:00:00'); 
 GO
 
 /* ---------- ประวัติสถานะ ---------- */
 INSERT INTO request_status_history (request_id, status, note, changed_by, changed_at) VALUES
  (1024, 'PENDING',     N'ส่งคำร้องพร้อมรูปภาพ 1 รูป', 1, '2026-10-12T10:00:00'),
 
+(1021, 'PENDING',      N'ส่งคำร้องพร้อมรูปภาพ 1 รูป', 2, '2026-10-21T09:00:00'),
+
  (1019, 'PENDING',     N'ส่งคำร้องพร้อมรูปภาพ 2 รูป', 1, '2026-10-10T08:40:00'),
- (1019, 'IN_PROGRESS', N'รับเรื่องและมอบหมายช่าง ชาญชัย ท่อน้ำดี นัดเข้าซ่อม 14/10/2569 13:00', 4, '2026-10-10T09:15:00'),
+ (1019, 'IN_PROGRESS', N'รับเรื่องและมอบหมายช่าง ชาญชัย ท่อน้ำดี นัดเข้าซ่อม 30/11/2569 13:00', 4, '2026-10-10T09:15:00'),
 
  (1020, 'PENDING',     N'ส่งคำร้องพร้อมรูปภาพ 1 รูป', 2, '2026-10-11T09:00:00'),
- (1020, 'IN_PROGRESS', N'รับเรื่องและมอบหมายช่าง ชาญชัย ท่อน้ำดี นัดเข้าซ่อม 14/10/2569 14:30', 4, '2026-10-11T10:30:00'),
+ (1020, 'IN_PROGRESS', N'รับเรื่องและมอบหมายช่าง ชาญชัย ท่อน้ำดี นัดเข้าซ่อม 30/11/2569 14:30', 4, '2026-10-11T10:30:00'),
 
  (1003, 'PENDING',     N'ส่งคำร้องพร้อมรูปภาพ 1 รูป', 1, '2026-09-20T14:00:00'),
  (1003, 'IN_PROGRESS', N'รับเรื่องและมอบหมายช่าง เกรียงไกร ลมเย็น นัดเข้าซ่อม 22/09/2569 10:00', 4, '2026-09-21T09:00:00'),
