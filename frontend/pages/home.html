@@ -7,19 +7,23 @@
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/home.css">
 </head>
-<body>
+<body class="has-desktop-shell home-screen">
 
   <header class="app-header">
-    <div>
-      <p class="app-header__brand">ระบบแจ้งซ่อมหอพัก</p>
-      <p class="app-header__role">ผู้พักอาศัย</p>
+    <div class="app-header__identity">
+      <p class="app-header__brand">หอพักอุ่นใจ</p>
+      <p class="app-header__role">ระบบบริการแจ้งซ่อมหอพัก</p>
     </div>
-    <button class="btn btn-outline" id="logout-btn" type="button">ออกจากระบบ</button>
+    <div class="app-header__user" aria-label="บัญชีผู้พักอาศัย"><span class="app-header__avatar" aria-hidden="true">♙</span><span>ผู้พักอาศัย</span></div>
   </header>
-  <nav class="tab-nav" aria-label="เมนูหลัก">
-    <a class="tab-nav__item is-active" href="home.html">หน้าหลัก</a>
-    <a class="tab-nav__item" href="repair-form.html">แจ้งซ่อม</a>
-    <a class="tab-nav__item" href="history.html">ประวัติคำร้อง</a>
+  <nav class="tab-nav" aria-label="เมนูผู้พักอาศัย">
+    <p class="sidebar-label">เมนูสำหรับผู้พักอาศัย</p>
+    <a class="tab-nav__item is-active" href="home.html"><span class="nav-icon" aria-hidden="true">⌂</span><span>หน้าหลัก</span></a>
+    <a class="tab-nav__item" href="repair-form.html"><span class="nav-icon" aria-hidden="true">＋</span><span>แจ้งซ่อม</span></a>
+    <a class="tab-nav__item" href="history.html"><span class="nav-icon" aria-hidden="true">▤</span><span>ประวัติคำร้อง</span></a>
+    <a class="tab-nav__item tab-nav__item--secondary" href="request-check.html"><span class="nav-icon" aria-hidden="true">☑</span><span>ตรวจสอบคำร้อง</span></a>
+    <a class="tab-nav__item tab-nav__item--secondary" href="request-detail.html"><span class="nav-icon" aria-hidden="true">◷</span><span>ติดตามสถานะ</span></a>
+    <button class="btn sidebar-logout" id="logout-btn" type="button"><span aria-hidden="true">⇥</span> ออกจากระบบ</button>
   </nav>
   <main class="page">
     <header class="page-header">
@@ -28,7 +32,7 @@
       <p class="page-subtitle">ห้อง <span id="user-room">A-305</span></p>
     </header>
 
-        <nav class="home-actions" aria-label="เมนูลัด">
+    <nav class="home-actions" aria-label="เมนูลัด">
       <a class="action-tile action-tile--primary" id="new-request-link" href="repair-form.html">
         <span class="action-tile__icon" aria-hidden="true">+</span>
         แจ้งซ่อม

@@ -7,7 +7,24 @@
   <link rel="stylesheet" href="../css/style.css">
   	<link rel="stylesheet" href="../css/request-check.css">
 </head>
-<body>
+<body class="has-desktop-shell">
+
+  <header class="app-header">
+    <div class="app-header__identity">
+      <p class="app-header__brand">หอพักอุ่นใจ</p>
+      <p class="app-header__role">ระบบบริการแจ้งซ่อมหอพัก</p>
+    </div>
+    <div class="app-header__user" aria-label="บัญชีผู้พักอาศัย"><span class="app-header__avatar" aria-hidden="true">♙</span><span>ผู้พักอาศัย</span></div>
+  </header>
+  <nav class="tab-nav" aria-label="เมนูผู้พักอาศัย">
+    <p class="sidebar-label">เมนูสำหรับผู้พักอาศัย</p>
+    <a class="tab-nav__item" href="home.html"><span class="nav-icon" aria-hidden="true">⌂</span><span>หน้าหลัก</span></a>
+    <a class="tab-nav__item" href="repair-form.html"><span class="nav-icon" aria-hidden="true">＋</span><span>แจ้งซ่อม</span></a>
+    <a class="tab-nav__item" href="history.html"><span class="nav-icon" aria-hidden="true">▤</span><span>ประวัติคำร้อง</span></a>
+    <a class="tab-nav__item is-active tab-nav__item--secondary" href="request-check.html"><span class="nav-icon" aria-hidden="true">☑</span><span>ตรวจสอบคำร้อง</span></a>
+    <a class="tab-nav__item tab-nav__item--secondary" href="request-detail.html"><span class="nav-icon" aria-hidden="true">◷</span><span>ติดตามสถานะ</span></a>
+    <button class="btn sidebar-logout" id="logout-btn" type="button"><span aria-hidden="true">⇥</span> ออกจากระบบ</button>
+  </nav>
 
   <header class="top-bar">
     <a class="back-btn" href="history.html" aria-label="กลับไปหน้าประวัติคำร้อง">←</a>

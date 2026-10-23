@@ -91,15 +91,19 @@
 }
 
 
-@media (min-width: 768px) {
-  .top-bar {
-    margin-left: 0;
+
+@media (min-width: 1024px) {
+  .has-desktop-shell .page:has(#timeline) {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(280px, .9fr);
+    align-content: start;
+    gap: 20px 24px;
   }
 
-  .page {
-    width: 100%;
-    max-width: 960px;
-    margin-right: auto;
-    margin-left: auto;
-  }
+  .has-desktop-shell .page:has(#timeline) > .page-header { grid-column: 1 / -1; }
+  .has-desktop-shell .page:has(#timeline) > .card:nth-of-type(1) { grid-column: 1 / -1; }
+  .has-desktop-shell .page:has(#timeline) > .card:nth-of-type(2) { grid-column: 1; grid-row: span 2; }
+  .has-desktop-shell .page:has(#timeline) > .card:nth-of-type(3),
+  .has-desktop-shell .page:has(#timeline) > .contact-card { grid-column: 2; }
+  .has-desktop-shell .page:has(#timeline) > .card:nth-of-type(5) { grid-column: 1 / -1; }
 }

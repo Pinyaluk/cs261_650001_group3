@@ -1,14 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;600&display=swap");
  
 :root {
-  --color-primary: #087f78;
-  --color-primary-dark: #0d4a4c;
+  --color-primary: #07877f;
+  --color-primary-dark: #103f40;
   --color-primary-light: #e8f5f2;
-  --color-bg: #f3f7f8;
+  --color-bg: #f2f6f7;
   --color-surface: #fff;
   --color-text: #18343b;
   --color-text-muted: #64777d;
-  --color-border: #dfe8ea;
+  --color-border: #dce7e9;
   --color-pending: #f7e8b9;
   --color-in-progress: #dbeafe;
   --color-completed: #dcfce7;
@@ -157,7 +157,7 @@ img {
   max-width: 760px;
   min-height: calc(100vh - 64px);
   margin: 0 auto;
-  padding: 20px 16px 32px;
+  padding: 24px 16px 32px;
 }
  
 .page-header {
@@ -785,3 +785,45 @@ textarea.form-control {
   }
 }
  
+
+
+/* Shared resident shell: desktop follows the Figma sidebar layout. */
+.app-header__identity { min-width: 0; }
+.app-header__user { display: flex; align-items: center; gap: 10px; color: var(--color-text); font-weight: 600; }
+.app-header__avatar { display: grid; width: 40px; height: 40px; place-items: center; color: var(--color-primary); background: var(--color-primary-light); border-radius: 50%; font-size: 22px; }
+.sidebar-label { margin: 0 0 8px; color: var(--color-text-muted); font-size: 11px; line-height: 18px; }
+.nav-icon { display: inline-grid; width: 24px; flex: 0 0 24px; place-items: center; font-size: 18px; line-height: 1; }
+.tab-nav__item { gap: 10px; }
+.sidebar-logout { display: flex; align-items: center; justify-content: center; gap: 8px; color: #c0392b; background: #fff0f0; border: 1px solid #c0392b; white-space: nowrap; }
+.sidebar-logout:hover { color: #fff; background: #c0392b; }
+
+@media (max-width: 767px) {
+  .has-desktop-shell:not(.home-screen) > .app-header,
+  .has-desktop-shell:not(.home-screen) > .tab-nav { display: none; }
+  .has-desktop-shell.home-screen .sidebar-label,
+  .has-desktop-shell.home-screen .tab-nav__item--secondary,
+  .app-header__user { font-size: 12px; }
+  .app-header__avatar { width: 32px; height: 32px; }
+  .tab-nav__item { flex: 1 0 auto; justify-content: center; }
+}
+
+@media (min-width: 768px) {
+  .has-desktop-shell > .app-header { position: fixed; z-index: 40; inset: 0 0 auto 0; height: 88px; padding: 0 32px; }
+  .has-desktop-shell .app-header__brand { color: var(--color-primary); font-size: 20px; line-height: 28px; font-weight: 700; }
+  .has-desktop-shell .app-header__role { font-size: 11px; line-height: 16px; }
+  .has-desktop-shell > .tab-nav { position: fixed; z-index: 30; top: 88px; bottom: 0; left: 0; display: flex; width: 232px; padding: 28px 20px 24px; flex-direction: column; gap: 8px; overflow-x: hidden; overflow-y: auto; border-right: 1px solid var(--color-border); border-bottom: 0; }
+  .has-desktop-shell .tab-nav__item { flex: 0 0 auto; width: 100%; min-height: 48px; padding: 12px; justify-content: flex-start; border-radius: 9px; font-size: 13px; }
+  .has-desktop-shell .tab-nav__item.is-active { color: #006f68; background: var(--color-primary-light); }
+  .has-desktop-shell .sidebar-logout { width: 100%; min-height: 44px; margin-top: auto; }
+  .has-desktop-shell > .top-bar { display: none; }
+  .has-desktop-shell > .page { width: calc(100% - 232px); max-width: 1280px; min-height: calc(100vh - 88px); margin: 88px 0 0 232px; padding: clamp(28px, 3vw, 40px); }
+  .has-desktop-shell > .footer-note { margin-left: 232px; padding: 0 24px 24px; text-align: left; }
+  .has-desktop-shell > .page.success-page { width: min(720px, calc(100% - 280px)); max-width: 720px; margin: 88px 0 0 max(260px, calc(232px + (100% - 232px - 720px) / 2)); }
+  .has-desktop-shell .page-header { margin-bottom: 28px; }
+  .has-desktop-shell .page-title { font-size: 30px; line-height: 1.35; }
+  .has-desktop-shell .card { border-radius: 12px; box-shadow: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
