@@ -24,3 +24,25 @@
   font-size: 14px;
   text-align: center;
 }
+
+@media (min-width: 1024px) {
+  #repair-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+    align-items: start;
+  }
+
+  #repair-form > .form-group:nth-child(1),
+  #repair-form > .form-group:nth-child(6),
+  #repair-form > .form-group:nth-child(7),
+  #repair-form > .form-group:nth-child(12),
+  #repair-form > .form-group:nth-child(13),
+  #repair-form > #form-error,
+  #repair-form > #submit-btn {
+    grid-column: 1 / -1;
+  }
+
+  #repair-form > .form-group:nth-child(12) { max-width: 100%; }
+  #repair-form > #submit-btn { margin-top: 8px; }
+}

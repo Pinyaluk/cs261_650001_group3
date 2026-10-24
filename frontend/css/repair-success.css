@@ -73,10 +73,9 @@ body {
 }
 
 @media (min-width: 768px) {
-  .page {
-    width: 100%;
-    max-width: 720px;
-    margin-right: auto;
-    margin-left: auto;
+  .success-page {
+    min-height: calc(100vh - 88px);
+    padding-top: 56px;
+    padding-bottom: 56px;
   }
 }
