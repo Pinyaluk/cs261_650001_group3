@@ -4,7 +4,7 @@
 ### 1.1 Get Resident Repair Request Detail
 - Endpoint: GET /api/repair-requests/{requestId}
 - Role: RESIDENT
-- Description: ใช้ Endpoint เดิมของ Sprint 1 โดยเพิ่มฟิลด์ appointmentNote ใน Response เดิม (ส่งเฉพาะรูปที่ผู้แจ้งแนบ imageUrls โดยผลการซ่อมจะแสดงผ่าน statusHistory ไม่ส่งรูปหลังซ่อมให้ Resident)
+- Description: ใช้ Response และโครงสร้างเดิมของ Sprint 1 ทั้งหมดเพื่อไม่ให้หน้า request-detail.js เดิมพัง โดยเพิ่มเฉพาะฟิลด์ appointmentNote เพิ่มเข้ามา
 
 Response (200 OK)
 {
@@ -17,9 +17,18 @@ Response (200 OK)
   "description": "ท่อน้ำในห้องน้ำไหลช้าและมีน้ำขัง",
   "urgency": "NORMAL",
   "status": "IN_PROGRESS",
-  "appointmentDate": "2026-11-30",
-  "appointmentSlot": "AFTERNOON",
+  "preferredDate1": "2026-11-28",
+  "preferredSlot1": "MORNING",
+  "preferredDate2": "2026-11-30",
+  "preferredSlot2": "AFTERNOON",
+  "appointmentDateTime": "2026-11-30T13:00:00",
   "appointmentNote": "ช่างจะเข้ามาช่วง 13:30 น.",
+  "contactPhone": "081-234-5678",
+  "lineId": "somchai_line",
+  "technician": {
+    "name": "ช่างวิชัย สายลม",
+    "phone": "089-555-0148"
+  },
   "imageUrls": [
     "/uploads/1021-1.jpg"
   ],
@@ -97,10 +106,11 @@ Response (200 OK)
   }
 ]
 
-### 2.3 Get Staff Repair Request Detail / Completed Job Detail
+### 2.3 Get Staff Repair Request Detail / Technician Job Detail
 - Endpoint: GET /api/staff/repair-requests/{requestId}
 - Role: STAFF, TECHNICIAN
-- Description: รายละเอียดคำร้องสำหรับเจ้าหน้าที่ และรายละเอียดงานที่ทำเสร็จแล้วสำหรับช่าง โดยแยก repairResult และ completedAt ออกจาก appointmentNote ชัดเจน พร้อมฟิลด์ครบถ้วนตาม Sprint 1 และ DB
+- Description: รายละเอียดคำร้องสำหรับเจ้าหน้าที่ และหน้ารายละเอียดงานของช่าง (U7) รองรับทั้งสถานะ IN_PROGRESS และ COMPLETED โดยมี preferredDate1/2, preferredSlot1/2 และ lineId สำหรับให้เจ้าหน้าที่เลือกช่วงเวลา และแยก repairResult กับ completedAt ออกจาก appointmentNote ชัดเจน
+- Authorization Rule: ช่างที่ล็อกอินอยู่จะสามารถดูหน้ารายละเอียดงานได้เฉพาะงานที่ตนเองได้รับมอบหมายเท่านั้น หากช่างพยายามเปิดดูงานที่ไม่ใช่ของตนเอง ระบบจะตอบกลับ 403 Forbidden
 
 Response (200 OK)
 {
@@ -112,12 +122,16 @@ Response (200 OK)
   "locationDetail": "ห้อง 405",
   "reporterName": "สมชาย ใจดี",
   "reporterPhone": "081-234-5678",
+  "lineId": "somchai_line",
   "description": "ท่อน้ำอุดตันในห้องน้ำ ไหลไม่สะดวก",
+  "preferredDate1": "2026-11-28",
+  "preferredSlot1": "MORNING",
+  "preferredDate2": "2026-11-30",
+  "preferredSlot2": "AFTERNOON",
   "urgency": "NORMAL",
   "status": "COMPLETED",
   "technician": {
-    "id": 5,
-    "fullName": "ช่างวิชัย สายลม",
+    "name": "ช่างวิชัย สายลม",
     "phone": "089-555-0148"
   },
   "appointmentDate": "2026-11-30",
@@ -153,6 +167,10 @@ Response (200 OK)
   ],
   "createdAt": "2026-10-18T10:00:00"
 }
+
+Error Responses (2.3 Specific Cases):
+- 403 Forbidden: ช่างพยายามเข้าดูรายละเอียดคำร้องที่ไม่ใช่คำร้องที่ตนเองได้รับมอบหมาย
+- 404 Not Found: ไม่พบ requestId ในระบบ
 
 ### 2.4 Assign Technician, Urgency, and Appointment (Single API)
 - Endpoint: PUT /api/staff/repair-requests/{requestId}/assign
@@ -208,13 +226,14 @@ Response (200 OK)
   }
 ]
 
-### 2.6 Get Technician's Completed Tasks (Paginated)
+### 2.6 Get Technician's Completed Tasks (Paginated & Searchable)
 - Endpoint: GET /api/technician/repair-requests/completed
 - Role: TECHNICIAN
 - Query Parameters:
   - page (optional, default: 0)
   - size (optional, default: 10)
-- Description: แยกงานที่เสร็จแล้วของช่างออกมาเป็น Endpoint เฉพาะสำหรับช่างคนนั้นแบบแบ่งหน้า
+  - keyword (optional): ค้นหาด้วยชื่อคำร้อง, สถานที่ หรือชื่อผู้แจ้ง
+- Description: แยกงานที่เสร็จแล้วของช่างออกมาเป็น Endpoint เฉพาะสำหรับช่างคนนั้นแบบแบ่งหน้า พร้อมคืนค่า appointmentDate และ appointmentSlot สำหรับแสดงในคอลัมน์วันนัดหมายตาม Figma
 
 Response (200 OK)
 {
@@ -226,6 +245,8 @@ Response (200 OK)
       "locationType": "ROOM",
       "building": "A2",
       "locationDetail": "ห้อง 405",
+      "appointmentDate": "2026-10-20",
+      "appointmentSlot": "AFTERNOON",
       "completedAt": "2026-10-20T15:30:00"
     }
   ],
@@ -239,11 +260,11 @@ Response (200 OK)
 - Endpoint: POST /api/technician/repair-requests/{requestId}/complete
 - Role: TECHNICIAN
 - Content-Type: multipart/form-data
-- Description: ช่างบันทึกผลการซ่อม อัปโหลดรูปภาพหลังซ่อม (1–3 รูป, ขนาดไม่เกิน 5MB ต่อรูป) และเปลี่ยนสถานะคำร้องเป็น COMPLETED
+- Description: ช่างบันทึกผลการซ่อม บังคับอัปโหลดรูปภาพหลังซ่อม (1–3 รูป, ขนาดไม่เกิน 5MB ต่อรูป) และเปลี่ยนสถานะคำร้องเป็น COMPLETED
 
 Request Body (Multipart / Form-Data)
 - repairResult (string, required): รายละเอียดผลการซ่อม
-- afterImages (file array, optional): ไฟล์รูปภาพหลังซ่อม 1–3 รูป (jpeg/png, max 5MB/file)
+- afterImages (file array, required): ไฟล์รูปภาพหลังซ่อม 1–3 รูป (jpeg/png, max 5MB/file)
 
 Response (200 OK)
 {
@@ -258,19 +279,21 @@ Response (200 OK)
 
 Error Responses (2.7 Specific Cases):
 - 400 Bad Request:
+  - ไม่ได้แนบรูปภาพหลังซ่อม (afterImages is required, 1-3 images)
   - ไฟล์รูปภาพมีขนาดเกิน 5MB หรืออัปโหลดเกิน 3 รูป
   - คำร้องไม่ได้อยู่ในสถานะ IN_PROGRESS
   - ช่างที่ล็อกอินอยู่ไม่ใช่ช่างที่ได้รับมอบหมายงานนี้
 - 404 Not Found: ไม่พบ requestId ในระบบ
 
-### 2.8 Common Error Response Structure (400 / 403)
-- 400 Bad Request: ข้อมูลใน Request Body ไม่ถูกต้อง หรือ Validation ไม่ผ่าน
-- 403 Forbidden: ไม่มีสิทธิ์ในการเข้าถึง Endpoint นั้น ๆ
+### 2.8 Common Error Response Structure (400 / 403 / 404)
+- 400 Bad Request: ข้อมูลใน Request Body/Multipart ไม่ถูกต้อง หรือ Validation ไม่ผ่าน
+- 403 Forbidden: ไม่มีสิทธิ์ในการเข้าถึง Endpoint หรือข้อมูลคำร้องนั้นๆ
+- 404 Not Found: ไม่พบทรัพยากรที่ร้องขอในระบบ
 
 Error Response Example (400 Bad Request)
 {
   "status": 400,
   "error": "Bad Request",
-  "message": "Invalid technician ID or request not in PENDING status",
-  "timestamp": "2026-10-25T01:54:00"
+  "message": "afterImages is required (1-3 images required)",
+  "timestamp": "2026-10-25T22:00:00"
 }
