@@ -11,20 +11,35 @@
 
   <header class="app-header">
     <div class="app-header__identity">
-      <p class="app-header__brand">หอพักอุ่นใจ</p>
-      <p class="app-header__role">ระบบบริการแจ้งซ่อมหอพัก</p>
+      <span class="app-header__logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></span>
+      <div>
+        <p class="app-header__brand">หอพักอุ่นใจ</p>
+        <p class="app-header__role">ผู้พักอาศัย</p>
+      </div>
     </div>
-    <div class="app-header__user" aria-label="บัญชีผู้พักอาศัย"><span class="app-header__avatar" aria-hidden="true">♙</span><span>ผู้พักอาศัย</span></div>
+    <div class="app-header__user" aria-label="บัญชีผู้พักอาศัย">
+      <span class="app-header__avatar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span>
+      <span class="app-header__account">
+        <span class="app-header__name" id="header-name">ผู้พักอาศัย</span>
+        <span class="app-header__room" id="header-room"></span>
+      </span>
+    </div>
   </header>
   <nav class="tab-nav" aria-label="เมนูผู้พักอาศัย">
     <p class="sidebar-label">เมนูสำหรับผู้พักอาศัย</p>
-    <a class="tab-nav__item" href="home.html"><span class="nav-icon" aria-hidden="true">⌂</span><span>หน้าหลัก</span></a>
-    <a class="tab-nav__item is-active" href="repair-form.html"><span class="nav-icon" aria-hidden="true">＋</span><span>แจ้งซ่อม</span></a>
-    <a class="tab-nav__item" href="history.html"><span class="nav-icon" aria-hidden="true">▤</span><span>ประวัติคำร้อง</span></a>
-    <button class="btn sidebar-logout" id="logout-btn" type="button"><span aria-hidden="true">⇥</span> ออกจากระบบ</button>
+    <a class="tab-nav__item" href="home.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span><span>หน้าหลัก</span></a>
+    <a class="tab-nav__item is-active" href="repair-form.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg></span><span>แจ้งซ่อม</span></a>
+    <a class="tab-nav__item" href="history.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg></span><span>ประวัติคำร้อง</span></a>
+    <div class="sidebar-help">
+      <p class="sidebar-help__title">ต้องการความช่วยเหลือ?</p>
+      <p class="sidebar-help__text">ติดต่อสำนักงานหอพัก</p>
+      <a class="sidebar-help__phone" href="tel:025550180">02-555-0180</a>
+    </div>
+    <button class="btn sidebar-logout" id="logout-btn" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg> ออกจากระบบ</button>
   </nav>
 
    <main class="page success-page">
+    <div class="success-panel">
     <div class="success-icon" aria-hidden="true">✓</div>
     <h1 class="success-title">ส่งคำร้องสำเร็จ</h1>
 
@@ -41,6 +56,7 @@
     <div class="success-actions">
       <a class="btn btn-primary btn-block" id="check-request-link" href="request-check.html">ตรวจสอบคำร้อง</a>
       <a class="btn btn-outline btn-block" id="home-link" href="home.html">กลับหน้าหลัก</a>
+    </div>
     </div>
   </main>
 

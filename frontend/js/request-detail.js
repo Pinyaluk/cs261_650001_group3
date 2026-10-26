@@ -51,6 +51,22 @@ function renderTimeline(history) {
 
     timeline.appendChild(clone);
   });
+
+  // ขั้นที่ยังไม่ถึง แสดงเป็นสีเทาตาม Figma (สถานะมี 3 ขั้น)
+  const UPCOMING = {
+    IN_PROGRESS: "รอเจ้าหน้าที่ตรวจสอบและมอบหมายช่าง",
+    COMPLETED: "รอช่างเข้าซ่อมตามนัด\nระบบจะอัปเดตเมื่อช่างปิดงาน"
+  };
+  const reached = new Set(sorted.map((h) => h.status));
+  ["IN_PROGRESS", "COMPLETED"].forEach((status) => {
+    if (reached.has(status)) return;
+    const clone = template.content.cloneNode(true);
+    clone.firstElementChild.classList.add("is-upcoming");
+    clone.querySelector('[data-field="title"]').textContent = STATUS[status].text;
+    clone.querySelector('[data-field="time"]').classList.add("is-hidden");
+    clone.querySelector('[data-field="note"]').textContent = UPCOMING[status];
+    timeline.appendChild(clone);
+  });
 }
 
 // ---------- รูปแนบ ----------
@@ -90,7 +106,7 @@ function renderRequest(r) {
   renderUrgencyBadge(document.getElementById("request-urgency"), r.urgency); // ถ้ามี element นี้
 
   setText("request-meta",
-    `#${r.requestId} · ${categoryText(r.category)} · ${room} · แจ้งเมื่อ ${formatDate(r.createdAt)}`);
+    `#${r.requestId} · ${categoryText(r.category)} · ${room} · แจ้งเมื่อ ${formatDateTime(r.createdAt)}`);
   const sortedHistory = [...(r.statusHistory || [])].sort(
   (a, b) => new Date(a.changedAt) - new Date(b.changedAt)
   );
@@ -106,9 +122,20 @@ function renderRequest(r) {
   // วันนัดหมาย (null = รอยืนยัน)
   setText("appointment-datetime",
     r.appointmentDateTime ? formatDateTime(r.appointmentDateTime) : "รอเจ้าหน้าที่ยืนยันเวลานัด");
+  setText("appointment-note", r.appointmentDateTime
+    ? `ช่างจะเข้า${r.locationDetail || "ห้อง"} ตามเวลานัด`
+    : "เจ้าหน้าที่จะแจ้งยืนยันวันนัดหมายอีกครั้ง");
+  // "ต้องการเลื่อนนัด?" แสดงเฉพาะเมื่อมีวันนัดแล้ว
+  const reschedule = document.getElementById("reschedule-notice");
+  if (reschedule) reschedule.classList.toggle("is-hidden", !r.appointmentDateTime);
 
   // ช่าง (technician เป็น null = ยังไม่มอบหมาย)
   const techPhone = document.getElementById("technician-phone");
+  const techCall = document.getElementById("technician-call");
+  if (techCall) {
+    techCall.classList.toggle("is-hidden", !(r.technician && r.technician.phone));
+    if (r.technician && r.technician.phone) techCall.href = "tel:" + r.technician.phone;
+  }
   if (r.technician) {
     setText("technician-name", r.technician.name);
     if (techPhone) {
@@ -144,7 +171,7 @@ function showNotFound() {
     box.classList.remove("is-hidden");
   }
   // ซ่อนทุกส่วนของรายละเอียด ไม่ให้เห็นข้อมูลตัวอย่างที่ค้างอยู่ใน HTML
-  document.querySelectorAll("main > section").forEach((s) => s.classList.add("is-hidden"));
+  document.querySelectorAll("main section").forEach((s) => s.classList.add("is-hidden"));
   setText("request-title", "ไม่พบคำร้องนี้");
   setText("request-meta", "");
 }

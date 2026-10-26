@@ -11,17 +11,31 @@
 
   <header class="app-header">
     <div class="app-header__identity">
-      <p class="app-header__brand">หอพักอุ่นใจ</p>
-      <p class="app-header__role">ระบบบริการแจ้งซ่อมหอพัก</p>
+      <span class="app-header__logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></span>
+      <div>
+        <p class="app-header__brand">หอพักอุ่นใจ</p>
+        <p class="app-header__role">ผู้พักอาศัย</p>
+      </div>
     </div>
-    <div class="app-header__user" aria-label="บัญชีผู้พักอาศัย"><span class="app-header__avatar" aria-hidden="true">♙</span><span>ผู้พักอาศัย</span></div>
+    <div class="app-header__user" aria-label="บัญชีผู้พักอาศัย">
+      <span class="app-header__avatar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span>
+      <span class="app-header__account">
+        <span class="app-header__name" id="header-name">ผู้พักอาศัย</span>
+        <span class="app-header__room" id="header-room"></span>
+      </span>
+    </div>
   </header>
   <nav class="tab-nav" aria-label="เมนูผู้พักอาศัย">
     <p class="sidebar-label">เมนูสำหรับผู้พักอาศัย</p>
-    <a class="tab-nav__item" href="home.html"><span class="nav-icon" aria-hidden="true">⌂</span><span>หน้าหลัก</span></a>
-    <a class="tab-nav__item" href="repair-form.html"><span class="nav-icon" aria-hidden="true">＋</span><span>แจ้งซ่อม</span></a>
-    <a class="tab-nav__item is-active" href="history.html"><span class="nav-icon" aria-hidden="true">▤</span><span>ประวัติคำร้อง</span></a>
-   <button class="btn sidebar-logout" id="logout-btn" type="button"><span aria-hidden="true">⇥</span> ออกจากระบบ</button>
+    <a class="tab-nav__item" href="home.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span><span>หน้าหลัก</span></a>
+    <a class="tab-nav__item" href="repair-form.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg></span><span>แจ้งซ่อม</span></a>
+    <a class="tab-nav__item is-active" href="history.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg></span><span>ประวัติคำร้อง</span></a>
+    <div class="sidebar-help">
+      <p class="sidebar-help__title">ต้องการความช่วยเหลือ?</p>
+      <p class="sidebar-help__text">ติดต่อสำนักงานหอพัก</p>
+      <a class="sidebar-help__phone" href="tel:025550180">02-555-0180</a>
+    </div>
+    <button class="btn sidebar-logout" id="logout-btn" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg> ออกจากระบบ</button>
   </nav>
 
   <header class="top-bar">
@@ -30,11 +44,7 @@
     <span aria-hidden="true"></span>
   </header>
   <main class="page">
-    <header class="page-header">
-      <p class="eyebrow">ผู้พักอาศัย</p>
-      <h1 class="page-title">ติดตามสถานะการรอซ่อม</h1>
-      <p class="page-subtitle">ดูประวัติการอัปเดตและข้อมูลนัดหมายเข้าซ่อม</p>
-    </header>
+    <a class="back-link" href="history.html">‹ กลับไปประวัติคำร้อง</a>
     <div id="not-found" class="notice notice--danger is-hidden" role="alert">ไม่พบคำร้องนี้</div>
 
     <section class="card">
@@ -42,55 +52,60 @@
         <span class="badge badge--pending" id="request-status">รอรับเรื่อง</span>
         <span class="badge badge--urgent is-hidden" id="request-urgency">เร่งด่วน</span>
       </div>
-      <h2 class="detail-title" id="request-title">เครื่องปรับอากาศมีน้ำหยด</h2>
+      <h1 class="detail-title" id="request-title">เครื่องปรับอากาศมีน้ำหยด</h1>
       <p class="request-item__meta" id="request-meta">#1019 · ประปา · ห้อง A-305 · แจ้งเมื่อ 10/10/2569</p>
     </section>
 
-    <section class="card">
-      <div class="card-head">
-        <h2 class="card__title">ติดตามสถานะ</h2>
-        <span class="request-item__meta" id="updated-at">อัปเดต 10/10 · 09:15</span>
+    <div class="detail-layout">
+      <div class="detail-main">
+        <section class="card detail-timeline">
+          <div class="card-head">
+            <h2 class="card__title">ติดตามสถานะ</h2>
+            <span class="request-item__meta" id="updated-at">อัปเดต 10/10 · 09:15</span>
+          </div>
+          <ol class="timeline" id="timeline" aria-live="polite"></ol>
+        </section>
+
+        <section class="card detail-info">
+          <h2 class="card__title">รายละเอียดที่แจ้ง</h2>
+          <p class="detail-description" id="request-description">มีน้ำหยดจากเครื่องปรับอากาศ</p>
+          <div class="image-grid" id="image-list" aria-label="รูปภาพประกอบ"></div>
+          <hr class="divider">
+          <dl class="detail-rows">
+            <div><dt>ประเภทปัญหา</dt><dd id="category">เครื่องปรับอากาศ</dd></div>
+            <div><dt>ห้อง</dt><dd id="room">A-305</dd></div>
+            <div><dt>เบอร์ติดต่อของคุณ</dt><dd id="contact-phone">081-234-5678</dd></div>
+          </dl>
+        </section>
       </div>
-      <ol class="timeline" id="timeline" aria-live="polite"></ol>
-    </section>
 
-    <section class="card">
-      <h2 class="card__title">นัดหมายเข้าซ่อม</h2>
-      <div class="appointment-row">
-        <span class="icon-box" aria-hidden="true">📅</span>
-        <div>
-          <p class="appointment-datetime" id="appointment-datetime">รอยืนยันวันและเวลา</p>
-          <p class="card__subtitle" id="appointment-note">เจ้าหน้าที่จะแจ้งยืนยันวันนัดหมายอีกครั้ง</p>
-        </div>
+      <div class="detail-side">
+        <section class="card detail-appointment">
+          <h2 class="card__title">นัดหมายเข้าซ่อม</h2>
+          <div class="appointment-row">
+            <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg></span>
+            <div>
+              <p class="appointment-datetime" id="appointment-datetime">รอยืนยันวันและเวลา</p>
+              <p class="card__subtitle" id="appointment-note">เจ้าหน้าที่จะแจ้งยืนยันวันนัดหมายอีกครั้ง</p>
+            </div>
+          </div>
+          <div class="notice notice--info" id="reschedule-notice"><span><strong>ต้องการเลื่อนนัด?</strong><br>โทรหาช่างหรือสำนักงานล่วงหน้าอย่างน้อย 1 วัน</span></div>
+        </section>
+
+        <section class="contact-card detail-tech">
+          <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+          <div><p class="contact-card__role">ช่างผู้รับผิดชอบ</p><p class="contact-card__name" id="technician-name">รอการมอบหมาย</p><a class="contact-card__phone" id="technician-phone" href="tel:">ยังไม่มีเบอร์ติดต่อ</a></div>
+          <a class="contact-card__call is-hidden" id="technician-call" href="tel:" aria-label="โทรหาช่าง"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>
+        </section>
+
+        <section class="contact-card detail-staff">
+          <span class="icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></span>
+          <div><p class="contact-card__role">รับเรื่องโดยเจ้าหน้าที่</p><p class="contact-card__name" id="staff-name">สำนักงานหอพัก</p><a class="contact-card__phone" id="staff-phone" href="tel:025550180">02-555-0180</a></div>
+          <a class="contact-card__call" href="tel:025550180" aria-label="โทรหาสำนักงานหอพัก"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>
+        </section>
       </div>
-      <div class="notice notice--info"><span><strong>ต้องการเลื่อนนัด?</strong><br>โทรหาช่างหรือสำนักงานล่วงหน้าอย่างน้อย 1 วัน</span></div>
-    </section>
+    </div>
 
-    <section class="contact-card">
-      <span class="icon-box" aria-hidden="true">🔧</span>
-      <div><p class="contact-card__role">ช่างผู้รับผิดชอบ</p><p class="contact-card__name" id="technician-name">รอการมอบหมาย</p><a class="contact-card__phone" id="technician-phone" href="tel:">ยังไม่มีเบอร์ติดต่อ</a></div>
-      <span aria-hidden="true"></span>
-    </section>
-
-    <section class="card">
-      <h2 class="card__title">รายละเอียดที่แจ้ง</h2>
-      <p class="detail-description" id="request-description">มีน้ำหยดจากเครื่องปรับอากาศ</p>
-      <div class="image-grid" id="image-list" aria-label="รูปภาพประกอบ"></div>
-      <hr class="divider">
-      <dl class="detail-rows">
-        <div><dt>ประเภทปัญหา</dt><dd id="category">เครื่องปรับอากาศ</dd></div>
-        <div><dt>ห้อง</dt><dd id="room">A-305</dd></div>
-        <div><dt>เบอร์ติดต่อของคุณ</dt><dd id="contact-phone">081-234-5678</dd></div>
-      </dl>
-    </section>
-
-    <section class="contact-card">
-      <span class="icon-box" aria-hidden="true">🏢</span>
-      <div><p class="contact-card__role">รับเรื่องโดยเจ้าหน้าที่</p><p class="contact-card__name" id="staff-name">สำนักงานหอพัก</p><a class="contact-card__phone" id="staff-phone" href="tel:025550180">02-555-0180</a></div>
-      <span aria-hidden="true"></span>
-    </section>
-    
-    <a class="btn btn-outline btn-block detail-home-btn" href="home.html">กลับหน้าหลัก</a>
     <template id="timeline-item-template">
       <li class="timeline__item">
         <p class="timeline__title" data-field="title"></p>

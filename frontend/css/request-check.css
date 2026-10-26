@@ -33,18 +33,25 @@
 
 .check-notice {
   margin: 20px 0;
+  align-items: flex-start;
 }
+.check-notice svg { flex: 0 0 auto; margin-top: 1px; }
+/* ช่วงเวลาที่สะดวก: บรรทัดละช่วง + หมายเหตุใต้ค่า */
+#preferred-times { white-space: pre-line; }
+.check-hint { margin-top: 6px; }
+#image-count { color: var(--color-text-muted); font-weight: 400; }
 
 @media (min-width: 1024px) {
   .has-desktop-shell .page:has(#detail-link) {
     display: grid;
     grid-template-columns: minmax(0, 1.8fr) minmax(280px, .9fr);
+    grid-template-rows: auto auto auto 1fr;
     align-content: start;
     gap: 20px 24px;
   }
 
   .has-desktop-shell .page:has(#detail-link) > .page-header { grid-column: 1 / -1; }
-  .has-desktop-shell .page:has(#detail-link) > .card { grid-column: 1; grid-row: span 2; }
+  .has-desktop-shell .page:has(#detail-link) > .card { grid-column: 1; grid-row: 2 / span 3; align-self: start; }
   .has-desktop-shell .page:has(#detail-link) > .check-notice,
   .has-desktop-shell .page:has(#detail-link) > #detail-link { grid-column: 2; align-self: start; }
 }

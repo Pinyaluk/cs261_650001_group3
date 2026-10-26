@@ -4,14 +4,8 @@
   gap: 8px;
 }
 
-.detail-home-btn {
-  margin-top: 20px;
-}
-.page > .card + .contact-card,
-.page > .contact-card + .card,
-.page > .contact-card + .contact-card {
-  margin-top: 20px;
-}
+
+
 
 .detail-title {
   margin: 10px 0 4px;
@@ -92,18 +86,54 @@
 
 
 
-@media (min-width: 1024px) {
-  .has-desktop-shell .page:has(#timeline) {
-    display: grid;
-    grid-template-columns: minmax(0, 1.6fr) minmax(280px, .9fr);
-    align-content: start;
-    gap: 20px 24px;
-  }
+/* ลิงก์กลับด้านบน (แทนหัวหน้า) ตาม Figma */
+.back-link {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  margin-bottom: 4px;
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 13px;
+}
 
-  .has-desktop-shell .page:has(#timeline) > .page-header { grid-column: 1 / -1; }
-  .has-desktop-shell .page:has(#timeline) > .card:nth-of-type(1) { grid-column: 1 / -1; }
-  .has-desktop-shell .page:has(#timeline) > .card:nth-of-type(2) { grid-column: 1; grid-row: span 2; }
-  .has-desktop-shell .page:has(#timeline) > .card:nth-of-type(3),
-  .has-desktop-shell .page:has(#timeline) > .contact-card { grid-column: 2; }
-  .has-desktop-shell .page:has(#timeline) > .card:nth-of-type(5) { grid-column: 1 / -1; }
+/* คอลัมน์หลัก (ติดตามสถานะ + รายละเอียด) / คอลัมน์ข้าง (นัดหมาย + ช่าง + เจ้าหน้าที่) */
+.detail-layout { display: grid; gap: 16px; margin-top: 16px; }
+.detail-main, .detail-side { display: grid; gap: 16px; align-content: start; }
+.detail-layout .card + .card { margin-top: 0; }
+.icon-box { color: var(--color-primary); }
+
+/* ปุ่มโทรกลมสีเขียวในการ์ดติดต่อ */
+.contact-card__call {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  color: #fff;
+  background: var(--color-primary);
+  border-radius: 50%;
+}
+
+/* ขั้นที่ยังไม่ถึงในไทม์ไลน์ เป็นสีเทา */
+.timeline__item.is-upcoming .timeline__title { color: #94a3b8; font-weight: 500; }
+.timeline__item.is-upcoming .timeline__note { white-space: pre-line; color: #94a3b8; }
+
+.detail-timeline .timeline__item { min-height: 0; padding-bottom: 24px; }
+
+/* ยังไม่มีเบอร์ช่าง: เป็นข้อความสีเทา ไม่ใช่ลิงก์ */
+.contact-card__phone[href="#"] { color: var(--color-text-muted); pointer-events: none; }
+
+/* มือถือ/จอแคบ: เรียงตาม Figma มือถือ (สถานะ → นัดหมาย → ช่าง → รายละเอียด → เจ้าหน้าที่) */
+@media (max-width: 1023px) {
+  .detail-layout { display: flex; flex-direction: column; }
+  .detail-main, .detail-side { display: contents; }
+  .detail-timeline { order: 1; }
+  .detail-appointment { order: 2; }
+  .detail-tech { order: 3; }
+  .detail-info { order: 4; }
+  .detail-staff { order: 5; }
+}
+
+@media (min-width: 1024px) {
+  .detail-layout { grid-template-columns: minmax(0, 1.6fr) minmax(300px, .9fr); gap: 20px 24px; }
 }

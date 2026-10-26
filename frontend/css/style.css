@@ -500,7 +500,7 @@ textarea.form-control {
  
 .request-item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 12px;
   align-items: center;
   min-height: 76px;
@@ -508,6 +508,13 @@ textarea.form-control {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
+}
+ 
+.request-item::after {
+  content: "›";
+  color: #94a3b8;
+  font-size: 22px;
+  line-height: 1;
 }
  
 .request-item__title,
@@ -788,6 +795,20 @@ textarea.form-control {
 
 
 /* Shared resident shell: desktop follows the Figma sidebar layout. */
+/* แถบหัว: โลโก้ + ชื่อหอ / บทบาท และชื่อ + ห้องมุมขวา (ตาม Figma) */
+.app-header__identity { display: flex; align-items: center; gap: 12px; }
+.app-header__logo { display: grid; width: 40px; height: 40px; flex: 0 0 40px; place-items: center; color: #fff; background: var(--color-primary); border-radius: 10px; }
+.app-header__account { display: grid; line-height: 1.3; }
+.app-header__name { font-weight: 600; font-size: 14px; }
+.app-header__room { color: var(--color-text-muted); font-size: 12px; font-weight: 400; }
+.app-header__room:empty { display: none; }
+.nav-icon svg, .app-header__avatar svg { display: block; }
+/* กล่องช่วยเหลือเหนือปุ่มออกจากระบบ (เมนูซ้าย จอคอม) */
+.sidebar-help { margin-top: auto; margin-bottom: 12px; padding: 14px 16px; background: #f5f8f8; border-radius: 10px; }
+.sidebar-help__title, .sidebar-help__text { margin: 0; }
+.sidebar-help__title { font-weight: 600; font-size: 13px; }
+.sidebar-help__text { margin-top: 4px; color: var(--color-text-muted); font-size: 12px; }
+.sidebar-help__phone { display: inline-block; margin-top: 6px; color: var(--color-primary); font-weight: 600; font-size: 14px; }
 .app-header__identity { min-width: 0; }
 .app-header__user { display: flex; align-items: center; gap: 10px; color: var(--color-text); font-weight: 600; }
 .app-header__avatar { display: grid; width: 40px; height: 40px; place-items: center; color: var(--color-primary); background: var(--color-primary-light); border-radius: 50%; font-size: 22px; }
@@ -803,23 +824,25 @@ textarea.form-control {
   .has-desktop-shell > .tab-nav { position: sticky; top: 72px; z-index: 100; }
   .has-desktop-shell > .top-bar { display: none; }
   .has-desktop-shell .sidebar-label,
-  .has-desktop-shell .app-header__user { display: none; }
+  .has-desktop-shell .app-header__user,
+  .has-desktop-shell .app-header__logo,
+  .has-desktop-shell .sidebar-help,
+  .has-desktop-shell .tab-nav .nav-icon { display: none; }
   .has-desktop-shell .sidebar-logout { position: fixed; top: 14px; right: 16px; z-index: 101; min-height: 44px; padding: 0 14px; font-size: 13px; }
   .tab-nav__item { flex: 1 0 auto; justify-content: center; }
 }
 
 @media (min-width: 768px) {
   .has-desktop-shell > .app-header { position: fixed; z-index: 40; inset: 0 0 auto 0; height: 88px; padding: 0 32px; }
-  .has-desktop-shell .app-header__brand { color: var(--color-primary); font-size: 20px; line-height: 28px; font-weight: 700; }
+  .has-desktop-shell .app-header__brand { color: var(--color-text); font-size: 18px; line-height: 26px; font-weight: 700; }
   .has-desktop-shell .app-header__role { font-size: 11px; line-height: 16px; }
   .has-desktop-shell > .tab-nav { position: fixed; z-index: 30; top: 88px; bottom: 0; left: 0; display: flex; width: 232px; padding: 28px 20px 24px; flex-direction: column; gap: 8px; overflow-x: hidden; overflow-y: auto; border-right: 1px solid var(--color-border); border-bottom: 0; }
   .has-desktop-shell .tab-nav__item { flex: 0 0 auto; width: 100%; min-height: 48px; padding: 12px; justify-content: flex-start; border-radius: 9px; font-size: 13px; }
   .has-desktop-shell .tab-nav__item.is-active { color: #006f68; background: var(--color-primary-light); }
-  .has-desktop-shell .sidebar-logout { width: 100%; min-height: 44px; margin-top: auto; }
+  .has-desktop-shell .sidebar-logout { width: 100%; min-height: 44px; }
   .has-desktop-shell > .top-bar { display: none; }
-  .has-desktop-shell > .page { width: calc(100% - 232px); max-width: 1280px; min-height: calc(100vh - 88px); margin: 88px 0 0 232px; padding: clamp(28px, 3vw, 40px); }
-  .has-desktop-shell > .footer-note { margin-left: 232px; padding: 0 24px 24px; text-align: left; }
-  .has-desktop-shell > .page.success-page { width: min(720px, calc(100% - 280px)); max-width: 720px; margin: 88px 0 0 max(260px, calc(232px + (100% - 232px - 720px) / 2)); }
+  .has-desktop-shell > .page { width: calc(100% - 232px); max-width: 1280px; min-height: calc(100vh - 88px); margin: 88px 0 0 max(232px, calc(232px + (100% - 232px - 1280px) / 2)); padding: clamp(28px, 3vw, 40px); }
+  .has-desktop-shell > .footer-note { max-width: 1280px; margin-left: max(232px, calc(232px + (100% - 232px - 1280px) / 2)); padding: 0 40px 24px; text-align: left; }
   .has-desktop-shell .page-header { margin-bottom: 28px; }
   .has-desktop-shell .page-title { font-size: 30px; line-height: 1.35; }
   .has-desktop-shell .card { border-radius: 12px; box-shadow: none; }

@@ -1,48 +1,26 @@
-@media (min-width: 768px) {
-  .top-bar {
-    margin-left: 0;
-  }
+/* หน้าส่งคำร้องแจ้งซ่อม — ตาม Figma (แยก 5 การ์ด + คอลัมน์ข้าง "หลังส่งคำร้อง") */
+.form-layout { display: grid; gap: 16px; }
+.form-main, .form-aside { display: grid; gap: 16px; align-content: start; }
+.form-card { margin: 0; }
+.form-card .card__title + .form-group,
+.form-card .card__subtitle + .form-group { margin-top: 16px; }
+.form-main .notice svg, .form-aside .notice svg { flex: 0 0 auto; margin-top: 1px; }
 
-  .page {
-    width: 100%;
-    max-width: 1280px;
-    margin-right: auto;
-    margin-left: auto;
-  }
-}
+/* ช่องเลือกไฟล์ซ่อน ใช้กล่อง dropzone และปุ่ม "จัดการรูปภาพแนบ" แทน */
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.dropzone { gap: 4px; justify-items: center; }
+.dropzone__icon { color: var(--color-primary); }
+#image-count { color: var(--color-text); }
+#image-preview:not(:empty) { margin-top: 12px; }
+#image-preview + template + .btn { margin-top: 12px; }
 
-.form-group + .btn-block {
-  margin-top: 20px;
-}
+.steps-list { display: grid; gap: 6px; margin: 12px 0 4px; padding-left: 20px; font-size: 13px; }
 
-.form-control--select {
-  padding-right: 36px;
-}
 /* ข้อความรวมเหนือปุ่มส่ง (กรอกไม่ครบ / error จาก backend) */
-#form-error {
-  margin-bottom: 8px;
-  font-size: 14px;
-  text-align: center;
-}
+#form-error { margin: 0; font-size: 14px; text-align: center; }
+#form-error:empty { display: none; }
 
 @media (min-width: 1024px) {
-  #repair-form {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 24px;
-    align-items: start;
-  }
-
-  #repair-form > .form-group:nth-child(1),
-  #repair-form > .form-group:nth-child(6),
-  #repair-form > .form-group:nth-child(7),
-  #repair-form > .form-group:nth-child(12),
-  #repair-form > .form-group:nth-child(13),
-  #repair-form > #form-error,
-  #repair-form > #submit-btn {
-    grid-column: 1 / -1;
-  }
-
-  #repair-form > .form-group:nth-child(12) { max-width: 100%; }
-  #repair-form > #submit-btn { margin-top: 8px; }
+  .form-layout { grid-template-columns: minmax(0, 1fr) 360px; gap: 24px; align-items: start; }
+  .form-aside { position: sticky; top: 112px; }
 }
