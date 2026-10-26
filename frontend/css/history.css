@@ -1,23 +1,50 @@
-.history-search {
-  margin-bottom: 12px;
-}
+/* หน้าประวัติคำร้อง — มือถือตาม Figma "M5 ประวัติคำร้อง" / จอคอมตาม Figma (การ์ดสรุป + ตาราง) */
 
-.history-filter {
-  margin-bottom: 8px;
-}
+/* สลับส่วนที่แสดงตามขนาดจอ */
+.desktop-only { display: none !important; }
 
-.history-filter .chip {
-  border-color: var(--color-border);
-}
+/* มือถือ: ไม่มีกรอบการ์ด ใช้รายการแบบการ์ดทีละใบ */
+.history-card { padding: 0; background: transparent; border: 0; box-shadow: none; }
+.history-search { position: relative; display: block; margin-bottom: 12px; }
+.history-search svg { position: absolute; top: 50%; left: 14px; color: #94a3b8; transform: translateY(-50%); }
+.history-search .form-control { padding-left: 42px; background: var(--color-surface); }
+.history-filter { margin-bottom: 8px; }
+.history-filter .chip { border-color: var(--color-border); }
+.history-list { display: grid; gap: 12px; margin: 12px 0 0; padding: 0; list-style: none; }
+.history-empty { margin: 16px 0; color: var(--color-text-muted); text-align: center; }
+.history-notice { margin: 20px 0; align-items: flex-start; }
+.history-notice svg { flex: 0 0 auto; margin-top: 1px; }
 
-.history-list {
-  display: grid;
-  gap: 16px;
-  margin: 12px 0 0;
-  padding: 0;
-  list-style: none;
-}
+@media (min-width: 768px) {
+  .desktop-only { display: revert !important; }
+  .mobile-only { display: none !important; }
 
-.history-notice {
-  margin: 20px 0;
+  /* การ์ดสรุป 3 สถานะ */
+  .history-stats { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+  .stat-card { padding: 16px 18px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; }
+  .stat-card__count { margin: 10px 0 2px; font-weight: 600; font-size: 30px; line-height: 1.2; }
+  .stat-card__unit { margin: 0; color: var(--color-text-muted); font-size: 12px; }
+
+  .history-new-btn { display: inline-flex !important; margin-bottom: 20px; }
+
+  /* การ์ด "คำร้องของฉัน" */
+  .history-card { padding: 20px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; }
+  .history-card__head { margin-bottom: 14px; }
+  .history-selects { display: flex !important; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .history-selects .form-control { width: auto; min-height: 36px; padding: 6px 10px; font-size: 13px; background: var(--color-surface); }
+
+  /* ตาราง */
+  .table-wrap { display: block !important; overflow-x: auto; }
+  .history-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .history-table th { padding: 10px 12px; color: var(--color-text-muted); font-weight: 500; text-align: left; background: #f5f8f8; white-space: nowrap; }
+  .history-table td { padding: 14px 12px; vertical-align: middle; border-bottom: 1px solid var(--color-border); }
+  .history-table tbody tr { cursor: pointer; }
+  .history-table tbody tr:hover { background: #fafcfc; }
+  .history-table__title { font-weight: 600; font-size: 14px; }
+  .history-table__meta { margin: 2px 0 0; color: var(--color-text-muted); font-size: 12px; }
+  .history-table__date { white-space: nowrap; }
+  .badge--normal { color: var(--color-text-muted); background: #f1f5f9; }
+
+  .history-card__foot { display: flex !important; justify-content: space-between; margin-top: 12px; color: var(--color-text-muted); font-size: 12px; }
+  .history-card__page { color: var(--color-primary); }
 }

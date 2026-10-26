@@ -26,7 +26,7 @@ function renderLatest(r) {
   renderStatusBadge(clone.querySelector('[data-field="status"]'), r.status);
   latestRequest.innerHTML = "";
   latestRequest.appendChild(clone);
-  latestDetailLink.href = "request-check.html?id=" + r.requestId;
+  if (latestDetailLink) latestDetailLink.href = "request-check.html?id=" + r.requestId;
 }
 
 async function init() {
@@ -41,7 +41,7 @@ async function init() {
       renderLatest(list[0]);
     } else {
       latestRequest.textContent = "ยังไม่มีคำร้อง";
-      latestDetailLink.classList.add("is-hidden");
+      if (latestDetailLink) latestDetailLink.classList.add("is-hidden");
     }
   } catch (err) {
     latestRequest.textContent = err.message;

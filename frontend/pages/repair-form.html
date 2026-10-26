@@ -12,17 +12,31 @@
 
   <header class="app-header">
     <div class="app-header__identity">
-      <p class="app-header__brand">หอพักอุ่นใจ</p>
-      <p class="app-header__role">ระบบบริการแจ้งซ่อมหอพัก</p>
+      <span class="app-header__logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></span>
+      <div>
+        <p class="app-header__brand">หอพักอุ่นใจ</p>
+        <p class="app-header__role">ผู้พักอาศัย</p>
+      </div>
     </div>
-    <div class="app-header__user" aria-label="บัญชีผู้พักอาศัย"><span class="app-header__avatar" aria-hidden="true">♙</span><span>ผู้พักอาศัย</span></div>
+    <div class="app-header__user" aria-label="บัญชีผู้พักอาศัย">
+      <span class="app-header__avatar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span>
+      <span class="app-header__account">
+        <span class="app-header__name" id="header-name">ผู้พักอาศัย</span>
+        <span class="app-header__room" id="header-room"></span>
+      </span>
+    </div>
   </header>
   <nav class="tab-nav" aria-label="เมนูผู้พักอาศัย">
     <p class="sidebar-label">เมนูสำหรับผู้พักอาศัย</p>
-    <a class="tab-nav__item" href="home.html"><span class="nav-icon" aria-hidden="true">⌂</span><span>หน้าหลัก</span></a>
-    <a class="tab-nav__item is-active" href="repair-form.html"><span class="nav-icon" aria-hidden="true">＋</span><span>แจ้งซ่อม</span></a>
-    <a class="tab-nav__item" href="history.html"><span class="nav-icon" aria-hidden="true">▤</span><span>ประวัติคำร้อง</span></a>
-    <button class="btn sidebar-logout" id="logout-btn" type="button"><span aria-hidden="true">⇥</span> ออกจากระบบ</button>
+    <a class="tab-nav__item" href="home.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span><span>หน้าหลัก</span></a>
+    <a class="tab-nav__item is-active" href="repair-form.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg></span><span>แจ้งซ่อม</span></a>
+    <a class="tab-nav__item" href="history.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg></span><span>ประวัติคำร้อง</span></a>
+    <div class="sidebar-help">
+      <p class="sidebar-help__title">ต้องการความช่วยเหลือ?</p>
+      <p class="sidebar-help__text">ติดต่อสำนักงานหอพัก</p>
+      <a class="sidebar-help__phone" href="tel:025550180">02-555-0180</a>
+    </div>
+    <button class="btn sidebar-logout" id="logout-btn" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg> ออกจากระบบ</button>
   </nav>
 
   <header class="top-bar">
@@ -32,123 +46,155 @@
   </header>
   <main class="page">
     <header class="page-header">
-      <p class="eyebrow">ผู้พักอาศัย / แจ้งซ่อม</p>
+      <p class="eyebrow">ผู้พักอาศัย</p>
       <h1 class="page-title">ส่งคำร้องแจ้งซ่อม</h1>
-      <p class="page-subtitle">กรอกรายละเอียดปัญหาและแนบรูปภาพประกอบ</p>
+      <p class="page-subtitle">บอกปัญหาที่พบและช่วงเวลาที่สะดวก เราจะช่วยดูแลให้</p>
     </header>
 
-    <div class="notice notice--info"><span>โปรดกรอกข้อมูลที่มีเครื่องหมาย * ให้ครบถ้วน และแนบรูปภาพ 1–3 รูป</span></div>
-
-    <section class="card">
-      <form id="repair-form">
-        <div class="form-group">
-          <span class="form-label">พื้นที่ที่พบปัญหา <span class="required">*</span></span>
-          <div class="choice-group">
-            <label class="choice" for="area-room"><input id="area-room" name="area-type" type="radio" value="ROOM" checked> ห้องพัก</label>
-            <label class="choice" for="area-common"><input id="area-common" name="area-type" type="radio" value="COMMON"> พื้นที่ส่วนกลาง</label>
+    <div class="form-layout">
+      <form id="repair-form" class="form-main">
+        <section class="card form-card">
+          <h2 class="card__title">สถานที่ที่พบปัญหา</h2>
+          <p class="card__subtitle">รองรับทั้งห้องพักและพื้นที่ส่วนกลาง</p>
+          <div class="form-group">
+            <span class="form-label">ประเภทพื้นที่ <span class="required">*</span></span>
+            <div class="choice-group">
+              <label class="choice" for="area-room"><input id="area-room" name="area-type" type="radio" value="ROOM" checked> ห้องพัก</label>
+              <label class="choice" for="area-common"><input id="area-common" name="area-type" type="radio" value="COMMON"> พื้นที่ส่วนกลาง</label>
+            </div>
+            <p class="error-msg" id="area-type-error">กรุณาเลือกพื้นที่ที่พบปัญหา</p>
           </div>
-          <p class="error-msg" id="area-type-error">กรุณาเลือกพื้นที่ที่พบปัญหา</p>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="building">อาคาร <span class="required">*</span></label>
-          <select class="form-control" id="building" name="building" required>
-                        <option value="">เลือกอาคาร</option><option value="อาคาร A">อาคาร A</option><option value="อาคาร B">อาคาร B</option><option value="พื้นที่ส่วนกลาง">พื้นที่ส่วนกลาง</option>
-          </select>
-          <p class="error-msg" id="building-error">กรุณาเลือกอาคาร</p>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="location">ห้อง / จุดที่พบปัญหา <span class="required">*</span></label>
-          <input class="form-control" id="location" name="location" type="text" placeholder="เช่น ห้อง A-305" required>
-          <p class="error-msg" id="location-error">กรุณาระบุตำแหน่งที่พบปัญหา</p>
-        </div>
+          <div class="form-group">
+            <label class="form-label" for="building">อาคาร <span class="required">*</span></label>
+            <select class="form-control" id="building" name="building" required>
+              <option value="">เลือกอาคาร</option><option value="อาคาร A">อาคาร A</option><option value="อาคาร B">อาคาร B</option><option value="พื้นที่ส่วนกลาง">พื้นที่ส่วนกลาง</option>
+            </select>
+            <p class="error-msg" id="building-error">กรุณาเลือกอาคาร</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="location">ห้อง / จุดที่พบปัญหา <span class="required">*</span></label>
+            <input class="form-control" id="location" name="location" type="text" placeholder="เช่น ชั้น 3 · ห้อง 305" required>
+            <p class="form-hint">หากเลือกพื้นที่ส่วนกลาง ให้ระบุจุดให้ชัดเจน เช่น อาคาร A ชั้น 2 บริเวณบันได</p>
+            <p class="error-msg" id="location-error">กรุณาระบุตำแหน่งที่พบปัญหา</p>
+          </div>
+        </section>
 
-        <div class="form-group">
-          <label class="form-label" for="category">หมวดปัญหา <span class="required">*</span></label>
-          <select class="form-control" id="category" name="category" required>
-                        <option value="">เลือกหมวดปัญหา</option><option value="ELECTRICAL">ไฟฟ้า</option><option value="PLUMBING">ประปา</option><option value="AIR_CONDITIONER">เครื่องปรับอากาศ</option><option value="FURNITURE">เฟอร์นิเจอร์</option><option value="OTHER">อื่น ๆ</option>
-          </select>
-          <p class="error-msg" id="category-error">กรุณาเลือกหมวดปัญหา</p>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="equipment">อุปกรณ์ที่ชำรุด <span class="required">*</span></label>
-          <input class="form-control" id="equipment" name="equipment" type="text" placeholder="เช่น เครื่องปรับอากาศ" required>
-          <p class="form-hint">ข้อมูลนี้จะใช้เป็นชื่อคำร้อง</p>
-          <p class="error-msg" id="equipment-error">กรุณาระบุอุปกรณ์ที่ชำรุด</p>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="description">รายละเอียดปัญหา <span class="required">*</span></label>
-          <textarea class="form-control" id="description" name="description" placeholder="อธิบายอาการหรือสิ่งที่พบ" required></textarea>
-          <p class="error-msg" id="description-error">กรุณาระบุรายละเอียดปัญหา</p>
-        </div>
+        <section class="card form-card">
+          <h2 class="card__title">ปัญหาและอุปกรณ์</h2>
+          <div class="form-group">
+            <label class="form-label" for="category">หมวดปัญหา <span class="required">*</span></label>
+            <select class="form-control" id="category" name="category" required>
+              <option value="">เลือกหมวดปัญหา</option><option value="ELECTRICAL">ไฟฟ้า</option><option value="PLUMBING">ประปา</option><option value="AIR_CONDITIONER">เครื่องปรับอากาศ</option><option value="FURNITURE">เฟอร์นิเจอร์</option><option value="OTHER">อื่น ๆ</option>
+            </select>
+            <p class="form-hint">เช่น ไฟฟ้า ประปา เครื่องปรับอากาศ หรือประตูและเฟอร์นิเจอร์</p>
+            <p class="error-msg" id="category-error">กรุณาเลือกหมวดปัญหา</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="equipment">อุปกรณ์ที่ชำรุด <span class="required">*</span></label>
+            <input class="form-control" id="equipment" name="equipment" type="text" placeholder="เช่น เครื่องปรับอากาศเหนือโต๊ะอ่านหนังสือ" required>
+            <p class="error-msg" id="equipment-error">กรุณาระบุอุปกรณ์ที่ชำรุด</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="description">รายละเอียดปัญหา <span class="required">*</span></label>
+            <textarea class="form-control" id="description" name="description" placeholder="อธิบายอาการหรือสิ่งที่พบ" required></textarea>
+            <p class="form-hint">อธิบายอาการ จุดที่พบ และช่วงเวลาที่เกิดปัญหา</p>
+            <p class="error-msg" id="description-error">กรุณาระบุรายละเอียดปัญหา</p>
+          </div>
+          <div class="form-group">
+            <label class="checkbox" for="urgent">
+              <input type="checkbox" id="urgent" name="urgent">
+              แจ้งว่าเร่งด่วน
+            </label>
+            <p class="form-hint">ติ๊กเมื่อปัญหาส่งผลต่อความปลอดภัยหรือใช้งานไม่ได้เลย เจ้าหน้าที่จะพิจารณาความเร่งด่วนอีกครั้ง</p>
+          </div>
+        </section>
 
-              <div class="form-group">
-          <label class="checkbox" for="urgent">
-            <input type="checkbox" id="urgent" name="urgent">
-            แจ้งว่าเร่งด่วน
-          </label>
-          <p class="form-hint">ติ๊กเมื่อปัญหาส่งผลต่อความปลอดภัยหรือใช้งานไม่ได้เลย เจ้าหน้าที่จะพิจารณาความเร่งด่วนอีกครั้ง</p>
-        </div>
+        <section class="card form-card">
+          <h2 class="card__title">ช่วงเวลาที่สะดวกให้เข้าห้อง</h2>
+          <p class="card__subtitle">ระบุเฉพาะงานในห้องพัก เจ้าหน้าที่จะติดต่อเพื่อตกลงเวลานัด</p>
+          <div class="form-group">
+            <label class="form-label" for="preferred-date-1">วันที่สะดวก <span class="required">*</span></label>
+            <input class="form-control" id="preferred-date-1" name="preferred-date-1" type="date" required>
+            <p class="error-msg" id="preferred-date-1-error">กรุณาเลือกวันที่สะดวก</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="preferred-time-1">ช่วงเวลา <span class="required">*</span></label>
+            <select class="form-control" id="preferred-time-1" name="preferred-time-1" required>
+              <option value="">เลือกช่วงเวลา</option><option value="MORNING">09:00–12:00 น.</option><option value="AFTERNOON">13:00–16:00 น.</option>
+            </select>
+            <p class="error-msg" id="preferred-time-1-error">กรุณาเลือกช่วงเวลา</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="preferred-date-2">วันที่สะดวกเพิ่มเติม</label>
+            <input class="form-control" id="preferred-date-2" name="preferred-date-2" type="date">
+            <p class="error-msg" id="preferred-date-2-error"></p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="preferred-time-2">ช่วงเวลาเพิ่มเติม</label>
+            <select class="form-control" id="preferred-time-2" name="preferred-time-2">
+              <option value="">เลือกช่วงเวลา</option><option value="MORNING">09:00–12:00 น.</option><option value="AFTERNOON">13:00–16:00 น.</option>
+            </select>
+            <p class="form-hint">ช่วงเวลานี้ยังไม่ใช่นัดหมายที่ยืนยัน งานพื้นที่ส่วนกลางไม่ต้องระบุเวลาเข้าห้อง</p>
+          </div>
+        </section>
 
-        <div class="form-group">
-          <label class="form-label" for="preferred-date-1">วันที่สะดวก <span class="required">*</span></label>
-          <input class="form-control" id="preferred-date-1" name="preferred-date-1" type="date" required>
-          <p class="error-msg" id="preferred-date-1-error">กรุณาเลือกวันที่สะดวก</p>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="preferred-time-1">ช่วงเวลา <span class="required">*</span></label>
-          <select class="form-control" id="preferred-time-1" name="preferred-time-1" required>
-              <option value="">เลือกช่วงเวลา</option><option value="MORNING">09:00–12:00</option><option value="AFTERNOON">13:00–16:00</option>
-          </select>
-          <p class="error-msg" id="preferred-time-1-error">กรุณาเลือกช่วงเวลา</p>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="preferred-date-2">วันที่สะดวกเพิ่มเติม</label>
-          <input class="form-control" id="preferred-date-2" name="preferred-date-2" type="date">
-          <p class="error-msg" id="preferred-date-2-error"></p>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="preferred-time-2">ช่วงเวลาเพิ่มเติม</label>
-          <select class="form-control" id="preferred-time-2" name="preferred-time-2">
-               <option value="">เลือกช่วงเวลา</option><option value="MORNING">09:00–12:00</option><option value="AFTERNOON">13:00–16:00</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="images">รูปภาพประกอบ <span class="required">*</span></label>
-          <input class="form-control" id="images" name="images" type="file" accept="image/jpeg,image/png" multiple>
-          <label class="dropzone" id="image-dropzone" for="images">
-            <strong>แนบรูปภาพ</strong>
-            <span>เลือกไฟล์ JPG หรือ PNG (สูงสุด 3 รูป รูปละไม่เกิน 5 MB)</span>
-            <span id="image-count">แนบรูปแล้ว 0 จาก 3 รูป</span>
-          </label>
-          <div class="image-grid" id="image-preview" aria-label="ตัวอย่างรูปภาพที่แนบ"></div>
+        <section class="card form-card">
+          <h2 class="card__title">แนบรูปภาพประกอบ</h2>
+          <p class="card__subtitle">รับไฟล์ JPG/PNG สูงสุด 3 รูป ขนาดไม่เกิน 5 MB ต่อรูป</p>
+          <div class="form-group">
+            <input class="visually-hidden" id="images" name="images" type="file" accept="image/jpeg,image/png" multiple>
+            <label class="dropzone" id="image-dropzone" for="images">
+              <span class="dropzone__icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 5h6"/><path d="M19 2v6"/><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/><circle cx="9" cy="9" r="2"/></svg></span>
+              <strong id="image-count">แนบรูปแล้ว 0 จาก 3 รูป</strong>
+              <span>กดเพื่อเลือกรูป (รูปภาพประกอบ <span class="required">*</span>)</span>
+            </label>
+            <div class="image-grid" id="image-preview" aria-label="ตัวอย่างรูปภาพที่แนบ"></div>
+            <template id="image-thumb-template">
+              <figure class="image-thumb">
+                <img data-field="img" alt="">
+                <figcaption class="image-thumb__caption" data-field="caption"></figcaption>
+              </figure>
+            </template>
+            <label class="btn btn-outline btn-block" for="images">จัดการรูปภาพแนบ</label>
+            <p class="error-msg" id="images-error">รูปภาพต้องไม่เกิน 5 MB ต่อรูป และแนบได้ไม่เกิน 3 รูป</p>
+          </div>
+        </section>
 
-                    <template id="image-thumb-template">
-            <figure class="image-thumb">
-              <img data-field="img" alt="">
-              <figcaption class="image-thumb__caption" data-field="caption"></figcaption>
-            </figure>
-          </template>
-          
-          <p class="error-msg" id="images-error">รูปภาพต้องไม่เกิน 5 MB ต่อรูป และแนบได้ไม่เกิน 3 รูป</p>
-        </div>
-        <div class="form-group">
-          <p class="form-label">ข้อมูลผู้พักอาศัย</p>
-          <p id="resident-info">คุณสมชาย · อาคาร A · ห้อง A-305</p>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="phone">เบอร์โทรศัพท์ที่ติดต่อได้ <span class="required">*</span></label>
-          <input class="form-control" id="phone" name="phone" type="tel" autocomplete="tel" placeholder="กรอกเบอร์โทรศัพท์" required>
-          <p class="error-msg" id="phone-error">กรุณากรอกเบอร์โทรศัพท์</p>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="line-id">LINE ID</label>
-          <input class="form-control" id="line-id" name="line-id" type="text" placeholder="กรอก LINE ID (ถ้ามี)">
-        </div>
-        
+        <section class="card form-card">
+          <h2 class="card__title">ข้อมูลติดต่อของคุณ</h2>
+          <div class="form-group">
+            <p class="form-hint">ผู้พักอาศัย</p>
+            <p class="form-label" id="resident-info">คุณสมชาย · อาคาร A · ห้อง A-305</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="phone">โทรศัพท์ที่ติดต่อได้ <span class="required">*</span></label>
+            <input class="form-control" id="phone" name="phone" type="tel" autocomplete="tel" placeholder="กรอกเบอร์โทรศัพท์" required>
+            <p class="error-msg" id="phone-error">กรุณากรอกเบอร์โทรศัพท์</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="line-id">ชื่อไลน์ที่ใช้ติดต่อ</label>
+            <input class="form-control" id="line-id" name="line-id" type="text" placeholder="กรอก LINE ID (ถ้ามี)">
+          </div>
+        </section>
+
+        <div class="notice notice--info"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>เจ้าหน้าที่จะตรวจสอบ รับเรื่อง กำหนดความเร่งด่วน และมอบหมายช่าง คุณไม่ต้องเลือกช่างเอง</span></div>
         <p class="error-msg" id="form-error" role="alert"></p>
-        <button class="btn btn-primary btn-block" id="submit-btn" type="submit">ส่งคำร้องแจ้งซ่อม</button>
+        <button class="btn btn-primary btn-block" id="submit-btn" type="submit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.54 21.69a.5.5 0 0 0 .93-.03l6.5-19a.5.5 0 0 0-.64-.64l-19 6.5a.5.5 0 0 0-.03.93l7.93 3.18a2 2 0 0 1 1.11 1.11z"/><path d="m21.85 2.15-10.94 10.94"/></svg> ส่งคำร้องแจ้งซ่อม</button>
       </form>
-    </section>
+
+      <aside class="form-aside">
+        <section class="card form-card">
+          <h2 class="card__title">หลังส่งคำร้อง</h2>
+          <ol class="steps-list">
+            <li>เจ้าหน้าที่ตรวจสอบและรับเรื่อง</li>
+            <li>ประสานวันนัดกับคุณและช่าง</li>
+            <li>ช่างเข้าซ่อมและบันทึกผล</li>
+          </ol>
+          <a class="link" href="history.html">ติดตามได้ในหน้า ประวัติคำร้อง</a>
+        </section>
+        <div class="notice notice--danger"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><span>หากมีไฟไหม้ กลิ่นไหม้ หรืออันตรายเร่งด่วน ให้หยุดใช้อุปกรณ์และโทรสำนักงานหอพัก 02-555-0180 ทันที</span></div>
+      </aside>
+    </div>
   </main>
 
   <p class="footer-note">หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180</p>

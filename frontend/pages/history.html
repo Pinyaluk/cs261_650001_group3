@@ -12,17 +12,31 @@
 
   <header class="app-header">
     <div class="app-header__identity">
-      <p class="app-header__brand">หอพักอุ่นใจ</p>
-      <p class="app-header__role">ระบบบริการแจ้งซ่อมหอพัก</p>
+      <span class="app-header__logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></span>
+      <div>
+        <p class="app-header__brand">หอพักอุ่นใจ</p>
+        <p class="app-header__role">ผู้พักอาศัย</p>
+      </div>
     </div>
-    <div class="app-header__user" aria-label="บัญชีผู้พักอาศัย"><span class="app-header__avatar" aria-hidden="true">♙</span><span>ผู้พักอาศัย</span></div>
+    <div class="app-header__user" aria-label="บัญชีผู้พักอาศัย">
+      <span class="app-header__avatar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span>
+      <span class="app-header__account">
+        <span class="app-header__name" id="header-name">ผู้พักอาศัย</span>
+        <span class="app-header__room" id="header-room"></span>
+      </span>
+    </div>
   </header>
   <nav class="tab-nav" aria-label="เมนูผู้พักอาศัย">
     <p class="sidebar-label">เมนูสำหรับผู้พักอาศัย</p>
-    <a class="tab-nav__item" href="home.html"><span class="nav-icon" aria-hidden="true">⌂</span><span>หน้าหลัก</span></a>
-    <a class="tab-nav__item" href="repair-form.html"><span class="nav-icon" aria-hidden="true">＋</span><span>แจ้งซ่อม</span></a>
-    <a class="tab-nav__item is-active" href="history.html"><span class="nav-icon" aria-hidden="true">▤</span><span>ประวัติคำร้อง</span></a>
-    <button class="btn sidebar-logout" id="logout-btn" type="button"><span aria-hidden="true">⇥</span> ออกจากระบบ</button>
+    <a class="tab-nav__item" href="home.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span><span>หน้าหลัก</span></a>
+    <a class="tab-nav__item" href="repair-form.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg></span><span>แจ้งซ่อม</span></a>
+    <a class="tab-nav__item is-active" href="history.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg></span><span>ประวัติคำร้อง</span></a>
+    <div class="sidebar-help">
+      <p class="sidebar-help__title">ต้องการความช่วยเหลือ?</p>
+      <p class="sidebar-help__text">ติดต่อสำนักงานหอพัก</p>
+      <a class="sidebar-help__phone" href="tel:025550180">02-555-0180</a>
+    </div>
+    <button class="btn sidebar-logout" id="logout-btn" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg> ออกจากระบบ</button>
   </nav>
 
   <header class="top-bar">
@@ -33,26 +47,76 @@
   <main class="page">
     <header class="page-header">
       <p class="eyebrow">ผู้พักอาศัย</p>
-      <h1 class="page-title">ประวัติคำร้อง</h1>
-      <p class="page-subtitle">ติดตามสถานะและดูรายการแจ้งซ่อมทั้งหมดของคุณ</p>
+      <h1 class="page-title">ติดตามสถานะคำร้อง</h1>
+      <p class="page-subtitle">ดูประวัติและสถานะเฉพาะคำร้องที่คุณแจ้งไว้กับหอพัก</p>
     </header>
-    <input class="form-control history-search" id="search-input" type="search" placeholder="🔍 ค้นหาหัวข้อหรือเลขคำร้อง" aria-label="ค้นหาคำร้อง">
 
-    <div class="chip-group history-filter" id="status-filter" role="group" aria-label="กรองตามสถานะ">
-      <button class="chip is-active" type="button" data-status="ALL">ทั้งหมด</button>
-      <button class="chip" type="button" data-status="PENDING">รอรับเรื่อง</button>
-      <button class="chip" type="button" data-status="IN_PROGRESS">กำลังดำเนินการ</button>
-      <button class="chip" type="button" data-status="COMPLETED">เสร็จสิ้น</button>
-    </div>
+    <!-- จอคอม: การ์ดสรุป 3 สถานะ -->
+    <section class="history-stats desktop-only" aria-label="สรุปสถานะคำร้อง">
+      <article class="stat-card"><span class="badge badge--pending">รอรับเรื่อง</span><p class="stat-card__count" id="stat-pending">0</p><p class="stat-card__unit">คำร้อง</p></article>
+      <article class="stat-card"><span class="badge badge--in-progress">กำลังดำเนินการ</span><p class="stat-card__count" id="stat-in-progress">0</p><p class="stat-card__unit">คำร้อง</p></article>
+      <article class="stat-card"><span class="badge badge--completed">เสร็จสิ้น</span><p class="stat-card__count" id="stat-completed">0</p><p class="stat-card__unit">คำร้อง</p></article>
+    </section>
 
-    <p class="form-hint" id="result-count" aria-live="polite">กำลังโหลดรายการ...</p>
 
-    <ul class="history-list" id="request-list" aria-live="polite"></ul>
-    <p class="is-hidden" id="empty-state">ไม่พบคำร้อง</p>
+    <a class="btn btn-primary history-new-btn desktop-only" href="repair-form.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg> ส่งคำร้องแจ้งซ่อมใหม่</a>
 
-    <div class="notice notice--info history-notice"><span>สถานะมี 3 ขั้น: รอรับเรื่อง → กำลังดำเนินการ → เสร็จสิ้น</span></div>
+    <section class="card history-card">
+      <div class="history-card__head desktop-only">
+        <h2 class="card__title">คำร้องของฉัน</h2>
+        <p class="card__subtitle" id="history-subtitle">0 คำร้อง • ไม่แสดงข้อมูลคำร้องของผู้พักอาศัยคนอื่น</p>
+      </div>
 
-    <a class="btn btn-primary btn-block" id="new-request-btn" href="repair-form.html">+ แจ้งซ่อมใหม่</a>
+      <label class="history-search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input class="form-control" id="search-input" type="search" placeholder="ค้นหาเลขคำร้องหรือปัญหาของฉัน" aria-label="ค้นหาคำร้อง">
+      </label>
+
+      <!-- จอคอม: ตัวกรองแบบ dropdown -->
+      <div class="history-selects desktop-only">
+        <select class="form-control" id="status-select" aria-label="กรองตามสถานะ">
+          <option value="ALL">ทุกสถานะ</option><option value="PENDING">รอรับเรื่อง</option><option value="IN_PROGRESS">กำลังดำเนินการ</option><option value="COMPLETED">เสร็จสิ้น</option>
+        </select>
+        <select class="form-control" id="urgency-select" aria-label="กรองตามความเร่งด่วน">
+          <option value="ALL">ทุกความเร่งด่วน</option><option value="NORMAL">ปกติ</option><option value="URGENT">เร่งด่วน</option>
+        </select>
+        <select class="form-control" id="month-select" aria-label="กรองตามเดือนที่แจ้ง">
+          <option value="ALL">ทุกเดือน</option>
+        </select>
+      </div>
+
+      <!-- มือถือ: ตัวกรองแบบปุ่ม + รายการแบบการ์ด (ตาม Figma M5) -->
+      <div class="chip-group history-filter mobile-only" id="status-filter" role="group" aria-label="กรองตามสถานะ">
+        <button class="chip is-active" type="button" data-status="ALL">ทั้งหมด</button>
+        <button class="chip" type="button" data-status="PENDING">รอรับเรื่อง</button>
+        <button class="chip" type="button" data-status="IN_PROGRESS">กำลังดำเนินการ</button>
+        <button class="chip" type="button" data-status="COMPLETED">เสร็จสิ้น</button>
+      </div>
+      <p class="form-hint mobile-only" id="result-count" aria-live="polite">กำลังโหลดรายการ...</p>
+      <ul class="history-list mobile-only" id="request-list" aria-live="polite"></ul>
+
+      <!-- จอคอม: ตาราง -->
+      <div class="table-wrap desktop-only">
+        <table class="history-table">
+          <thead>
+            <tr><th>คำร้อง / สถานที่</th><th>สถานะ</th><th>ความเร่งด่วน</th><th>วันที่แจ้ง</th><th>ช่างผู้รับผิดชอบ</th></tr>
+          </thead>
+          <tbody id="request-table-body"></tbody>
+        </table>
+      </div>
+
+      <p class="history-empty is-hidden" id="empty-state">ไม่พบคำร้อง</p>
+
+      <div class="history-card__foot desktop-only">
+        <span id="table-count">แสดง 0 คำร้องของฉัน</span>
+        <span class="history-card__page">หน้า 1</span>
+      </div>
+    </section>
+
+    <div class="notice notice--info history-notice"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>สถานะคำร้องมี 3 ขั้นตอน: รอรับเรื่อง → กำลังดำเนินการ → เสร็จสิ้น</span></div>
+
+    <a class="btn btn-primary btn-block mobile-only" id="new-request-btn" href="repair-form.html">+ แจ้งซ่อมใหม่</a>
+
     <template id="request-item-template">
       <li>
         <a class="request-item" data-field="link" href="request-detail.html">
@@ -63,6 +127,19 @@
           <span class="badge" data-field="status"></span>
         </a>
       </li>
+    </template>
+
+    <template id="request-row-template">
+      <tr>
+        <td>
+          <a class="history-table__title" data-field="link" href="request-check.html"></a>
+          <p class="history-table__meta" data-field="place"></p>
+        </td>
+        <td><span class="badge" data-field="status"></span></td>
+        <td><span class="badge" data-field="urgency"></span></td>
+        <td class="history-table__date" data-field="date"></td>
+        <td data-field="technician"></td>
+      </tr>
     </template>
   </main>
 

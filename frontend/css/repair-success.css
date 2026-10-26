@@ -1,5 +1,11 @@
+/* มือถือ: พื้นเขียวอ่อนทั้งหน้า / จอคอม: กล่องเขียวอ่อนมุมมนในพื้นที่เนื้อหา (ตาม Figma) */
 body {
   background: #e3f3ef;
+}
+.success-panel {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
 }
 
 .success-page {
@@ -73,9 +79,12 @@ body {
 }
 
 @media (min-width: 768px) {
-  .success-page {
-    min-height: calc(100vh - 88px);
-    padding-top: 56px;
-    padding-bottom: 56px;
+  body { background: var(--color-bg); }
+  .success-page { display: block; max-width: none; }
+  .success-panel {
+    max-width: none;
+    padding: 56px max(24px, calc((100% - 520px) / 2));
+    background: #e3f3ef;
+    border-radius: 16px;
   }
 }

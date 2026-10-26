@@ -1,177 +1,70 @@
-.summary-grid {
-  margin-bottom: 20px;
-}
+/* หน้าหลักผู้พักอาศัย — ตาม Figma (มือถือ "02 หน้าโฮม" / จอคอม "หน้าหลัก") */
 
-/* ปุ่มลัด แจ้งซ่อม / ประวัติคำร้อง (ตาม Figma) */
+/* กล่องทักทาย พื้นเขียว ตัวอักษรขาว */
+.home-hero {
+  margin: -24px -16px 16px;
+  padding: 20px 20px 22px;
+  color: #fff;
+  background: var(--color-primary);
+}
+.home-hero .page-title { font-size: 22px; line-height: 1.4; }
+.home-hero .page-subtitle { margin-top: 2px; color: rgb(255 255 255 / 85%); }
+
+/* ปุ่มลัด แจ้งซ่อม / ประวัติคำร้อง: ไอคอนบน ชื่อล่าง */
 .home-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 28px;
+  gap: 12px;
+  margin-bottom: 16px;
 }
-
 .action-tile {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 16px;
   min-height: 120px;
-  padding: 20px;
+  padding: 16px;
   color: var(--color-text);
   font-weight: 600;
   font-size: 16px;
-  text-decoration: none;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: 16px;
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
-
-.action-tile:hover {
-  box-shadow: 0 8px 22px rgb(24 52 59 / 9%);
-  transform: translateY(-1px);
-}
-
-.action-tile:focus-visible {
-  outline: 3px solid #7cc9c2;
-  outline-offset: 3px;
-}
-
-.action-tile--primary {
-  color: #fff;
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
+.action-tile:hover { box-shadow: 0 8px 22px rgb(24 52 59 / 9%); transform: translateY(-1px); }
+.action-tile:focus-visible { outline: 3px solid #7cc9c2; outline-offset: 3px; }
+.action-tile--primary { color: #fff; background: var(--color-primary); border-color: var(--color-primary); }
 .action-tile__icon {
   display: grid;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   place-items: center;
-  color: var(--color-primary);
-  font-size: 22px;
-  background: var(--color-primary-light);
-  border-radius: 50%;
+  border-radius: 10px;
 }
+.action-tile--primary .action-tile__icon { color: #fff; background: rgb(255 255 255 / 20%); }
+.action-tile__icon--blue { color: #1d4ed8; background: var(--color-in-progress); }
 
-.action-tile--primary .action-tile__icon {
-  color: #fff;
-  background: rgb(255 255 255 / 20%);
-}
+/* หัวข้อย่อย + ลิงก์ "ดูทั้งหมด" */
+.section-label { margin: 0 0 10px; font-size: 15px; font-weight: 600; }
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+.section-head .section-label { margin: 0; }
+.section-head__link { display: inline-flex; min-height: 44px; align-items: center; color: var(--color-primary); font-weight: 600; font-size: 13px; }
 
-.section-label {
-  margin: 0 0 12px;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-/* สีตัวเลขสรุป ตามสีสถานะ */
+/* สรุป 3 สถานะ: ใช้แบบกลางกล่องจาก style.css */
+.summary-grid { margin-bottom: 16px; }
 #count-pending { color: #a16207; }
 #count-in-progress { color: #1d4ed8; }
 #count-completed { color: #15803d; }
 
+#latest-request > li { list-style: none; }
+#latest-request .request-item__title { padding-right: 4px; }
+
 @media (min-width: 768px) {
-  .page {
-    width: calc(100% - 232px);
-    max-width: 1280px;
-    margin-left: 232px;
-  }
-
-  .page > .page-header {
-    padding: 24px 28px;
-    margin-bottom: 28px;
-    background: var(--color-primary-light);
-    border-radius: 10px;
-  }
-
-  .page > .page-header .eyebrow {
-    margin-bottom: 8px;
-  }
-
-  .page > .page-header .page-title {
-    font-size: 24px;
-    line-height: 1.4;
-  }
-
-  .home-actions {
-    gap: 24px;
-    margin-bottom: 28px;
-  }
-  .action-tile {
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 20px;
-    min-height: 106px;
-    padding: 24px;
-    border-radius: 10px;
-  }
-
-  .action-tile::after {
-    content: "→";
-    margin-left: auto;
-    color: var(--color-primary);
-    font-size: 22px;
-    font-weight: 400;
-  }
-
-  .action-tile--primary::after {
-    color: #fff;
-  }
-
-  .summary-grid {
-    gap: 24px;
-    margin-bottom: 28px;
-  }
-
-  .summary-box {
-    min-height: 128px;
-    padding: 20px 24px;
-    place-content: center start;
-    text-align: left;
-    border-radius: 10px;
-  }
-
-  .summary-box__count {
-    font-size: 32px;
-    line-height: 40px;
-  }
-
-  .summary-box__label {
-    margin-top: 8px;
-    font-size: 13px;
-  }
-
-  .page > .card {
-    margin-top: 28px;
-    padding: 24px;
-    border-radius: 10px;
-    box-shadow: none;
-  }
-}
-
-#latest-request > li {
-  list-style: none;
-}
-
-@media (max-width: 520px) {
-  .home-actions {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 16px;
-  }
-
-  .action-tile {
-    min-height: 88px;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-  }
-
-  .action-tile::after {
-    content: "→";
-    margin-left: auto;
-    color: var(--color-primary);
-  }
-
-  .action-tile--primary::after { color: #fff; }
+  .home-hero { margin: 0 0 16px; padding: 24px 28px; border-radius: 16px; }
+  .home-hero .page-title { font-size: 24px; }
+  .home-actions { gap: 16px; }
+  .action-tile { min-height: 120px; padding: 18px; }
+  .summary-grid { gap: 12px; }
 }

@@ -1,19 +1,18 @@
-    @media (min-width: 768px) {
-      .top-bar {
-        margin-left: 0;
-      }
+/* หน้าส่งคำร้องแจ้งซ่อม — ตาม Figma (แยก 5 การ์ด + คอลัมน์ข้าง "หลังส่งคำร้อง") */
+.form-layout { display: grid; gap: 16px; }
+.form-main, .form-aside { display: grid; gap: 16px; align-content: start; }
+.form-card { margin: 0; }
+.form-card .card__title + .form-group,
+.form-card .card__subtitle + .form-group { margin-top: 16px; }
+.form-main .notice svg, .form-aside .notice svg { flex: 0 0 auto; margin-top: 1px; }
 
-      .page {
-        width: 100%;
-        max-width: 1280px;
-        margin-right: auto;
-        margin-left: auto;
-      }
-    }
-
-    .form-group + .btn-block {
-      margin-top: 20px;
-    }
+/* ช่องเลือกไฟล์ซ่อน ใช้กล่อง dropzone และปุ่ม "จัดการรูปภาพแนบ" แทน */
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.dropzone { gap: 4px; justify-items: center; }
+.dropzone__icon { color: var(--color-primary); }
+#image-count { color: var(--color-text); }
+#image-preview:not(:empty) { margin-top: 12px; }
+#image-preview + template + .btn { margin-top: 12px; }
 
     .form-control--select {
       padding-right: 36px;

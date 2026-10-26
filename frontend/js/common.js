@@ -95,3 +95,13 @@ const userNameEl = document.getElementById("user-name");
 if (userNameEl && localStorage.getItem("fullName")) {
   userNameEl.textContent = localStorage.getItem("fullName");
 }
+
+// 6) ชื่อและห้องที่แถบหัว (มุมขวาบน จอคอม) ตาม Figma
+const headerNameEl = document.getElementById("header-name");
+const headerRoomEl = document.getElementById("header-room");
+if (headerNameEl && localStorage.getItem("fullName")) {
+  headerNameEl.textContent = localStorage.getItem("fullName");
+}
+if (headerRoomEl && localStorage.getItem("roomNumber")) {
+  headerRoomEl.textContent = "ห้อง " + localStorage.getItem("roomNumber");
+}
