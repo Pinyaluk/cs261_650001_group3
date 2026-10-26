@@ -1,0 +1,134 @@
+/* Centered login page matching the supplied reference screenshot. */
+.login-screen {
+  min-height: 100vh;
+  background: #f3f7f7;
+}
+
+.login-hero {
+  display: none !important;
+}
+
+.login-page {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 540px;
+  min-height: auto;
+  margin: 0 auto;
+  padding: 40px 20px 32px;
+}
+
+.login-page .page-header {
+  margin-bottom: 26px;
+}
+
+.login-page .page-header .eyebrow {
+  margin-bottom: 4px;
+  color: #64777d;
+  font-size: 12px;
+}
+
+.login-page .page-title {
+  margin: 0;
+  color: #263e42;
+  font-size: 30px;
+  line-height: 1.4;
+}
+
+.login-page .page-subtitle {
+  margin-top: 4px;
+  color: #64777d;
+  font-size: 14px;
+}
+
+.login-page .card {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #dfe7e8;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgb(24 52 59 / 5%);
+}
+
+.login-page .card__title {
+  margin: 0 0 2px;
+  color: #263e42;
+  font-size: 18px;
+  line-height: 28px;
+}
+
+.login-page .form-group {
+  margin-top: 0;
+  gap: 7px;
+}
+
+.login-page .form-group + .form-group {
+  margin-top: 16px;
+}
+
+.login-page .form-label {
+  color: #263e42;
+  font-size: 13px;
+}
+
+.login-page .form-control {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 49px;
+  padding: 12px;
+  background: #f8fafb;
+  border: 1px solid #dce5e7;
+  border-radius: 10px;
+}
+
+.login-page .checkbox {
+  min-height: 44px;
+  margin-top: 2px;
+  color: #64777d;
+  font-size: 13px;
+}
+
+.login-page .btn-block {
+  width: 100%;
+  min-height: 47px;
+  border-radius: 10px;
+  background: #3b817b;
+}
+
+.login-page .link {
+  min-height: 44px;
+  color: #3b817b;
+  font-size: 13px;
+}
+
+.login-page .footer-note {
+  margin-top: 24px;
+  color: #64777d;
+  text-align: center;
+}
+
+.login-page .footer-note strong {
+  color: #64777d;
+  font-weight: 600;
+}
+
+@media (max-width: 767px) {
+  .login-page {
+    max-width: 540px;
+    padding: 32px 20px 24px;
+  }
+
+  .login-page .page-title {
+    font-size: 28px;
+  }
+
+  .login-page .card {
+    padding: 20px;
+  }
+
+  /* Keep the centered login layout on mobile; hide the split-screen hero. */
+  .login-hero,
+  .login-hero__description,
+  .login-hero__illustration,
+  .login-hero__footer { display: none !important; }
+}
