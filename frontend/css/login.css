@@ -65,4 +65,14 @@
 @media (max-width: 767px) {
   .login-page { width: 100%; max-width: 560px; margin: 0 auto; padding: 32px 20px; }
   .login-page .footer-note { margin-top: 28px; }
+
+  /* มือถือ: แถบสีเขียวเข้มด้านบน มีชื่อหอ + สโลแกน ตาม Figma (ไม่แสดงรูปตึก) */
+  .login-hero { display: block; padding: 28px 20px 32px; color: #fff; background: #103f40; }
+  .login-hero__brand { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; }
+  .login-hero__home { display: grid; width: 26px; height: 26px; place-items: center; border: 1.8px solid currentColor; border-radius: 6px; font-size: 20px; line-height: 1; }
+  .login-hero__eyebrow { margin: 14px 0 10px; color: #b6d2d0; font-size: 12px; }
+  .login-hero__title { margin: 0; font-size: 26px; line-height: 1.45; font-weight: 700; }
+  .login-hero__description,
+  .login-hero__illustration,
+  .login-hero__footer { display: none; }
 }
