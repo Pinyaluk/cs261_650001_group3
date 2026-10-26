@@ -1,11 +1,12 @@
-/* Centered login page matching the supplied reference screenshot. */
+/* Login page styling: split layout on desktop, compact branded header on mobile. */
 .login-screen {
   min-height: 100vh;
-  background: #f3f7f7;
+  background: #fff;
 }
 
+/* The hero is hidden on desktop, but must be allowed to display on mobile. */
 .login-hero {
-  display: none !important;
+  display: none;
 }
 
 .login-page {
@@ -112,7 +113,136 @@
   font-weight: 600;
 }
 
+
+/* Desktop: branded hero on the left and login form on the right. */
+@media (min-width: 768px) {
+  .login-screen {
+    display: grid;
+    grid-template-columns: 47.2% minmax(0, 1fr);
+    min-height: 100vh;
+    background: #fff;
+  }
+
+  .login-hero {
+    position: relative;
+    display: flex;
+    grid-column: 1;
+    grid-row: 1;
+    flex-direction: column;
+    padding: 64px clamp(36px, 4.5vw, 68px) 48px;
+    color: #fff;
+    background: #103f40;
+  }
+
+  .login-hero__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .login-hero__home {
+    display: grid;
+    width: 26px;
+    height: 26px;
+    place-items: center;
+    border: 1.8px solid currentColor;
+    border-radius: 6px;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .login-hero__eyebrow {
+    margin: 14px 0 10px;
+    color: #b6d2d0;
+    font-size: 12px;
+  }
+
+  .login-hero__title {
+    margin: 0;
+    font-size: 32px;
+    line-height: 1.4;
+    font-weight: 700;
+  }
+
+  .login-hero__description {
+    margin-top: 14px;
+    color: #d6e5e4;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .login-hero__illustration {
+    margin-top: 28px;
+  }
+
+  .login-hero__footer {
+    margin-top: auto;
+    padding-top: 28px;
+    color: #b6d2d0;
+    font-size: 13px;
+  }
+
+  .login-page {
+    grid-column: 2;
+    grid-row: 1;
+    width: 100%;
+    max-width: 560px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 32px 32px 24px;
+    align-content: center;
+  }
+}
+
+/* Mobile: show the branded green header and use tighter spacing. */
 @media (max-width: 767px) {
+  .login-hero {
+    display: block;
+    padding: 28px 20px 32px;
+    color: #fff;
+    background: #103f40;
+  }
+
+  .login-hero__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .login-hero__home {
+    display: grid;
+    width: 26px;
+    height: 26px;
+    place-items: center;
+    border: 1.8px solid currentColor;
+    border-radius: 6px;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .login-hero__eyebrow {
+    margin: 14px 0 10px;
+    color: #b6d2d0;
+    font-size: 12px;
+  }
+
+  .login-hero__title {
+    margin: 0;
+    font-size: 26px;
+    line-height: 1.45;
+    font-weight: 700;
+  }
+
+  .login-hero__description,
+  .login-hero__illustration,
+  .login-hero__footer {
+    display: none;
+  }
+
   .login-page {
     max-width: 540px;
     padding: 32px 20px 24px;

@@ -798,12 +798,13 @@ textarea.form-control {
 .sidebar-logout:hover { color: #fff; background: #c0392b; }
 
 @media (max-width: 767px) {
-  .has-desktop-shell:not(.home-screen) > .app-header,
-  .has-desktop-shell:not(.home-screen) > .tab-nav { display: none; }
-  .has-desktop-shell.home-screen .sidebar-label,
-  .has-desktop-shell.home-screen .tab-nav__item--secondary,
-  .app-header__user { font-size: 12px; }
-  .app-header__avatar { width: 32px; height: 32px; }
+  /* Task 26: มือถือ — หัว + แท็บติดด้านบนทุกหน้า และปุ่มออกจากระบบอยู่มุมขวาบนตาม Figma */
+  .has-desktop-shell > .app-header { position: sticky; top: 0; z-index: 99; }
+  .has-desktop-shell > .tab-nav { position: sticky; top: 72px; z-index: 100; }
+  .has-desktop-shell > .top-bar { display: none; }
+  .has-desktop-shell .sidebar-label,
+  .has-desktop-shell .app-header__user { display: none; }
+  .has-desktop-shell .sidebar-logout { position: fixed; top: 14px; right: 16px; z-index: 101; min-height: 44px; padding: 0 14px; font-size: 13px; }
   .tab-nav__item { flex: 1 0 auto; justify-content: center; }
 }
 
