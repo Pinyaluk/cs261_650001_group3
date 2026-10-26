@@ -235,20 +235,36 @@ INSERT INTO request_status_history (request_id, status, note, changed_by, ...) V
     "status": "PENDING",
     "technicianName": null,
     "createdAt": "2026-10-12T10:00:00",
-    "updatedAt": "2026-10-12T10:00:00"
+    "updatedAt": "2026-10-12T10:00:00",
+    "urgency": "NORMAL",
+    "locationType": "ROOM",
+    "building": "อาคาร A",
+    "locationDetail": "ชั้น 3 · ห้อง 305",
+    "appointmentDateTime": null
   },
   {
     "requestId": 1019,
     "title": "ก๊อกน้ำอ่างล้างหน้ารั่ว",
     "category": "PLUMBING",
     "status": "IN_PROGRESS",
-    "technicianName": "วิชัย สายลม",
+    "technicianName": "ชาญชัย ท่อน้ำดี",
     "createdAt": "2026-10-10T08:40:00",
-    "updatedAt": "2026-10-10T09:15:00"
+    "updatedAt": "2026-10-10T09:15:00",
+    "urgency": "URGENT",
+    "locationType": "ROOM",
+    "building": "อาคาร A",
+    "locationDetail": "ชั้น 3 · ห้อง 305",
+    "appointmentDateTime": "2026-11-30T13:00:00"
   }
 ]
 ```
 `technicianName` เป็น `null` เมื่อยังไม่มอบหมายช่าง
+
+| ฟิลด์ | หมายเหตุ |
+|---|---|
+| `urgency` | ... |
+| `locationType`, `building`, `locationDetail` | ... |
+| `appointmentDateTime` | ... |
 
 **Error**
 | Status | กรณี | message |
