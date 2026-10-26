@@ -1,78 +1,83 @@
-/* Login page styling: split layout on desktop, compact branded header on mobile. */
+/* Centered login page layout matching the supplied Figma reference. */
 .login-screen {
   min-height: 100vh;
-  background: #fff;
+  background: #f3f7f8;
 }
 
-/* The hero is hidden on desktop, but must be allowed to display on mobile. */
-.login-hero {
-  display: none;
-}
-
-.login-page {
+.login-screen .login-page {
   box-sizing: border-box;
+  display: block;
   width: 100%;
-  max-width: 540px;
-  min-height: auto;
+  max-width: 760px;
+  min-height: 100vh;
   margin: 0 auto;
-  padding: 40px 20px 32px;
+  padding: 40px 16px 32px;
 }
 
-.login-page .page-header {
+.login-screen .login-page .page-header,
+.login-screen .login-page .login-card,
+.login-screen .login-page > .footer-note {
+  width: 100%;
+  max-width: 498px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.login-screen .login-page .page-header {
   margin-bottom: 26px;
+  text-align: left;
 }
 
-.login-page .page-header .eyebrow {
-  margin-bottom: 4px;
+.login-screen .login-page .page-header .eyebrow {
+  margin-bottom: 6px;
   color: #64777d;
   font-size: 12px;
 }
 
-.login-page .page-title {
+.login-screen .login-page .page-title {
   margin: 0;
   color: #263e42;
   font-size: 30px;
   line-height: 1.4;
 }
 
-.login-page .page-subtitle {
-  margin-top: 4px;
+.login-screen .login-page .page-subtitle {
+  margin-top: 6px;
   color: #64777d;
   font-size: 14px;
 }
 
-.login-page .card {
+.login-screen .login-page .login-card {
   box-sizing: border-box;
-  width: 100%;
-  padding: 20px;
+  padding: 22px 20px 24px;
   background: #fff;
   border: 1px solid #dfe7e8;
   border-radius: 16px;
   box-shadow: 0 8px 24px rgb(24 52 59 / 5%);
 }
 
-.login-page .card__title {
+.login-screen .login-page .card__title {
   margin: 0 0 2px;
   color: #263e42;
   font-size: 18px;
   line-height: 28px;
 }
 
-.login-page .form-group {
+.login-screen .login-page .form-group {
   margin-top: 0;
   gap: 7px;
 }
 
-.login-page .form-group + .form-group {
+.login-screen .login-page .form-group + .form-group {
   margin-top: 16px;
 }
 
-.login-page .form-label {
+.login-screen .login-page .form-label {
   color: #263e42;
   font-size: 13px;
 }
 
-.login-page .form-control {
+.login-screen .login-page .form-control {
   box-sizing: border-box;
   width: 100%;
   min-height: 49px;
@@ -82,177 +87,38 @@
   border-radius: 10px;
 }
 
-.login-page .checkbox {
+.login-screen .login-page .checkbox {
   min-height: 44px;
   margin-top: 2px;
   color: #64777d;
   font-size: 13px;
 }
 
-.login-page .btn-block {
+.login-screen .login-page .btn-block {
   width: 100%;
   min-height: 47px;
   border-radius: 10px;
   background: #3b817b;
 }
 
-.login-page .link {
+.login-screen .login-page .link {
   min-height: 44px;
   color: #3b817b;
   font-size: 13px;
 }
 
-.login-page .footer-note {
+.login-screen .login-page > .footer-note {
   margin-top: 24px;
   color: #64777d;
   text-align: center;
 }
 
-.login-page .footer-note strong {
-  color: #64777d;
-  font-weight: 600;
-}
-
-
-/* Desktop: branded hero on the left and login form on the right. */
-@media (min-width: 768px) {
-  .login-screen {
-    display: grid;
-    grid-template-columns: 47.2% minmax(0, 1fr);
-    min-height: 100vh;
-    background: #fff;
+@media (max-width: 480px) {
+  .login-screen .login-page {
+    padding: 24px 16px;
   }
 
-  .login-hero {
-    position: relative;
-    display: flex;
-    grid-column: 1;
-    grid-row: 1;
-    flex-direction: column;
-    padding: 64px clamp(36px, 4.5vw, 68px) 48px;
-    color: #fff;
-    background: #103f40;
-  }
-
-  .login-hero__brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 18px;
-    font-weight: 700;
-  }
-
-  .login-hero__home {
-    display: grid;
-    width: 26px;
-    height: 26px;
-    place-items: center;
-    border: 1.8px solid currentColor;
-    border-radius: 6px;
-    font-size: 20px;
-    line-height: 1;
-  }
-
-  .login-hero__eyebrow {
-    margin: 14px 0 10px;
-    color: #b6d2d0;
-    font-size: 12px;
-  }
-
-  .login-hero__title {
-    margin: 0;
-    font-size: 32px;
-    line-height: 1.4;
-    font-weight: 700;
-  }
-
-  .login-hero__description {
-    margin-top: 14px;
-    color: #d6e5e4;
-    font-size: 15px;
-    line-height: 1.7;
-  }
-
-  .login-hero__illustration {
-    margin-top: 28px;
-  }
-
-  .login-hero__footer {
-    margin-top: auto;
-    padding-top: 28px;
-    color: #b6d2d0;
-    font-size: 13px;
-  }
-
-  .login-page {
-    grid-column: 2;
-    grid-row: 1;
-    width: 100%;
-    max-width: 560px;
-    min-height: 100vh;
-    margin: 0 auto;
-    padding: 32px 32px 24px;
-    align-content: center;
-  }
-}
-
-/* Mobile: show the branded green header and use tighter spacing. */
-@media (max-width: 767px) {
-  .login-hero {
-    display: block;
-    padding: 28px 20px 32px;
-    color: #fff;
-    background: #103f40;
-  }
-
-  .login-hero__brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 18px;
-    font-weight: 700;
-  }
-
-  .login-hero__home {
-    display: grid;
-    width: 26px;
-    height: 26px;
-    place-items: center;
-    border: 1.8px solid currentColor;
-    border-radius: 6px;
-    font-size: 20px;
-    line-height: 1;
-  }
-
-  .login-hero__eyebrow {
-    margin: 14px 0 10px;
-    color: #b6d2d0;
-    font-size: 12px;
-  }
-
-  .login-hero__title {
-    margin: 0;
-    font-size: 26px;
-    line-height: 1.45;
-    font-weight: 700;
-  }
-
-  .login-hero__description,
-  .login-hero__illustration,
-  .login-hero__footer {
-    display: none;
-  }
-
-  .login-page {
-    max-width: 540px;
-    padding: 32px 20px 24px;
-  }
-
-  .login-page .page-title {
-    font-size: 28px;
-  }
-
-  .login-page .card {
-    padding: 20px;
+  .login-screen .login-page .login-card {
+    padding: 20px 16px;
   }
 }
