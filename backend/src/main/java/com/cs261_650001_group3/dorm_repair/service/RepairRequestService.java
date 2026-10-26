@@ -166,7 +166,12 @@ public class RepairRequestService {
                 r.getStatus().name(),
                 tech != null ? tech.getFullName() : null,
                 r.getCreatedAt(),
-                r.getUpdatedAt()
+                r.getUpdatedAt(),
+                r.getUrgency() != null ? r.getUrgency().name() : null,
+                r.getLocationType() != null ? r.getLocationType().name() : null,
+                r.getBuilding(),
+                r.getLocationDetail(),
+                r.getAppointmentDateTime()
         );
     }
 
