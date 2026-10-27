@@ -1,6 +1,7 @@
 package com.cs261_650001_group3.dorm_repair.service;
 
 import com.cs261_650001_group3.dorm_repair.dto.LoginResponseDTO;
+import com.cs261_650001_group3.dorm_repair.entity.Role;
 import com.cs261_650001_group3.dorm_repair.entity.User;
 import com.cs261_650001_group3.dorm_repair.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -58,6 +59,23 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "กรุณาเข้าสู่ระบบใหม่");
         }
         return userId;
+    }
+
+    /**
+     * Sprint 2 (U4–U8): ตรวจ token แล้วเช็กบทบาท
+     * ไม่มี token หรือหมดอายุ → 401 / บทบาทไม่อยู่ในรายการที่อนุญาต → 403
+     * คืน User เพราะบาง API ต้องรู้ทั้ง id และ role (เช่น ช่างดูได้เฉพาะงานของตัวเอง)
+     */
+    public User requireRole(String authHeader, Role... allowedRoles) {
+        Long userId = requireUserId(authHeader);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "กรุณาเข้าสู่ระบบใหม่"));
+        for (Role role : allowedRoles) {
+            if (user.getRole() == role) {
+                return user;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ไม่มีสิทธิ์เข้าถึง");
     }
 
     private static String extractToken(String authHeader) {
