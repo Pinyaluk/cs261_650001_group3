@@ -1,7 +1,13 @@
 package com.cs261_650001_group3.dorm_repair.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,11 +18,17 @@ import com.cs261_650001_group3.dorm_repair.dto.ContactDTO;
 import com.cs261_650001_group3.dorm_repair.dto.CreateRepairRequestDTO; 
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestResponseDTO;
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestSummaryDTO;
+import com.cs261_650001_group3.dorm_repair.dto.PageResponseDTO;
+import com.cs261_650001_group3.dorm_repair.dto.StaffRequestDetailDTO;
+import com.cs261_650001_group3.dorm_repair.dto.StaffRequestSummaryDTO;
 import com.cs261_650001_group3.dorm_repair.dto.StatusHistoryDTO;
 import com.cs261_650001_group3.dorm_repair.entity.ImageType;
 import com.cs261_650001_group3.dorm_repair.entity.RepairRequest;
 import com.cs261_650001_group3.dorm_repair.entity.RequestImage;
 import com.cs261_650001_group3.dorm_repair.entity.RequestStatus;
+import com.cs261_650001_group3.dorm_repair.entity.RequestStatusHistory;
+import com.cs261_650001_group3.dorm_repair.entity.Role;
+import com.cs261_650001_group3.dorm_repair.entity.TimeSlot;
 import com.cs261_650001_group3.dorm_repair.entity.User;
 import com.cs261_650001_group3.dorm_repair.repository.RepairRequestRepository;
 import com.cs261_650001_group3.dorm_repair.repository.UserRepository;
@@ -154,6 +166,138 @@ public class RepairRequestService {
         RepairRequest r = repairRequestRepository.findByRequestIdAndResidentUserId(requestId, userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ไม่พบคำร้องนี้"));
         return toResponse(r);
+    }
+
+    // ---------- U4: เจ้าหน้าที่ตรวจสอบคำร้อง (Task42) ----------
+
+    /** ขนาดหน้าสูงสุด กันเรียกทีเดียวทั้งตาราง */
+    private static final int MAX_PAGE_SIZE = 50;
+
+    /**
+     * GET /api/staff/repair-requests : รายการคำร้องทั้งหมดแบบแบ่งหน้า
+     * status = null → ทุกสถานะ / เรียงงานเร่งด่วนขึ้นก่อน แล้วตามด้วยคำร้องล่าสุด
+     * (urgency เก็บเป็นข้อความ "URGENT" > "NORMAL" จึงเรียง DESC ได้เลย)
+     * page < 0 หรือ size ไม่อยู่ในช่วง 1–50 → 400
+     */
+    @Transactional(readOnly = true)
+    public PageResponseDTO<StaffRequestSummaryDTO> getStaffRequests(RequestStatus status, int page, int size) {
+        if (page < 0 || size < 1 || size > MAX_PAGE_SIZE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "page ต้องไม่ติดลบ และ size ต้องอยู่ระหว่าง 1–" + MAX_PAGE_SIZE);
+        }
+        Pageable pageable = PageRequest.of(page, size,
+                Sort.by(Sort.Order.desc("urgency"), Sort.Order.desc("createdAt"), Sort.Order.desc("requestId")));
+
+        Page<RepairRequest> result = (status == null)
+                ? repairRequestRepository.findAll(pageable)
+                : repairRequestRepository.findByStatus(status, pageable);
+
+        return PageResponseDTO.of(result.map(this::toStaffSummary));
+    }
+
+    /**
+     * GET /api/staff/repair-requests/{id} : รายละเอียดคำร้องสำหรับเจ้าหน้าที่ (และช่าง U7)
+     * ไม่พบ → 404 / ช่างเปิดงานที่ไม่ได้รับมอบหมาย → 403 (เจ้าหน้าที่ดูได้ทุกใบ)
+     */
+    @Transactional(readOnly = true)
+    public StaffRequestDetailDTO getStaffRequestDetail(Long requestId, User viewer) {
+        RepairRequest r = repairRequestRepository.findById(requestId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ไม่พบคำร้อง"));
+
+        if (viewer.getRole() == Role.TECHNICIAN) {
+            User tech = r.getTechnician();
+            if (tech == null || !tech.getUserId().equals(viewer.getUserId())) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ไม่มีสิทธิ์ดูคำร้องนี้");
+            }
+        }
+        return toStaffDetail(r);
+    }
+
+    private StaffRequestSummaryDTO toStaffSummary(RepairRequest r) {
+        User resident = r.getResident();
+        return new StaffRequestSummaryDTO(
+                r.getRequestId(),
+                r.getTitle(),
+                r.getCategory().name(),
+                r.getLocationType().name(),
+                r.getBuilding(),
+                r.getLocationDetail(),
+                resident.getFullName(),
+                reporterPhone(r),
+                r.getStatus().name(),
+                r.getUrgency().name(),
+                r.getCreatedAt()
+        );
+    }
+
+    private StaffRequestDetailDTO toStaffDetail(RepairRequest r) {
+        User tech = r.getTechnician();
+        ContactDTO technician = (tech != null) ? new ContactDTO(tech.getFullName(), tech.getPhone()) : null;
+
+        LocalDateTime appt = r.getAppointmentDateTime();
+        LocalDate appointmentDate = (appt != null) ? appt.toLocalDate() : null;
+        String appointmentSlot = (appt == null) ? null
+                : (appt.getHour() < TimeSlot.AFTERNOON.getStartHour() ? TimeSlot.MORNING : TimeSlot.AFTERNOON).name();
+
+        // ผลการซ่อมและเวลาที่เสร็จ = ประวัติ COMPLETED ล่าสุด (ไม่มีคอลัมน์แยกใน DB)
+        RequestStatusHistory completed = null;
+        for (RequestStatusHistory h : r.getStatusHistory()) {
+            if (h.getStatus() == RequestStatus.COMPLETED) {
+                completed = h;
+            }
+        }
+
+        return new StaffRequestDetailDTO(
+                r.getRequestId(),
+                r.getTitle(),
+                r.getCategory().name(),
+                r.getLocationType().name(),
+                r.getBuilding(),
+                r.getLocationDetail(),
+                r.getResident().getFullName(),
+                reporterPhone(r),
+                r.getLineId(),
+                r.getDescription(),
+                r.getPreferredDate1(),
+                r.getPreferredSlot1().name(),
+                r.getPreferredDate2(),
+                r.getPreferredSlot2() != null ? r.getPreferredSlot2().name() : null,
+                r.getUrgency().name(),
+                r.getStatus().name(),
+                technician,
+                appointmentDate,
+                appointmentSlot,
+                r.getAppointmentNote(),
+                completed != null ? completed.getNote() : null,
+                completed != null ? completed.getChangedAt() : null,
+                imageUrls(r, ImageType.BEFORE),
+                imageUrls(r, ImageType.AFTER),
+                toHistoryDTOs(r),
+                r.getCreatedAt()
+        );
+    }
+
+    /** เบอร์ที่ผู้แจ้งกรอกในฟอร์ม (ติดต่อกลับได้แน่นอน) ถ้าว่างใช้เบอร์ในบัญชี */
+    private static String reporterPhone(RepairRequest r) {
+        String phone = r.getContactPhone();
+        return (phone != null && !phone.isBlank()) ? phone : r.getResident().getPhone();
+    }
+
+    private static List<String> imageUrls(RepairRequest r, ImageType type) {
+        return r.getImages().stream()
+                .filter(img -> img.getImageType() == type)
+                .map(RequestImage::getFilePath)
+                .toList();
+    }
+
+    private static List<StatusHistoryDTO> toHistoryDTOs(RepairRequest r) {
+        return r.getStatusHistory().stream()
+                .map(h -> new StatusHistoryDTO(
+                        h.getStatus().name(),
+                        h.getNote(),
+                        h.getChangedAt(),
+                        h.getChangedBy().getFullName()))
+                .toList();
     }
 
     // ---------- แปลง Entity → DTO ----------

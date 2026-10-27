@@ -59,6 +59,8 @@ Response (200 OK)
   - size (optional, default: 10)
   - status (optional: PENDING / IN_PROGRESS / COMPLETED)
 - Description: ดึงรายการคำร้องทั้งหมดสำหรับเจ้าหน้าที่แบบแบ่งหน้า พร้อมแสดงข้อมูลสถานที่และผู้แจ้งตาม UI ใน Figma
+- Sorting: งาน URGENT ขึ้นก่อน แล้วเรียงคำร้องล่าสุดก่อน (createdAt DESC)
+- Error: ไม่มี token → 401 / ไม่ใช่ STAFF → 403 / status ไม่ถูกต้อง, page ติดลบ หรือ size ไม่อยู่ใน 1–50 → 400
 
 Response (200 OK)
 {
@@ -167,6 +169,13 @@ Response (200 OK)
   ],
   "createdAt": "2026-10-18T10:00:00"
 }
+
+หมายเหตุการ map ข้อมูล (Task42):
+- reporterPhone = เบอร์ที่ผู้แจ้งกรอกในฟอร์ม (contact_phone) ถ้าว่างใช้เบอร์ในบัญชีผู้ใช้
+- appointmentDate / appointmentSlot แยกจาก appointment_datetime (เวลาก่อน 13:00 = MORNING, ตั้งแต่ 13:00 = AFTERNOON) ยังไม่มอบหมาย = null
+- repairResult / completedAt = note และ changed_at ของแถวประวัติสถานะ COMPLETED ล่าสุด (ไม่มีคอลัมน์แยกใน DB) ยังไม่เสร็จ = null
+  → API U8 (2.7) ต้องบันทึก repairResult เป็น note ของประวัติสถานะ COMPLETED
+- imageUrls = รูป BEFORE, afterImageUrls = รูป AFTER
 
 Error Responses (2.3 Specific Cases):
 - 403 Forbidden: ช่างพยายามเข้าดูรายละเอียดคำร้องที่ไม่ใช่คำร้องที่ตนเองได้รับมอบหมาย
