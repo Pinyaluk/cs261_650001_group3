@@ -326,6 +326,15 @@ class RepairRequestRepositoryTest {
         rDone.setAppointmentDateTime(LocalDateTime.of(2026, 11, 29, 14, 0));
         em.persist(rDone);
 
+        // สร้างงาน rOther ของช่างคนอื่น (tech01): IN_PROGRESS ต้องไม่ติดมาใน assigned jobs ของ tech03
+        RepairRequest rOther = new RepairRequest(d.u1, LocationType.ROOM, "อาคาร A", "ชั้น 1",
+                RepairCategory.ELECTRICAL, "ไฟกะพริบ", "ไฟกะพริบตลอด",
+                LocalDate.of(2026, 11, 29), TimeSlot.MORNING, "081-123-4567");
+        rOther.setStatus(RequestStatus.IN_PROGRESS);
+        rOther.assignTechnician(d.tech01);
+        rOther.setAppointmentDateTime(LocalDateTime.of(2026, 11, 29, 9, 0));
+        em.persist(rOther);
+
         em.flush();
         em.clear();
 
