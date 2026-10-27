@@ -7,59 +7,73 @@
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/home.css">
 </head>
-<body>
+<body class="has-desktop-shell home-screen">
 
   <header class="app-header">
-    <div>
-      <p class="app-header__brand">ระบบแจ้งซ่อมหอพัก</p>
-      <p class="app-header__role">ผู้พักอาศัย</p>
+    <div class="app-header__identity">
+      <span class="app-header__logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></span>
+      <div>
+        <p class="app-header__brand">หอพักอุ่นใจ</p>
+        <p class="app-header__role">ผู้พักอาศัย</p>
+      </div>
     </div>
-    <button class="btn btn-outline" id="logout-btn" type="button">ออกจากระบบ</button>
+    <div class="app-header__user" aria-label="บัญชีผู้พักอาศัย">
+      <span class="app-header__avatar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span>
+      <span class="app-header__account">
+        <span class="app-header__name" id="header-name">ผู้พักอาศัย</span>
+        <span class="app-header__room" id="header-room"></span>
+      </span>
+    </div>
   </header>
-  <nav class="tab-nav" aria-label="เมนูหลัก">
-    <a class="tab-nav__item is-active" href="home.html">หน้าหลัก</a>
-    <a class="tab-nav__item" href="repair-form.html">แจ้งซ่อม</a>
-    <a class="tab-nav__item" href="history.html">ประวัติคำร้อง</a>
+  <nav class="tab-nav" aria-label="เมนูผู้พักอาศัย">
+    <p class="sidebar-label">เมนูสำหรับผู้พักอาศัย</p>
+    <a class="tab-nav__item is-active" href="home.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span><span>หน้าหลัก</span></a>
+    <a class="tab-nav__item" href="repair-form.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg></span><span>แจ้งซ่อม</span></a>
+    <a class="tab-nav__item" href="history.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg></span><span>ประวัติคำร้อง</span></a>
+    <div class="sidebar-help">
+      <p class="sidebar-help__title">ต้องการความช่วยเหลือ?</p>
+      <p class="sidebar-help__text">ติดต่อสำนักงานหอพัก</p>
+      <a class="sidebar-help__phone" href="tel:025550180">02-555-0180</a>
+    </div>
+    <button class="btn sidebar-logout" id="logout-btn" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg> ออกจากระบบ</button>
   </nav>
   <main class="page">
-    <header class="page-header">
-      <p class="eyebrow">หน้าหลัก</p>
+    <header class="page-header home-hero">
       <h1 class="page-title">สวัสดี คุณ<span id="user-name">สมชาย</span></h1>
-      <p class="page-subtitle">ห้อง <span id="user-room">A-305</span></p>
+      <p class="page-subtitle">ห้อง <span id="user-room">A-305</span> · ผู้พักอาศัย</p>
     </header>
 
-        <nav class="home-actions" aria-label="เมนูลัด">
+    <nav class="home-actions" aria-label="เมนูลัด">
       <a class="action-tile action-tile--primary" id="new-request-link" href="repair-form.html">
-        <span class="action-tile__icon" aria-hidden="true">+</span>
+        <span class="action-tile__icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>
         แจ้งซ่อม
       </a>
       <a class="action-tile" id="history-link" href="history.html">
-        <span class="action-tile__icon" aria-hidden="true">☰</span>
+        <span class="action-tile__icon action-tile__icon--blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg></span>
         ประวัติคำร้อง
       </a>
     </nav>
 
     <h2 class="section-label">สรุปคำร้องของฉัน</h2>
     <section class="summary-grid" aria-label="สรุปคำร้องของฉัน">
-      <article class="summary-box"><p class="summary-box__count" id="count-pending">1</p><p class="summary-box__label">รอรับเรื่อง</p></article>
-      <article class="summary-box"><p class="summary-box__count" id="count-in-progress">1</p><p class="summary-box__label">กำลังดำเนินการ</p></article>
-      <article class="summary-box"><p class="summary-box__count" id="count-completed">2</p><p class="summary-box__label">เสร็จสิ้น</p></article>
+      <article class="summary-box"><p class="summary-box__count" id="count-pending">0</p><p class="summary-box__label">รอรับเรื่อง</p></article>
+      <article class="summary-box"><p class="summary-box__count" id="count-in-progress">0</p><p class="summary-box__label">กำลังดำเนินการ</p></article>
+      <article class="summary-box"><p class="summary-box__count" id="count-completed">0</p><p class="summary-box__label">เสร็จสิ้น</p></article>
     </section>
 
-    <section class="card">
-      <h2 class="card__title">คำร้องล่าสุด</h2>
-      <div id="latest-request">
-        <a class="request-item" href="request-check.html">
-          <div>
-            <h3 class="request-item__title">เครื่องปรับอากาศมีน้ำหยด</h3>
-            <p class="request-item__meta">#1024 · ห้อง A-305 · 12/10/2569</p>
-          </div>
-          <span class="badge badge--pending">รอรับเรื่อง</span>
-        </a>
-      </div>
-      <a class="link" id="latest-detail-link" href="request-check.html">รายละเอียดคำร้อง &gt;</a>
-    </section>
-
+    <div class="section-head">
+      <h2 class="section-label">คำร้องล่าสุด</h2>
+      <a class="section-head__link" id="all-requests-link" href="history.html">ดูทั้งหมด ›</a>
+    </div>
+    <div id="latest-request">
+      <a class="request-item" href="request-check.html">
+        <div>
+          <h3 class="request-item__title">ไฟห้องน้ำดับ</h3>
+          <p class="request-item__meta">#1024 · ไฟฟ้า · แจ้งเมื่อ 12/10/2569</p>
+        </div>
+        <span class="badge badge--pending">รอรับเรื่อง</span>
+      </a>
+    </div>
     <template id="request-item-template">
       <li>
         <a class="request-item" data-field="link" href="request-check.html">

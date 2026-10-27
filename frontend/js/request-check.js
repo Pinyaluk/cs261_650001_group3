@@ -69,13 +69,15 @@ function renderRequest(r) {
     slotText(r.preferredDate1, r.preferredSlot1),
     slotText(r.preferredDate2, r.preferredSlot2)
   ].filter(Boolean);
-  setText("preferred-times", times.length ? times.join(" / ") : "-");
+  setText("preferred-times", times.length ? times.join("\n") : "-"); // แยกบรรทัดละช่วงตาม Figma
 
   const name = localStorage.getItem("fullName") || "";
   const line = r.lineId ? ` · LINE ${r.lineId}` : "";
   setText("contact-info", (`${name} ${r.contactPhone || ""}`.trim() + line) || "-");
 
   renderImages(r.imageUrls);
+  const imageCount = (r.imageUrls || []).length;
+  setText("image-count", imageCount ? `(${imageCount} รูป)` : "");
 
   const detailLink = document.getElementById("detail-link");
   if (detailLink) detailLink.href = "request-detail.html?id=" + encodeURIComponent(r.requestId);

@@ -7,7 +7,36 @@
   <link rel="stylesheet" href="../css/style.css">
   	<link rel="stylesheet" href="../css/request-check.css">
 </head>
-<body>
+<body class="has-desktop-shell">
+
+  <header class="app-header">
+    <div class="app-header__identity">
+      <span class="app-header__logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg></span>
+      <div>
+        <p class="app-header__brand">หอพักอุ่นใจ</p>
+        <p class="app-header__role">ผู้พักอาศัย</p>
+      </div>
+    </div>
+    <div class="app-header__user" aria-label="บัญชีผู้พักอาศัย">
+      <span class="app-header__avatar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span>
+      <span class="app-header__account">
+        <span class="app-header__name" id="header-name">ผู้พักอาศัย</span>
+        <span class="app-header__room" id="header-room"></span>
+      </span>
+    </div>
+  </header>
+  <nav class="tab-nav" aria-label="เมนูผู้พักอาศัย">
+    <p class="sidebar-label">เมนูสำหรับผู้พักอาศัย</p>
+    <a class="tab-nav__item" href="home.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></span><span>หน้าหลัก</span></a>
+    <a class="tab-nav__item" href="repair-form.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg></span><span>แจ้งซ่อม</span></a>
+    <a class="tab-nav__item is-active" href="history.html"><span class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg></span><span>ประวัติคำร้อง</span></a>
+    <div class="sidebar-help">
+      <p class="sidebar-help__title">ต้องการความช่วยเหลือ?</p>
+      <p class="sidebar-help__text">ติดต่อสำนักงานหอพัก</p>
+      <a class="sidebar-help__phone" href="tel:025550180">02-555-0180</a>
+    </div>
+    <button class="btn sidebar-logout" id="logout-btn" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg> ออกจากระบบ</button>
+  </nav>
 
   <header class="top-bar">
     <a class="back-btn" href="history.html" aria-label="กลับไปหน้าประวัติคำร้อง">←</a>
@@ -35,20 +64,21 @@
         <div><dt class="info-list__label">อุปกรณ์ที่ชำรุด</dt><dd class="info-list__value" id="equipment">เครื่องปรับอากาศ</dd></div>
         <div><dt class="info-list__label">รายละเอียดปัญหาจากผู้แจ้ง</dt><dd class="info-list__value" id="description">มีน้ำหยดจากเครื่องปรับอากาศ</dd></div>
       </dl>
-      <h3 class="check-section-title">รูปภาพประกอบ</h3>
+      <h3 class="check-section-title">รูปภาพประกอบ <span id="image-count"></span></h3>
       <div class="image-grid" id="image-list">
         <figure class="image-thumb"><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="ตัวอย่างรูปที่แนบ"><figcaption class="image-thumb__caption">รูปประกอบคำร้อง</figcaption></figure>
       </div>
       <hr class="divider">
       <dl class="info-list">
-        <div><dt class="info-list__label">ช่วงเวลาที่สะดวกให้เข้าห้อง</dt><dd class="info-list__value" id="preferred-times">13/10/2569 · 09:00–12:00</dd></div>
+        <div><dt class="info-list__label">ช่วงเวลาที่สะดวกให้เข้าห้อง</dt><dd class="info-list__value" id="preferred-times">13/10/2569 · 09:00–12:00</dd>
+          <p class="form-hint check-hint">เป็นเวลาที่ผู้พักอาศัยเสนอ ยังไม่ใช่วันนัดจนกว่าจะตกลงร่วมกัน</p></div>
         <div><dt class="info-list__label">ผู้แจ้งและเบอร์ติดต่อที่ระบุไว้</dt><dd class="info-list__value" id="contact-info">081-234-5678</dd></div>
       </dl>
     </section>
 
-    <div class="notice notice--info check-notice"><span>ความเร่งด่วนและช่างผู้รับผิดชอบกำหนดโดยเจ้าหน้าที่ หากข้อมูลสถานที่หรือเวลาที่สะดวกเปลี่ยน กรุณาติดต่อสำนักงานหอพัก</span></div>
+    <div class="notice notice--info check-notice"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>ความเร่งด่วนและช่างผู้รับผิดชอบกำหนดโดยเจ้าหน้าที่ หากข้อมูลสถานที่หรือเวลาที่สะดวกเปลี่ยน กรุณาติดต่อสำนักงานหอพัก</span></div>
 
-    <a class="btn btn-primary btn-block" id="detail-link" href="request-detail.html">รายละเอียดคำร้อง</a>
+    <a class="btn btn-primary btn-block" id="detail-link" href="request-detail.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> รายละเอียดคำร้อง</a>
   </main>
 
   <p class="footer-note">หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180</p>
