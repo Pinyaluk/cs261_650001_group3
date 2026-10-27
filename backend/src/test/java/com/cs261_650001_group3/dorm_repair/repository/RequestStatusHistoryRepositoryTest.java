@@ -13,7 +13,11 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** Unit test ของ RequestStatusHistoryRepository: UT-DAO-16 ถึง 18 */
+/**
+ * Unit test ของ RequestStatusHistoryRepository:
+ * Sprint 1: UT-DAO-16 ถึง 18
+ * Sprint 2: UT-DAO-35
+ */
 @DataJpaTest(properties = "spring.jpa.hibernate.ddl-auto=create-drop")
 class RequestStatusHistoryRepositoryTest {
 
@@ -69,5 +73,21 @@ class RequestStatusHistoryRepositoryTest {
                 repo.findByRepairRequestRequestIdOrderByChangedAtAsc(d.r3.getRequestId());
 
         assertThat(result).isNotNull().isEmpty();
+    }
+
+    @Test
+    void UT_DAO_35_save_completedStatus_withRepairNote() {
+        RequestStatusHistory h = new RequestStatusHistory(
+                d.r1020, RequestStatus.COMPLETED, d.tech03, "เปลี่ยนท่อน้ำทิ้งใหม่ ใช้งานได้ปกติ");
+
+        RequestStatusHistory saved = repo.saveAndFlush(h);
+        em.clear();
+
+        RequestStatusHistory reloaded = repo.findById(saved.getHistoryId()).orElseThrow();
+        assertThat(reloaded.getHistoryId()).isNotNull();
+        assertThat(reloaded.getStatus()).isEqualTo(RequestStatus.COMPLETED);
+        assertThat(reloaded.getNote()).isEqualTo("เปลี่ยนท่อน้ำทิ้งใหม่ ใช้งานได้ปกติ");
+        assertThat(reloaded.getChangedBy().getUserId()).isEqualTo(d.tech03.getUserId());
+        assertThat(reloaded.getChangedAt()).isNotNull();
     }
 }
