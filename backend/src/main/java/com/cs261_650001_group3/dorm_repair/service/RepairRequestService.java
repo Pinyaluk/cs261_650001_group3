@@ -13,6 +13,7 @@ import com.cs261_650001_group3.dorm_repair.dto.CreateRepairRequestDTO;
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestResponseDTO;
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestSummaryDTO;
 import com.cs261_650001_group3.dorm_repair.dto.StatusHistoryDTO;
+import com.cs261_650001_group3.dorm_repair.entity.ImageType;
 import com.cs261_650001_group3.dorm_repair.entity.RepairRequest;
 import com.cs261_650001_group3.dorm_repair.entity.RequestImage;
 import com.cs261_650001_group3.dorm_repair.entity.RequestStatus;
@@ -180,6 +181,7 @@ public class RepairRequestService {
         ContactDTO technician = (tech != null) ? new ContactDTO(tech.getFullName(), tech.getPhone()) : null;
 
         List<String> imageUrls = r.getImages().stream()
+                .filter(img -> img.getImageType() == ImageType.BEFORE)
                 .map(RequestImage::getFilePath)
                 .toList();
 

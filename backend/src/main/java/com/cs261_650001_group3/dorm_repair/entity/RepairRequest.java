@@ -90,6 +90,11 @@ public class RepairRequest {
     @Column(name = "appointment_datetime")
     private LocalDateTime appointmentDateTime;
 
+    /** หมายเหตุวันนัดจากเจ้าหน้าที่ (U6) */
+    @Nationalized
+    @Column(name = "appointment_note", length = 500)
+    private String appointmentNote;
+
     @Column(name = "contact_phone", nullable = false, length = 20)
     private String contactPhone;
 
@@ -161,9 +166,16 @@ public class RepairRequest {
         updatedAt = LocalDateTime.now();
     }
 
-    /** แนบรูป (Service เป็นคนเช็กว่า 1–3 รูป รูปละไม่เกิน 5MB) */
+    /** แนบรูปก่อนซ่อม (BEFORE) อัตโนมัติ (Service เป็นคนเช็กว่า 1–3 รูป รูปละไม่เกิน 5MB) */
     public RequestImage addImage(String filePath, long fileSize) {
-        RequestImage image = new RequestImage(this, filePath, fileSize);
+        RequestImage image = new RequestImage(this, filePath, fileSize, ImageType.BEFORE);
+        images.add(image);
+        return image;
+    }
+
+    /** แนบรูปพร้อมระบุประเภท (ให้ U8 ใช้ตอนส่งมอบงานเพื่อแนบรูป AFTER) */
+    public RequestImage addImage(String filePath, long fileSize, ImageType imageType) {
+        RequestImage image = new RequestImage(this, filePath, fileSize, imageType);
         images.add(image);
         return image;
     }
@@ -194,6 +206,7 @@ public class RepairRequest {
     public void setStatus(RequestStatus status) { this.status = status; }
     public void assignTechnician(User technician) { this.technician = technician; }
     public void setAppointmentDateTime(LocalDateTime appointmentDateTime) { this.appointmentDateTime = appointmentDateTime; }
+    public void setAppointmentNote(String appointmentNote) { this.appointmentNote = appointmentNote; }
     public void setUrgency(Urgency urgency) { this.urgency = urgency; }
 
     /** ใช้กับข้อมูลตั้งต้นและ test เท่านั้น ปกติระบบตั้งเวลาให้เอง */
@@ -213,6 +226,7 @@ public class RepairRequest {
     public LocalDate getPreferredDate2() { return preferredDate2; }
     public TimeSlot getPreferredSlot2() { return preferredSlot2; }
     public LocalDateTime getAppointmentDateTime() { return appointmentDateTime; }
+    public String getAppointmentNote() { return appointmentNote; }
     public String getContactPhone() { return contactPhone; }
     public String getLineId() { return lineId; }
     public RequestStatus getStatus() { return status; }

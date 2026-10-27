@@ -1,5 +1,6 @@
 package com.cs261_650001_group3.dorm_repair.repository;
 
+import com.cs261_650001_group3.dorm_repair.entity.ImageType;
 import com.cs261_650001_group3.dorm_repair.entity.RequestImage;
 import jakarta.persistence.PersistenceException;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +15,11 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/** Unit test ของ RequestImageRepository: UT-DAO-14 และ 15 */
+/**
+ * Unit test ของ RequestImageRepository:
+ * Sprint 1: UT-DAO-14 และ 15
+ * Sprint 2: UT-DAO-36 ถึง 39
+ */
 @DataJpaTest(properties = "spring.jpa.hibernate.ddl-auto=create-drop")
 class RequestImageRepositoryTest {
 
@@ -50,5 +55,55 @@ class RequestImageRepositoryTest {
 
         assertThatThrownBy(() -> repo.saveAndFlush(orphan))
                 .isInstanceOfAny(DataIntegrityViolationException.class, PersistenceException.class);
+    }
+
+    @Test
+    void UT_DAO_36_save_afterImage() {
+        RequestImage img = new RequestImage(d.r1020, "/uploads/1020-after-1.jpg", 680_000, ImageType.AFTER);
+        RequestImage saved = repo.saveAndFlush(img);
+        em.clear();
+
+        RequestImage reloaded = repo.findById(saved.getImageId()).orElseThrow();
+        assertThat(reloaded.getImageId()).isNotNull();
+        assertThat(reloaded.getImageType()).isEqualTo(ImageType.AFTER);
+        assertThat(reloaded.getFilePath()).isEqualTo("/uploads/1020-after-1.jpg");
+    }
+
+    @Test
+    void UT_DAO_37_findAfterImages_onlyAfter() {
+        d.r3.addImage("/uploads/1003-1.jpg", 18_318, ImageType.BEFORE);
+        d.r3.addImage("/uploads/1003-after.jpg", 18_318, ImageType.AFTER);
+        em.flush();
+        em.clear();
+
+        List<RequestImage> result = repo.findByRepairRequestRequestIdAndImageType(d.r3.getRequestId(), ImageType.AFTER);
+
+        assertThat(result)
+                .extracting(RequestImage::getFilePath)
+                .containsExactly("/uploads/1003-after.jpg");
+    }
+
+    @Test
+    void UT_DAO_38_findBeforeImages_onlyBefore() {
+        d.r4.addImage("/uploads/987-1.jpg", 17_359, ImageType.BEFORE);
+        d.r4.addImage("/uploads/987-after.jpg", 17_359, ImageType.AFTER);
+        em.flush();
+        em.clear();
+
+        List<RequestImage> result = repo.findByRepairRequestRequestIdAndImageType(d.r4.getRequestId(), ImageType.BEFORE);
+
+        assertThat(result)
+                .extracting(RequestImage::getFilePath)
+                .containsExactly("/uploads/987-1.jpg");
+    }
+
+    @Test
+    void UT_DAO_39_defaultImageType_isBefore() {
+        RequestImage img = new RequestImage(d.r2, "/uploads/1019-3.jpg", 15_000);
+        RequestImage saved = repo.saveAndFlush(img);
+        em.clear();
+
+        RequestImage reloaded = repo.findById(saved.getImageId()).orElseThrow();
+        assertThat(reloaded.getImageType()).isEqualTo(ImageType.BEFORE);
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestResponseDTO;
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestSummaryDTO;
 import com.cs261_650001_group3.dorm_repair.dto.StatusHistoryDTO;
+import com.cs261_650001_group3.dorm_repair.entity.ImageType;
 import com.cs261_650001_group3.dorm_repair.entity.LocationType;
 import com.cs261_650001_group3.dorm_repair.entity.RepairCategory;
 import com.cs261_650001_group3.dorm_repair.entity.RepairRequest;
@@ -69,6 +70,8 @@ class RepairRequestServiceTest {
         inProgress.setAppointmentDateTime(LocalDateTime.of(2026, 10, 14, 13, 0));
         inProgress.addImage("/uploads/1019-1.jpg", 612352);
         inProgress.addImage("/uploads/1019-2.jpg", 487424);
+        // รูปหลังซ่อม (AFTER) ต้องไม่ปนใน imageUrls ของหน้าตรวจสอบคำร้อง
+        inProgress.addImage("/uploads/1019-after.jpg", 400000, ImageType.AFTER);
         inProgress.addHistory(RequestStatus.PENDING, somchai, "ส่งคำร้องพร้อมรูปภาพ 2 รูป")
                 .setChangedAt(LocalDateTime.of(2026, 10, 10, 8, 40));
         inProgress.addHistory(RequestStatus.IN_PROGRESS, tech, "รับเรื่องและมอบหมายช่าง")

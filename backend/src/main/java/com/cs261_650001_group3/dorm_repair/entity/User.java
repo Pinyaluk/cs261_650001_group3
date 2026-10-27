@@ -41,6 +41,14 @@ public class User {
     @Column(name = "role", nullable = false, length = 20)
     private Role role;
 
+    /**
+     * ประเภทงานที่ช่างรับผิดชอบ (Sprint 2) ใช้ค่าเดียวกับ category ของคำร้อง
+     * NULL สำหรับ RESIDENT และ STAFF
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "specialty", length = 30)
+    private RepairCategory specialty;
+
     /** ใช้กับผู้พักอาศัย เช่น A-305 */
     @Column(name = "room_number", length = 20)
     private String roomNumber;
@@ -75,6 +83,7 @@ public class User {
     public String getPasswordHash() { return passwordHash; }
     public String getFullName() { return fullName; }
     public Role getRole() { return role; }
+    public RepairCategory getSpecialty() { return specialty; }
     public String getRoomNumber() { return roomNumber; }
     public String getPhone() { return phone; }
     public LocalDateTime getCreatedAt() { return createdAt; }
@@ -82,6 +91,7 @@ public class User {
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
     public void setFullName(String fullName) { this.fullName = fullName; }
     public void setRole(Role role) { this.role = role; }
+    public void setSpecialty(RepairCategory specialty) { this.specialty = specialty; }
     public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
     public void setPhone(String phone) { this.phone = phone; }
 }
