@@ -14,34 +14,13 @@
 #image-preview:not(:empty) { margin-top: 12px; }
 #image-preview + template + .btn { margin-top: 12px; }
 
-    .form-control--select {
-      padding-right: 36px;
-    }
-    /* ข้อความรวมเหนือปุ่มส่ง (กรอกไม่ครบ / error จาก backend) */
-    #form-error {
-      margin-bottom: 8px;
-      font-size: 14px;
-      text-align: center;
-    }
+.steps-list { display: grid; gap: 6px; margin: 12px 0 4px; padding-left: 20px; font-size: 13px; }
 
-    @media (min-width: 1024px) {
-      #repair-form {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        column-gap: 24px;
-        align-items: start;
-      }
+/* ข้อความรวมเหนือปุ่มส่ง (กรอกไม่ครบ / error จาก backend) */
+#form-error { margin: 0; font-size: 14px; text-align: center; }
+#form-error:empty { display: none; }
 
-      #repair-form > .form-group:nth-child(1),
-      #repair-form > .form-group:nth-child(6),
-      #repair-form > .form-group:nth-child(7),
-      #repair-form > .form-group:nth-child(12),
-      #repair-form > .form-group:nth-child(13),
-      #repair-form > #form-error,
-      #repair-form > #submit-btn {
-        grid-column: 1 / -1;
-      }
-
-      #repair-form > .form-group:nth-child(12) { max-width: 100%; }
-      #repair-form > #submit-btn { margin-top: 8px; }
-    }
+@media (min-width: 1024px) {
+  .form-layout { grid-template-columns: minmax(0, 1fr) 360px; gap: 24px; align-items: start; }
+  .form-aside { position: sticky; top: 112px; }
+}
