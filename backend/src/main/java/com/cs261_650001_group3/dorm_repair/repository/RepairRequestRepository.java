@@ -2,10 +2,15 @@ package com.cs261_650001_group3.dorm_repair.repository;
 
 import com.cs261_650001_group3.dorm_repair.entity.RepairRequest;
 import com.cs261_650001_group3.dorm_repair.entity.RequestStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +36,24 @@ public interface RepairRequestRepository extends JpaRepository<RepairRequest, Lo
     /** Sprint 2: เจ้าหน้าที่ดูคำร้องตามสถานะ เก่าสุดก่อน */
     List<RepairRequest> findByStatusOrderByCreatedAtAsc(RequestStatus status);
 
+    /** U4: เจ้าหน้าที่ดูคำร้องตามสถานะ พร้อมแบ่งหน้าและจัดเรียง */
+    Page<RepairRequest> findByStatus(RequestStatus status, Pageable pageable);
+
     /** Sprint 2: ช่างดูงานที่ได้รับมอบหมาย เรียงตามเวลานัด */
     List<RepairRequest> findByTechnicianUserIdOrderByAppointmentDateTimeAsc(Long technicianId);
+
+    /** U6: นับจำนวนนัดของช่างในช่วงเวลาที่กำหนด เพื่อตรวจเช็กนัดซ้อน */
+    long countByTechnicianUserIdAndStatusAndAppointmentDateTimeBetween(
+            Long technicianId, RequestStatus status, LocalDateTime start, LocalDateTime end);
+
+    /**
+     * U7: ช่างดูงาน IN_PROGRESS ของตนเอง เรียงตามวันนัด และวันเดียวกันให้งานเร่งด่วนขึ้นก่อน
+     */
+    @Query("SELECT r FROM RepairRequest r WHERE r.technician.userId = :technicianId "
+            + "AND r.status = com.cs261_650001_group3.dorm_repair.entity.RequestStatus.IN_PROGRESS "
+            + "ORDER BY CAST(r.appointmentDateTime AS LocalDate) ASC, r.urgency DESC, r.appointmentDateTime ASC")
+    List<RepairRequest> findAssignedJobs(@Param("technicianId") Long technicianId);
+
+    /** U7 / Task48: ดึงงานตามสถานะของช่าง พร้อมแบ่งหน้า (เช่น งาน COMPLETED) */
+    Page<RepairRequest> findByTechnicianUserIdAndStatus(Long technicianId, RequestStatus status, Pageable pageable);
 }
