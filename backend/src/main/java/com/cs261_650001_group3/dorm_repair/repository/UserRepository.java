@@ -15,4 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     /** U6: หาช่างตามประเภทงาน (specialty) */
     List<User> findByRoleAndSpecialty(Role role, RepairCategory specialty);
+
+    /** U6: ช่างทุกคน (ใช้เมื่อเจ้าหน้าที่ไม่ได้กรองประเภทงาน) */
+    List<User> findByRole(Role role);
 }
