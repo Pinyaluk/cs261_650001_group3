@@ -172,7 +172,7 @@ Response (200 OK)
 
 หมายเหตุการ map ข้อมูล (Task42):
 - reporterPhone = เบอร์ที่ผู้แจ้งกรอกในฟอร์ม (contact_phone) ถ้าว่างใช้เบอร์ในบัญชีผู้ใช้
-- appointmentDate / appointmentSlot แยกจาก appointment_datetime (เวลาก่อน 13:00 = MORNING, ตั้งแต่ 13:00 = AFTERNOON) ยังไม่มอบหมาย = null
+- appointmentDate / appointmentSlot แยกจาก appointment_datetime (เวลาก่อน 12:00 = MORNING, ตั้งแต่ 12:00 = AFTERNOON) ยังไม่มอบหมาย = null
 - repairResult / completedAt = note และ changed_at ของแถวประวัติสถานะ COMPLETED ล่าสุด (ไม่มีคอลัมน์แยกใน DB) ยังไม่เสร็จ = null
   → API U8 (2.7) ต้องบันทึก repairResult เป็น note ของประวัติสถานะ COMPLETED
 - imageUrls = รูป BEFORE, afterImageUrls = รูป AFTER

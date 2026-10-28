@@ -237,7 +237,7 @@ public class RepairRequestService {
         LocalDateTime appt = r.getAppointmentDateTime();
         LocalDate appointmentDate = (appt != null) ? appt.toLocalDate() : null;
         String appointmentSlot = (appt == null) ? null
-                : (appt.getHour() < TimeSlot.AFTERNOON.getStartHour() ? TimeSlot.MORNING : TimeSlot.AFTERNOON).name();
+                 : (appt.getHour() < 12 ? TimeSlot.MORNING : TimeSlot.AFTERNOON).name();
 
         // ผลการซ่อมและเวลาที่เสร็จ = ประวัติ COMPLETED ล่าสุด (ไม่มีคอลัมน์แยกใน DB)
         RequestStatusHistory completed = null;
