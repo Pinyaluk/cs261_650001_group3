@@ -1,7 +1,7 @@
 // js/repair-success.js
 // หน้าส่งคำร้องสำเร็จ: อ่านเลขคำร้องจาก URL (?id=1024) แล้วแสดงผล
 
-requireLogin();
+requireRole("RESIDENT");
 
 const requestIdEl = document.getElementById("request-id");
 const requestStatusEl = document.getElementById("request-status");

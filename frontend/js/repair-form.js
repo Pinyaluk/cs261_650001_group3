@@ -1,7 +1,7 @@
 // js/repair-form.js
 // หน้าแจ้งซ่อม: ตรวจฟอร์ม + เช็ครูป + เตือนวันเวลาในอดีต + ตัวอย่างรูป + ส่ง FormData
 
-requireLogin();
+requireRole("RESIDENT");
 
 // ---------- ค่าคงที่ ----------
 const MAX_FILES = 3;

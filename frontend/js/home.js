@@ -1,7 +1,7 @@
 // js/home.js
 // หน้าหลัก: นับสถานะคำร้อง + แสดงคำร้องล่าสุด 1 รายการ
 
-requireLogin();
+requireRole("RESIDENT");
 
 const countPending = document.getElementById("count-pending");
 const countInProgress = document.getElementById("count-in-progress");
