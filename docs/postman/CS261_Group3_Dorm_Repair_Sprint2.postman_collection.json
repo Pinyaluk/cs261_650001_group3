@@ -806,6 +806,838 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "U6 มอบหมายงานให้ช่าง (Task46)",
+      "description": "รันหลังโฟลเดอร์ U4 ต้อง reset DB ก่อนรันซ้ำ เพราะข้อ 29 เปลี่ยนคำร้อง 1021 เป็น IN_PROGRESS",
+      "item": [
+        {
+          "name": "18 รายชื่อช่าง ไม่ส่ง token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/technicians?category=PLUMBING&date=2026-11-30&slot=AFTERNOON",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "technicians"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "PLUMBING"
+                },
+                {
+                  "key": "date",
+                  "value": "2026-11-30"
+                },
+                {
+                  "key": "slot",
+                  "value": "AFTERNOON"
+                }
+              ]
+            },
+            "description": "ไม่มี token → 401",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "19 รายชื่อช่าง ด้วย token ผู้พักอาศัย",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/technicians?category=PLUMBING&date=2026-11-30&slot=AFTERNOON",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "technicians"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "PLUMBING"
+                },
+                {
+                  "key": "date",
+                  "value": "2026-11-30"
+                },
+                {
+                  "key": "slot",
+                  "value": "AFTERNOON"
+                }
+              ]
+            },
+            "description": "ไม่ใช่ STAFF → 403",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{residentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "20 ช่างประปา 30/11/2569 ช่วงบ่าย",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"ได้ช่างประปา 2 คน\", () => { pm.expect(j.length).to.eql(2); j.forEach(t => pm.expect(t.specialty).to.eql(\"PLUMBING\")); });",
+                  "pm.test(\"แต่ละคนมี id, fullName, specialty, phone, appointmentCount\", () => j.forEach(t => [\"id\",\"fullName\",\"specialty\",\"phone\",\"appointmentCount\"].forEach(k => pm.expect(t).to.have.property(k))));",
+                  "pm.test(\"tech03 (id 7) มีนัดแล้ว 2 งาน (1019 13:00, 1020 14:30)\", () => pm.expect(j.find(t => t.id === 7).appointmentCount).to.eql(2));",
+                  "pm.test(\"tech04 (id 8) ว่าง\", () => pm.expect(j.find(t => t.id === 8).appointmentCount).to.eql(0));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/technicians?category=PLUMBING&date=2026-11-30&slot=AFTERNOON",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "technicians"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "PLUMBING"
+                },
+                {
+                  "key": "date",
+                  "value": "2026-11-30"
+                },
+                {
+                  "key": "slot",
+                  "value": "AFTERNOON"
+                }
+              ]
+            },
+            "description": "ตรงกับวันที่ผู้แจ้งคำร้อง 1021 เสนอ ใช้แสดง \"ว่าง\" / \"มีนัดแล้ว N งาน\"",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "21 ส่ง date แต่ไม่ส่ง slot",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/technicians?category=PLUMBING&date=2026-11-30",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "technicians"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "PLUMBING"
+                },
+                {
+                  "key": "date",
+                  "value": "2026-11-30"
+                }
+              ]
+            },
+            "description": "date กับ slot ต้องส่งมาคู่กัน → 400",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "22 มอบหมาย ไม่ส่ง token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"technicianId\": 7,\n  \"urgency\": \"URGENT\",\n  \"appointmentDate\": \"2026-11-30\",\n  \"appointmentSlot\": \"AFTERNOON\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests/1021/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests",
+                "1021",
+                "assign"
+              ]
+            },
+            "description": "ไม่มี token → 401",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "23 มอบหมาย 1021 ให้ช่างไฟฟ้า",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"technicianId\": 5,\n  \"urgency\": \"URGENT\",\n  \"appointmentDate\": \"2026-11-30\",\n  \"appointmentSlot\": \"AFTERNOON\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests/1021/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests",
+                "1021",
+                "assign"
+              ]
+            },
+            "description": "tech01 (id 5) เป็นช่างไฟฟ้า แต่ 1021 เป็นงานประปา → 400",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "24 วันนัดใหม่ไม่มีหมายเหตุ",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"technicianId\": 7,\n  \"urgency\": \"URGENT\",\n  \"appointmentDate\": \"2026-12-02\",\n  \"appointmentSlot\": \"MORNING\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests/1021/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests",
+                "1021",
+                "assign"
+              ]
+            },
+            "description": "ไม่ตรงกับช่วงที่ผู้แจ้งเสนอ และไม่มีหมายเหตุ → 400",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "25 วันนัดเป็นอดีต",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"technicianId\": 7,\n  \"urgency\": \"URGENT\",\n  \"appointmentDate\": \"2026-01-05\",\n  \"appointmentSlot\": \"AFTERNOON\",\n  \"appointmentNote\": \"ทดสอบวันย้อนหลัง\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests/1021/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests",
+                "1021",
+                "assign"
+              ]
+            },
+            "description": "วันนัดเป็นอดีต → 400",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "26 urgency ไม่ถูกต้อง",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"technicianId\": 7,\n  \"urgency\": \"HIGH\",\n  \"appointmentDate\": \"2026-11-30\",\n  \"appointmentSlot\": \"AFTERNOON\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests/1021/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests",
+                "1021",
+                "assign"
+              ]
+            },
+            "description": "urgency ต้องเป็น NORMAL หรือ URGENT → 400",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "27 มอบหมายคำร้องที่ไม่มีในระบบ",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"technicianId\": 7,\n  \"urgency\": \"URGENT\",\n  \"appointmentDate\": \"2026-11-30\",\n  \"appointmentSlot\": \"AFTERNOON\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests/999999/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests",
+                "999999",
+                "assign"
+              ]
+            },
+            "description": "ไม่พบคำร้อง → 404",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "28 มอบหมายให้ช่างที่ไม่มีในระบบ",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"technicianId\": 999,\n  \"urgency\": \"URGENT\",\n  \"appointmentDate\": \"2026-11-30\",\n  \"appointmentSlot\": \"AFTERNOON\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests/1021/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests",
+                "1021",
+                "assign"
+              ]
+            },
+            "description": "ไม่พบช่าง → 404",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "29 มอบหมาย 1021 ให้ tech03 (Test case 6)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"สถานะเปลี่ยนเป็น IN_PROGRESS\", () => pm.expect(j.status).to.eql(\"IN_PROGRESS\"));",
+                  "pm.test(\"บันทึกช่าง วันนัด และความเร่งด่วน\", () => { pm.expect(j.technicianId).to.eql(7); pm.expect(j.appointmentDate).to.eql(\"2026-11-30\"); pm.expect(j.appointmentSlot).to.eql(\"AFTERNOON\"); pm.expect(j.urgency).to.eql(\"URGENT\"); });",
+                  "pm.test(\"มี updatedAt\", () => pm.expect(j.updatedAt).to.be.a(\"string\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"technicianId\": 7,\n  \"urgency\": \"URGENT\",\n  \"appointmentDate\": \"2026-11-30\",\n  \"appointmentSlot\": \"AFTERNOON\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests/1021/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests",
+                "1021",
+                "assign"
+              ]
+            },
+            "description": "tech03 มีนัดช่วงบ่ายวันนั้นแล้ว 2 งาน แต่ระบบไม่บล็อก (เจ้าหน้าที่ตัดสินใจเอง) ใช้ช่วงที่ 1 ที่ผู้แจ้งเสนอจึงไม่ต้องมีหมายเหตุ",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "30 รายชื่อช่างหลังมอบหมาย",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"tech03 มีนัดแล้ว 3 งาน\", () => pm.expect(j.find(t => t.id === 7).appointmentCount).to.eql(3));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/technicians?category=PLUMBING&date=2026-11-30&slot=AFTERNOON",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "technicians"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "PLUMBING"
+                },
+                {
+                  "key": "date",
+                  "value": "2026-11-30"
+                },
+                {
+                  "key": "slot",
+                  "value": "AFTERNOON"
+                }
+              ]
+            },
+            "description": "นับคำร้อง 1021 เพิ่มเข้ามาแล้ว",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "31 รายละเอียด 1021 หลังมอบหมาย",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"มีช่างและวันนัด\", () => { pm.expect(j.technician.name).to.eql(\"ชาญชัย ท่อน้ำดี\"); pm.expect(j.appointmentDate).to.eql(\"2026-11-30\"); pm.expect(j.appointmentSlot).to.eql(\"AFTERNOON\"); });",
+                  "pm.test(\"ประวัติสถานะล่าสุดเป็น IN_PROGRESS\", () => pm.expect(j.statusHistory[j.statusHistory.length - 1].status).to.eql(\"IN_PROGRESS\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests/1021",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests",
+                "1021"
+              ]
+            },
+            "description": "ตรวจผลผ่าน API รายละเอียดของ U4",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "32 มอบหมาย 1021 ซ้ำ",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"technicianId\": 8,\n  \"urgency\": \"URGENT\",\n  \"appointmentDate\": \"2026-11-30\",\n  \"appointmentSlot\": \"AFTERNOON\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests/1021/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests",
+                "1021",
+                "assign"
+              ]
+            },
+            "description": "คำร้องไม่ได้อยู่ในสถานะ PENDING แล้ว → 400",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "variable": [
