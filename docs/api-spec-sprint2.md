@@ -59,6 +59,8 @@ Response (200 OK)
   - size (optional, default: 10)
   - status (optional: PENDING / IN_PROGRESS / COMPLETED)
 - Description: ดึงรายการคำร้องทั้งหมดสำหรับเจ้าหน้าที่แบบแบ่งหน้า พร้อมแสดงข้อมูลสถานที่และผู้แจ้งตาม UI ใน Figma
+- Sorting: งาน URGENT ขึ้นก่อน แล้วเรียงคำร้องล่าสุดก่อน (createdAt DESC)
+- Error: ไม่มี token → 401 / ไม่ใช่ STAFF → 403 / status ไม่ถูกต้อง, page ติดลบ หรือ size ไม่อยู่ใน 1–50 → 400
 
 Response (200 OK)
 {
@@ -168,6 +170,13 @@ Response (200 OK)
   "createdAt": "2026-10-18T10:00:00"
 }
 
+หมายเหตุการ map ข้อมูล (Task42):
+- reporterPhone = เบอร์ที่ผู้แจ้งกรอกในฟอร์ม (contact_phone) ถ้าว่างใช้เบอร์ในบัญชีผู้ใช้
+- appointmentDate / appointmentSlot แยกจาก appointment_datetime (เวลาก่อน 12:00 = MORNING, ตั้งแต่ 12:00 = AFTERNOON) ยังไม่มอบหมาย = null
+- repairResult / completedAt = note และ changed_at ของแถวประวัติสถานะ COMPLETED ล่าสุด (ไม่มีคอลัมน์แยกใน DB) ยังไม่เสร็จ = null
+  → API U8 (2.7) ต้องบันทึก repairResult เป็น note ของประวัติสถานะ COMPLETED
+- imageUrls = รูป BEFORE, afterImageUrls = รูป AFTER
+
 Error Responses (2.3 Specific Cases):
 - 403 Forbidden: ช่างพยายามเข้าดูรายละเอียดคำร้องที่ไม่ใช่คำร้องที่ตนเองได้รับมอบหมาย
 - 404 Not Found: ไม่พบ requestId ในระบบ
@@ -206,6 +215,15 @@ Error Responses (2.4 Specific Cases):
   - คำร้องไม่ได้อยู่ในสถานะ PENDING
 - 404 Not Found: ไม่พบคำร้องแจ้งซ่อม หรือไม่พบข้อมูลช่าง
 
+หมายเหตุการทำงาน (Task46):
+- ไม่มี token → 401 / ไม่ใช่ STAFF → 403
+- technicianId, appointmentDate, appointmentSlot บังคับ (ไม่ครบ → 400) / appointmentSlot ต้องเป็น MORNING หรือ AFTERNOON
+- urgency ไม่บังคับ: ไม่ส่ง = ใช้ค่าที่ผู้พักอาศัยติ๊กมา / ส่งค่าอื่นนอกจาก NORMAL, URGENT → 400
+- "วันนัดใหม่" = วันและช่วงเวลาไม่ตรงกับช่วงที่ 1 หรือช่วงที่ 2 ที่ผู้พักอาศัยเสนอ → ต้องมี appointmentNote / ถ้าเลือกช่วงที่เสนอ หมายเหตุไม่บังคับ
+- appointmentNote ยาวเกิน 500 ตัวอักษร → 400 / technicianId ที่ไม่ใช่ช่าง (เช่น id ของผู้พักอาศัย) → 404
+- ไม่บล็อกเมื่อช่างมีนัดซ้อน (เจ้าหน้าที่ตัดสินใจเอง)
+- บันทึกประวัติสถานะ IN_PROGRESS โดยเจ้าหน้าที่ที่ล็อกอิน note เช่น "มอบหมายงานให้ช่างชาญชัย ท่อน้ำดี นัดวันที่ 30/11/2569 ช่วงบ่าย"
+
 ### 2.5 Get Technicians Filtered by Specialty and Slot (U6)
 - Endpoint: GET /api/staff/technicians
 - Role: STAFF
@@ -225,6 +243,13 @@ Response (200 OK)
     "appointmentCount": 2
   }
 ]
+
+หมายเหตุการทำงาน (Task46):
+- ไม่มี token → 401 / ไม่ใช่ STAFF → 403
+- ไม่ส่ง category = ช่างทุกคน เรียงตาม id
+- appointmentCount = จำนวนคำร้อง IN_PROGRESS ของช่างที่ appointment_datetime อยู่ในวันและช่วงนั้น (ก่อน 12:00 = MORNING, ตั้งแต่ 12:00 = AFTERNOON เช่น 13:00 และ 14:30 นับเป็นช่วงบ่ายทั้งคู่) ไม่นับงาน COMPLETED
+- date กับ slot ต้องส่งมาคู่กัน (ส่งอย่างเดียว → 400) / ไม่ส่งทั้งคู่ → appointmentCount = 0
+- category หรือ slot ไม่ถูกต้อง หรือ date ผิดรูปแบบ → 400
 
 ### 2.6 Get Technician's Completed Tasks (Paginated & Searchable)
 - Endpoint: GET /api/technician/repair-requests/completed
