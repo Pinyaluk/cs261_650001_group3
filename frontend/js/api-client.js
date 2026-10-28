@@ -31,7 +31,10 @@ function homePageFor(role) {
 
 /** ป้องกันไม่ให้ role อื่นเปิดหน้าที่ไม่มีสิทธิ์ */
 function requireRole(...allowedRoles) {
-  requireLogin();
+  if (!getToken()) {
+    window.location.replace("login.html");
+    return;
+  }
 
   const currentRole = localStorage.getItem("role");
   if (!allowedRoles.includes(currentRole)) {
