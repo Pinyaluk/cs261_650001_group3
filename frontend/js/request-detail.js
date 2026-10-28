@@ -1,7 +1,7 @@
 // js/request-detail.js
 // หน้ารายละเอียดคำร้อง: อ่าน id จาก URL → เรียก API → เติมข้อมูลลงหน้า
 
-requireLogin();
+requireRole("RESIDENT");
 
 const id = getQueryParam("id");
 

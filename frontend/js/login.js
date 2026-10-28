@@ -49,7 +49,8 @@ loginForm.addEventListener("submit", async (event) => {
       } else {
         localStorage.removeItem("savedUsername");
       }
-      window.location.href = "home.html";
+     // พาไปหน้าแรกตามบทบาทของผู้ใช้
+   window.location.href = homePageFor(result.role);
     } else {
       setLoginError(result.message);
     }
