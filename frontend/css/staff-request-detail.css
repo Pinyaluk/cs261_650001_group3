@@ -1,0 +1,571 @@
+/* ========================================
+   staff-request-detail.css
+   เฉพาะหน้ารายละเอียดคำร้อง (ต้องโหลด staff-style.css ก่อน)
+======================================== */
+ 
+.detail-page .notice {
+  margin-bottom: 14px;
+}
+ 
+.detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 16px;
+  color: var(--staff-primary, #087f78);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+ 
+.detail-back:hover {
+  text-decoration: underline;
+}
+ 
+/* ========================================
+   Grid
+======================================== */
+ 
+.detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+ 
+.detail-area-info { grid-area: info; }
+.detail-area-form { grid-area: form; }
+.detail-area-contact { grid-area: contact; }
+ 
+.detail-grid {
+  grid-template-areas:
+    "info"
+    "form"
+    "contact";
+}
+ 
+@media (min-width: 1024px) {
+ 
+  .detail-grid {
+    grid-template-columns: minmax(0, 1fr) 408px;
+    grid-template-areas:
+      "info form"
+      "contact form";
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    gap: 16px 16px;
+  }
+}
+ 
+/* ========================================
+   Cards & facts
+======================================== */
+ 
+.detail-card {
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid var(--staff-border, #dfe8ea);
+  border-radius: 16px;
+  background: var(--staff-surface, #fff);
+}
+ 
+.detail-grid > .detail-card {
+  margin-bottom: 0;
+}
+ 
+.detail-card__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+ 
+.detail-card__hint {
+  margin: 2px 0 12px;
+  color: var(--staff-muted, #64777d);
+  font-size: 12px;
+  line-height: 1.6;
+}
+ 
+.detail-card__hint--bottom {
+  margin: 12px 0 0;
+}
+ 
+.detail-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 12px;
+}
+ 
+.detail-request-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+ 
+.detail-request-meta {
+  margin: 2px 0 16px;
+  color: var(--staff-muted, #64777d);
+  font-size: 12px;
+  line-height: 1.6;
+}
+ 
+.detail-facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px 24px;
+  margin: 0;
+}
+ 
+.detail-facts dt {
+  color: var(--staff-muted, #64777d);
+  font-size: 12px;
+  line-height: 1.5;
+}
+ 
+.detail-facts dd {
+  margin: 2px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+ 
+@media (min-width: 640px) {
+  .detail-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+ 
+  .detail-facts--single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+ 
+  .detail-facts__wide {
+    grid-column: 1 / -1;
+  }
+}
+ 
+.detail-subtitle {
+  margin: 18px 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+}
+ 
+.detail-divider {
+  height: 1px;
+  margin: 18px 0 0;
+  background: var(--staff-border, #dfe8ea);
+}
+ 
+.detail-divider + .detail-subtitle {
+  margin-top: 16px;
+}
+ 
+/* ========================================
+   Photos
+======================================== */
+ 
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+ 
+.photo-grid__frame {
+  display: flex;
+  aspect-ratio: 8 / 5;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 0;
+  border-radius: 12px;
+  background: #e8f0f0;
+  color: #7a9096;
+  cursor: zoom-in;
+  padding: 0;
+  width: 100%;
+}
+ 
+.photo-grid__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+ 
+.photo-grid__caption {
+  margin: 6px 0 0;
+  color: var(--staff-muted, #64777d);
+  font-size: 11px;
+}
+ 
+/* ========================================
+   Choices (radio card)
+======================================== */
+ 
+.choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+ 
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--staff-border, #dfe8ea);
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+}
+ 
+.choice:hover {
+  border-color: var(--staff-primary, #087f78);
+}
+ 
+.choice.is-selected {
+  border: 1.5px solid var(--staff-primary, #087f78);
+  background: var(--staff-primary-light, #e8f5f2);
+}
+ 
+.choice:focus-within {
+  outline: 3px solid rgb(8 127 120 / 25%);
+  outline-offset: 2px;
+}
+ 
+.choice.is-disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+ 
+.choice__input {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  border: 2px solid #cbd7da;
+  border-radius: 50%;
+  background: #fff;
+  cursor: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
+ 
+.choice__body {
+  min-width: 0;
+  flex: 1;
+}
+ 
+.choice__title {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+ 
+.choice__desc {
+  display: block;
+  color: var(--staff-muted, #64777d);
+  font-size: 12px;
+  line-height: 1.5;
+}
+ 
+.choice__tag {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 700;
+}
+ 
+.choice__tag--free {
+  color: var(--staff-primary, #087f78);
+}
+ 
+.choice__tag--busy {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #fff4d6;
+  color: #8a5a00;
+}
+ 
+/* ========================================
+   Custom appointment form
+======================================== */
+ 
+.custom-appt {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px;
+  margin-top: 10px;
+  border-radius: 12px;
+  background: #f6f9f9;
+}
+ 
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+ 
+.req {
+  color: var(--staff-danger, #b7473a);
+}
+ 
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--staff-border, #dfe8ea);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+}
+ 
+.field textarea {
+  min-height: 84px;
+  resize: vertical;
+}
+ 
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--staff-primary, #087f78);
+  outline: 3px solid rgb(8 127 120 / 18%);
+}
+ 
+.field .is-invalid {
+  border-color: var(--staff-danger, #b7473a);
+  background: #fffafa;
+}
+ 
+.field__error {
+  margin: 6px 0 0;
+  color: var(--staff-danger, #b7473a);
+  font-size: 12px;
+}
+ 
+/* ========================================
+   Buttons / action bar
+======================================== */
+ 
+.action-bar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 4px;
+}
+ 
+.action-bar--single {
+  margin-top: 16px;
+}
+ 
+.btn-primary,
+.btn-secondary,
+.btn-call {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  padding: 0 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+ 
+.btn-primary {
+  border: 1px solid var(--staff-primary, #087f78);
+  background: var(--staff-primary, #087f78);
+  color: #fff;
+}
+ 
+.btn-primary:hover:not(:disabled) {
+  background: #066b65;
+}
+ 
+.btn-primary:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+ 
+.btn-secondary {
+  border: 1px solid var(--staff-border, #dfe8ea);
+  background: #fff;
+  color: var(--staff-primary, #087f78);
+}
+ 
+.btn-secondary:hover {
+  border-color: var(--staff-primary, #087f78);
+}
+ 
+.btn-call {
+  min-height: 40px;
+  margin-top: 16px;
+  border: 1px solid var(--staff-border, #dfe8ea);
+  background: #fff;
+  color: var(--staff-primary, #087f78);
+  font-size: 13px;
+}
+ 
+.btn-call[aria-disabled="true"] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+ 
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-call:focus-visible {
+  outline: 3px solid rgb(8 127 120 / 25%);
+  outline-offset: 2px;
+}
+ 
+.action-note {
+  margin: 14px 0 0;
+  color: var(--staff-muted, #64777d);
+  font-size: 12px;
+  line-height: 1.7;
+  text-align: left;
+}
+ 
+@media (min-width: 1024px) {
+  .action-bar {
+    grid-template-columns: 1fr 1fr;
+  }
+ 
+  .action-bar--single {
+    grid-template-columns: 1fr;
+  }
+}
+ 
+.request-state--small {
+  padding: 16px 8px;
+}
+ 
+/* ========================================
+   Success
+======================================== */
+ 
+.success-card {
+  max-width: 560px;
+  padding: 28px 20px;
+  margin: 24px auto 0;
+  border: 1px solid var(--staff-border, #dfe8ea);
+  border-radius: 18px;
+  background: #fff;
+  text-align: center;
+}
+ 
+.success-card__icon {
+  display: inline-flex;
+  width: 56px;
+  height: 56px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--staff-primary, #087f78);
+  color: #fff;
+}
+ 
+.success-card__title {
+  margin: 14px 0 4px;
+  font-size: 22px;
+}
+ 
+.success-card__sub {
+  margin: 0 0 18px;
+  color: var(--staff-muted, #64777d);
+  font-size: 12px;
+}
+ 
+.success-card__rows {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  margin: 0 0 14px;
+  border-radius: 12px;
+  background: #f6f9f9;
+  text-align: left;
+}
+ 
+.success-card__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13px;
+}
+ 
+.success-card__row dt {
+  color: var(--staff-muted, #64777d);
+}
+ 
+.success-card__row dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+ 
+.success-card__note {
+  text-align: left;
+}
+ 
+.success-card__actions {
+  display: grid;
+  gap: 10px;
+}
+ 
+ 
+/* ========================================
+   ปรับให้ตรง Figma (radio แบบวงแหวน, รูป, ปุ่ม, มือถือ)
+======================================== */
+ 
+.choice__input:checked {
+  border-color: var(--staff-primary, #087f78);
+  background: var(--staff-primary, #087f78);
+  box-shadow: inset 0 0 0 3px #fff;
+}
+ 
+.choice__input:disabled {
+  opacity: 0.6;
+}
+ 
+.choice__input:focus-visible {
+  outline: 3px solid rgb(8 127 120 / 25%);
+  outline-offset: 2px;
+}
+ 
+@media (min-width: 1024px) {
+  .photo-grid__frame {
+    aspect-ratio: 5 / 2;
+  }
+ 
+  .action-note {
+    text-align: center;
+  }
+}
+ 
+@media (max-width: 1023px) {
+  .btn-call {
+    display: flex;
+    width: 100%;
+  }
+ 
+  /* มือถือ: ปุ่มมอบหมายอยู่บน ปุ่มกลับอยู่ล่าง */
+  #assign-btn {
+    order: -1;
+  }
+}
+ 

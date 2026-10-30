@@ -1,6 +1,14 @@
-
-if (typeof requireRole === "function") {
-  requireRole("STAFF");
+// js/staff-requests.js
+// หน้ารายการคำร้อง (เจ้าหน้าที่) — ดึงข้อมูลจริงจาก GET /api/staff/repair-requests ผ่าน apiFetch (api-client.js)
+// ไม่มีข้อมูลตัวอย่างในไฟล์นี้
+ 
+// ตรวจสิทธิ์: เข้าได้เฉพาะ STAFF (เรียกครั้งเดียว)
+window.__staffListLoaded = true;
+ 
+try {
+  if (typeof requireRole === "function") requireRole("STAFF");
+} catch (error) {
+  console.error("requireRole failed:", error);
 }
  
 (function () {
@@ -368,6 +376,21 @@ if (typeof requireRole === "function") {
     return parts.join(" • ");
   }
  
+  // category จาก API เป็นรหัสอังกฤษ (ELECTRICAL, PLUMBING ...) → แสดงเป็นภาษาไทย
+  const CATEGORY_LABELS = {
+    ELECTRIC: "ไฟฟ้า", ELECTRICAL: "ไฟฟ้า",
+    PLUMBING: "ประปา", WATER: "ประปา",
+    AIR_CON: "แอร์", AIRCON: "แอร์", AIR_CONDITIONER: "แอร์",
+    FURNITURE: "เฟอร์นิเจอร์", CARPENTRY: "เฟอร์นิเจอร์",
+    OTHER: "อื่น ๆ", GENERAL: "ทั่วไป",
+  };
+ 
+  function categoryLabel(value) {
+    const text = String(value || "").trim();
+    if (!text) return "";
+    return CATEGORY_LABELS[text.toUpperCase().replace(/[\s-]+/g, "_")] || text;
+  }
+ 
   function normalizeRequest(r) {
     const id = firstDefined(r.id, r.requestId, r.request_id);
     const rawCode = String(firstDefined(r.requestNo, r.code, id, "")).trim();
@@ -375,7 +398,7 @@ if (typeof requireRole === "function") {
     const title = String(firstDefined(r.title, r.subject, r.summary, r.detail, "คำร้องแจ้งซ่อม")).trim();
     const requester = String(firstDefined(r.requesterName, r.residentName, r.reporterName, r.createdByName, "")).trim();
     const location = buildLocation(r);
-    const category = String(firstDefined(r.categoryName, r.category, r.problemType, "")).trim();
+    const category = categoryLabel(firstDefined(r.categoryName, r.category, r.problemType, ""));
     const createdAt = firstDefined(r.createdAt, r.created_at, r.reportedAt, r.submittedAt);
     const createdAtMs = createdAt ? new Date(createdAt).getTime() || 0 : 0;
  
@@ -493,7 +516,10 @@ if (typeof requireRole === "function") {
     setHidden(els.loading, true);
     renderSummary();
  
-    els.resultCount.textContent = `${total.toLocaleString("th-TH")} รายการ • หน้าละ ${state.pageSize} รายการ • เรียงตามวันที่แจ้งล่าสุด`;
+    const totalText = total.toLocaleString("th-TH");
+    els.resultCount.textContent = DESKTOP_QUERY.matches
+      ? `${totalText} รายการ • หน้าละ ${state.pageSize} รายการ • เรียงตามวันที่แจ้งล่าสุด`
+      : `${totalText} รายการ • เรียงตามวันที่แจ้งล่าสุด`;
  
     if (items.length === 0) {
       setHidden(els.empty, false);

@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>รายละเอียดคำร้อง | เจ้าหน้าที่หอพัก</title>
+  <link rel="stylesheet" href="../css/staff-style.css">
+  <link rel="stylesheet" href="../css/staff-request-detail.css">
+</head>
+<body class="staff-body">
+  <div class="staff-app">
+
+    <!-- Mobile / Tablet -->
+    <header class="staff-mobilebar">
+      <div class="staff-mobilebar__row">
+        <div>
+          <p class="staff-mobilebar__brand">หอพักอุ่นใจ</p>
+          <p class="staff-mobilebar__role">เจ้าหน้าที่หอพัก</p>
+        </div>
+        <button class="staff-logout js-logout" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          ออกจากระบบ
+        </button>
+      </div>
+      <nav class="staff-mobilebar__nav" aria-label="เมนูหลัก">
+        <a class="staff-tab is-active js-list-link" href="staff-requests.html" aria-current="page">รายการคำร้อง</a>
+      </nav>
+    </header>
+
+    <!-- Desktop sidebar -->
+    <aside class="staff-sidebar">
+      <div>
+        <div class="staff-brand">
+          <p class="staff-brand__name">หอพักอุ่นใจ</p>
+          <p class="staff-brand__tag">ศูนย์บริการแจ้งซ่อม</p>
+        </div>
+        <p class="staff-sidebar__role">เจ้าหน้าที่หอพัก</p>
+        <nav class="staff-nav" aria-label="เมนูหลัก">
+          <a class="staff-nav__item is-active js-list-link" href="staff-requests.html" aria-current="page">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            <span>รายการคำร้อง</span>
+          </a>
+        </nav>
+        <p class="staff-office">
+          สำนักงานหอพัก<br>
+          02-555-0180<br>
+          08:30–17:00 น.
+        </p>
+      </div>
+
+      <div class="staff-sidebar__bottom">
+        <div class="staff-user">
+          <p class="staff-user__org">หอพักอุ่นใจ • สำนักงาน</p>
+          <p class="staff-user__name js-user-name">เจ้าหน้าที่</p>
+        </div>
+        <button class="staff-logout staff-logout--block js-logout" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          ออกจากระบบ
+        </button>
+      </div>
+    </aside>
+
+    <div class="staff-main">
+      <div class="staff-topbar">
+        <div>
+          <p class="staff-topbar__title">ระบบบริการแจ้งซ่อมหอพัก</p>
+          <p class="staff-topbar__sub">ดูแลทุกคำร้องให้ถึงมือช่าง</p>
+        </div>
+        <div class="staff-topbar__chips">
+          <span class="staff-pill">เจ้าหน้าที่</span>
+          <span class="staff-pill staff-pill--soft js-user-name">เจ้าหน้าที่</span>
+        </div>
+      </div>
+
+      <main class="staff-page detail-page">
+
+        <a class="detail-back js-list-link" id="back-link" href="staff-requests.html">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          <span id="back-label">กลับไปรายการคำร้อง</span>
+        </a>
+
+        <div class="request-state" id="detail-loading" role="status">กำลังโหลดข้อมูลคำร้อง...</div>
+
+        <div class="notice notice--danger is-hidden" id="detail-error" role="alert">
+          <p id="detail-error-message">ไม่สามารถโหลดข้อมูลคำร้องได้</p>
+          <button class="request-retry" id="detail-retry" type="button">ลองอีกครั้ง</button>
+        </div>
+
+        <!-- ===== เนื้อหา ===== -->
+        <div class="is-hidden" id="detail-content">
+          <div class="page-header">
+            <p class="page-crumb">เจ้าหน้าที่<span class="only-desktop">หอพัก</span> › รายการคำร้อง</p>
+            <h1 class="page-title" id="page-title">คำร้อง</h1>
+            <p class="page-subtitle" id="page-subtitle">ตรวจสอบ<span class="only-desktop">ข้อมูล</span> ยืนยันความเร่งด่วนและวันนัด แล้วมอบหมายช่าง<span class="only-desktop">ให้ตรงประเภทงาน</span></p>
+          </div>
+
+          <div class="notice notice--info is-hidden" id="readonly-banner">
+            มอบหมายช่างแล้ว · หน้านี้ดูได้อย่างเดียว
+          </div>
+
+          <div class="detail-grid">
+
+            <!-- ข้อมูลคำร้อง -->
+            <section class="detail-card detail-area-info" aria-labelledby="info-title">
+              <h2 class="detail-card__title" id="info-title">ข้อมูลคำร้อง<span class="only-desktop">จากผู้พักอาศัย</span></h2>
+              <div class="detail-badges" id="info-badges"></div>
+              <h3 class="detail-request-title" id="req-title"></h3>
+              <p class="detail-request-meta" id="req-meta"></p>
+
+              <dl class="detail-facts only-desktop">
+                <div><dt>ประเภทพื้นที่</dt><dd id="fact-area-type">-</dd></div>
+                <div><dt>สถานที่</dt><dd id="fact-location">-</dd></div>
+                <div><dt>ประเภทปัญหา</dt><dd id="fact-category">-</dd></div>
+                <div><dt>อุปกรณ์ที่ชำรุด</dt><dd id="fact-equipment">-</dd></div>
+                <div class="detail-facts__wide"><dt>รายละเอียดจากผู้แจ้ง</dt><dd id="fact-detail">-</dd></div>
+              </dl>
+              <dl class="detail-facts detail-facts--single only-mobile">
+                <div><dt>สถานที่</dt><dd id="fact-location-m">-</dd></div>
+                <div><dt>ประเภทปัญหา / อุปกรณ์</dt><dd id="fact-problem-m">-</dd></div>
+                <div><dt>รายละเอียดจากผู้แจ้ง</dt><dd id="fact-detail-m">-</dd></div>
+              </dl>
+
+              <div id="photos-section" class="is-hidden">
+                <h4 class="detail-subtitle" id="photos-title">รูปภาพประกอบจากผู้แจ้ง</h4>
+                <ul class="photo-grid" id="photo-grid"></ul>
+              </div>
+
+              <div class="only-desktop">
+                <div class="detail-divider"></div>
+                <h4 class="detail-subtitle">ช่วงเวลาที่ผู้พักอาศัยสะดวก</h4>
+                <dl class="detail-facts" id="preferred-slots"></dl>
+              </div>
+            </section>
+
+            <!-- ติดต่อผู้แจ้ง -->
+            <section class="detail-card detail-area-contact" aria-labelledby="contact-title">
+              <h2 class="detail-card__title" id="contact-title">ติดต่อผู้แจ้ง</h2>
+              <p class="detail-card__hint only-desktop">ใช้โทรตกลงวันนัดใหม่ เมื่อไม่สะดวกทั้ง 2 ช่วง</p>
+              <dl class="detail-facts">
+                <div><dt>ผู้แจ้ง</dt><dd id="contact-name">-</dd></div>
+                <div class="only-desktop"><dt>โทรศัพท์</dt><dd id="contact-phone">-</dd></div>
+                <div id="contact-line-wrap" class="only-desktop"><dt>ไลน์</dt><dd id="contact-line">-</dd></div>
+              </dl>
+              <a class="btn-call" id="call-btn" href="#">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <span id="call-label">โทร</span>
+              </a>
+            </section>
+
+            <!-- ฟอร์มมอบหมาย -->
+            <div class="detail-area-form">
+              <form id="assign-form" novalidate>
+
+                <section class="detail-card" aria-labelledby="urgency-title">
+                  <h2 class="detail-card__title" id="urgency-title">1. ความเร่งด่วน</h2>
+                  <p class="detail-card__hint" id="urgency-hint">ยืนยันหรือเปลี่ยนได้</p>
+                  <div class="choice-list" id="urgency-options"></div>
+                </section>
+
+                <section class="detail-card" aria-labelledby="appt-title">
+                  <h2 class="detail-card__title" id="appt-title">2. ยืนยันวันนัด</h2>
+                  <p class="detail-card__hint">เลือกจากช่วงที่ผู้แจ้งเสนอ หรือกำหนดใหม่</p>
+                  <div class="choice-list" id="slot-options"></div>
+
+                  <div class="custom-appt is-hidden" id="custom-appt">
+                    <div class="field">
+                      <label for="custom-date">วันที่นัด <span class="req">*</span></label>
+                      <input type="date" id="custom-date" name="custom-date">
+                      <p class="field__error is-hidden" id="custom-date-error" role="alert"></p>
+                    </div>
+                    <div class="field">
+                      <label for="custom-period">ช่วงเวลา <span class="req">*</span></label>
+                      <select id="custom-period" name="custom-period">
+                        <option value="MORNING">ช่วงเช้า 09:00–12:00 น.</option>
+                        <option value="AFTERNOON">ช่วงบ่าย 13:00–16:00 น.</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label for="custom-note">หมายเหตุการนัดหมายใหม่ <span class="req">*</span></label>
+                      <textarea id="custom-note" name="custom-note" rows="3" maxlength="500" placeholder="ระบุผลการโทรตกลงกับผู้แจ้ง เช่น โทรตกลงกับผู้แจ้งแล้ว สะดวกวันที่..."></textarea>
+                      <p class="field__error is-hidden" id="custom-note-error" role="alert"></p>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="detail-card" aria-labelledby="tech-title">
+                  <h2 class="detail-card__title" id="tech-title">3. เลือกช่าง</h2>
+                  <p class="detail-card__hint" id="tech-hint">แสดงเฉพาะช่างที่ตรงกับประเภทงาน</p>
+                  <div class="request-state request-state--small" id="tech-loading" role="status">กำลังโหลดรายชื่อช่าง...</div>
+                  <div class="notice notice--danger is-hidden" id="tech-error" role="alert">
+                    <p id="tech-error-message">โหลดรายชื่อช่างไม่สำเร็จ</p>
+                    <button class="request-retry" id="tech-retry" type="button">ลองอีกครั้ง</button>
+                  </div>
+                  <p class="request-state request-state--small is-hidden" id="tech-empty">ไม่พบช่างที่ตรงกับประเภทงานนี้</p>
+                  <div class="choice-list" id="technician-list"></div>
+                  <p class="field__error is-hidden" id="tech-select-error" role="alert"></p>
+                  <p class="detail-card__hint detail-card__hint--bottom"><span class="only-desktop">ระบบแสดงนัดที่ช่างมีอยู่แล้วเพื่อช่วยตัดสินใจ แต่ไม่ล็อกการเลือก เจ้าหน้าที่เป็นผู้พิจารณาว่าช่างทำทันหรือไม่</span><span class="only-mobile">ระบบแสดงนัดที่มีอยู่แล้ว แต่ไม่ล็อกการเลือก</span></p>
+                </section>
+
+                <div class="notice notice--danger is-hidden" id="submit-error" role="alert">
+                  <p id="submit-error-message"></p>
+                </div>
+
+                <div class="action-bar" id="action-bar">
+                  <a class="btn-secondary js-list-link" href="staff-requests.html">กลับไปรายการ</a>
+                  <button class="btn-primary" id="assign-btn" type="submit">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+                    <span id="assign-btn-label">มอบหมายงานให้ช่าง</span>
+                  </button>
+                </div>
+                <p class="action-note" id="action-note">ความเร่งด่วน วันนัด และช่างจะถูกบันทึกพร้อมกันเมื่อกด "มอบหมายงานให้ช่าง" เท่านั้น ถ้ากดกลับโดยยังไม่มอบหมาย คำร้องยังเป็น "รอรับเรื่อง" ไม่มีอะไรถูกบันทึก</p>
+              </form>
+
+              <!-- มุมมองอ่านอย่างเดียว (มอบหมายแล้ว) -->
+              <section class="detail-card is-hidden" id="assigned-card" aria-labelledby="assigned-title">
+                <h2 class="detail-card__title" id="assigned-title">ช่างที่รับงาน</h2>
+                <dl class="detail-facts detail-facts--single" id="assigned-facts"></dl>
+                <div class="action-bar action-bar--single">
+                  <a class="btn-secondary js-list-link" href="staff-requests.html">กลับไปรายการ</a>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== มอบหมายสำเร็จ ===== -->
+        <section class="success-card is-hidden" id="success-view" aria-live="polite">
+          <div class="success-card__icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h1 class="success-card__title">มอบหมายงานสำเร็จ</h1>
+          <p class="success-card__sub">สถานะเปลี่ยนจาก "รอรับเรื่อง" เป็น "กำลังดำเนินการ"</p>
+          <dl class="success-card__rows" id="success-rows"></dl>
+          <p class="notice notice--info success-card__note">ผู้แจ้งเห็นชื่อช่างและวันนัดแล้ว และงานขึ้นในหน้า "งานของฉัน" ของช่างทันที</p>
+          <div class="success-card__actions">
+            <a class="btn-primary js-list-link" href="staff-requests.html">กลับไปรายการคำร้อง</a>
+            <button class="btn-secondary" id="view-detail-btn" type="button">ดูรายละเอียดคำร้อง</button>
+          </div>
+        </section>
+
+        </main>
+        </div>
+    </div>
+  <script src="../js/common.js"></script>
+  <script src="../js/api-client.js"></script>
+     <script src="../js/staff-request-detail.js"></script>
+    </body>
+    </html>
+

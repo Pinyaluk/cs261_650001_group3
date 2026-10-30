@@ -3,146 +3,204 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>รายการคำร้อง | เจ้าหน้าที่</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <title>รายการคำร้อง | เจ้าหน้าที่หอพัก</title>
+  <link rel="stylesheet" href="../css/staff-style.css">
   <link rel="stylesheet" href="../css/staff-requests.css">
-  
 </head>
-<body class="has-desktop-shell">
-  <header class="app-header">
-    <div class="app-header__identity">
-      <div>
-        <p class="app-header__brand">หอพักอุ่นใจ</p>
-        <p class="app-header__role">เจ้าหน้าที่</p>
-      </div>
-    </div>
-    <div class="app-header__user">
-      <span class="app-header__name" id="header-name">เจ้าหน้าที่</span>
-    </div>
-  </header>
+<body class="staff-body">
+  <div class="staff-app">
 
-  <nav class="tab-nav">
-    <div class="tab-nav__top">
-      <a href="staff-requests.html" class="tab-btn is-active">
-        <svg class="tab-btn__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-        </svg>
-        <span class="tab-btn__label">รายการคำร้อง</span>
-      </a>
-    </div>
-
-      <button class="btn sidebar-logout" id="logout-btn" type="button">ออกจากระบบ</button>
-    
-  </nav>
-
-  <main class="page">
-    <div class="page-header">
-      <h1 class="page-title">รายการคำร้องแจ้งซ่อม (เจ้าหน้าที่)</h1>
-      <p class="page-subtitle">หน้ารายการคำร้องทั้งหมดสำหรับเจ้าหน้าที่ตรวจสอบและมอบหมายงาน</p>
-    </div>
-    <!-- 1.1 กล่องสรุปจำนวนคำร้อง -->
-    <section class="summary-grid" aria-label="สรุปจำนวนคำร้อง">
-      <article class="summary-box summary-box--pending">
-        <span class="summary-box__count" id="count-pending">0</span>
-        <span class="summary-box__label">รอรับเรื่อง</span>
-      </article>
-
-      <article class="summary-box summary-box--in-progress">
-        <span class="summary-box__count" id="count-in-progress">0</span>
-        <span class="summary-box__label">กำลังดำเนินการ</span>
-      </article>
-
-      <article class="summary-box summary-box--completed">
-        <span class="summary-box__count" id="count-completed">0</span>
-        <span class="summary-box__label">เสร็จสิ้น</span>
-      </article>
-
-      <article class="summary-box summary-box--urgent">
-        <span class="summary-box__count" id="count-urgent">0</span>
-        <span class="summary-box__label">เร่งด่วน ยังไม่มอบหมาย</span>
-      </article>
-    </section>
-
-    <!-- 1.2 รายการคำร้อง (ค้นหา, กรอง, โหลด, ตาราง Desktop, รายการ Mobile, Pagination) -->
-    <section class="card request-list-card">
-      <div class="request-list-card__header">
+    <!-- ===== Mobile / Tablet: แถบบน ===== -->
+    <header class="staff-mobilebar">
+      <div class="staff-mobilebar__row">
         <div>
-          <h2 class="card__title">คำร้องทั้งหมด</h2>
-          <p class="card__subtitle" id="result-count">กำลังโหลดรายการคำร้อง</p>
+          <p class="staff-mobilebar__brand">หอพักอุ่นใจ</p>
+          <p class="staff-mobilebar__role">เจ้าหน้าที่หอพัก</p>
         </div>
+        <button class="staff-logout js-logout" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          ออกจากระบบ
+        </button>
       </div>
-
-      <div class="request-toolbar">
-        <div class="form-group request-search">
-          <label class="form-label is-hidden" for="search-input">ค้นหาคำร้อง</label>
-          <input class="form-control" id="search-input" type="search" placeholder="ค้นหาเลขคำร้อง ชื่อผู้แจ้ง หรือห้อง" autocomplete="off">
-        </div>
-
-        <div class="chip-group" id="status-filter" aria-label="กรองตามสถานะ">
-          <button class="chip is-active" type="button" data-status="ALL">
-            ทั้งหมด <span data-field="count">0</span>
-          </button>
-          <button class="chip" type="button" data-status="PENDING">
-            รอรับเรื่อง <span data-field="count">0</span>
-          </button>
-          <button class="chip" type="button" data-status="IN_PROGRESS">
-            กำลังดำเนินการ <span data-field="count">0</span>
-          </button>
-          <button class="chip" type="button" data-status="COMPLETED">
-            เสร็จสิ้น <span data-field="count">0</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="request-state" id="loading-state" role="status">กำลังโหลดรายการคำร้อง...</div>
-
-      <div class="notice notice--danger is-hidden" id="error-state" role="alert">
-        <p id="error-message">ไม่สามารถโหลดรายการคำร้องได้</p>
-        <button class="btn btn-outline" id="retry-btn" type="button">ลองอีกครั้ง</button>
-      </div>
-
-      <div class="request-state is-hidden" id="empty-state">
-        <h3 class="request-state__title">ไม่พบคำร้อง</h3>
-        <p class="request-state__description">ลองเปลี่ยนคำค้นหาหรือตัวกรองสถานะ</p>
-      </div>
-
-      <div class="request-table-wrap is-hidden" id="request-table-wrap">
-        <table class="request-table">
-          <thead>
-            <tr>
-              <th scope="col">เลขที่</th>
-              <th scope="col">เรื่องที่แจ้ง / สถานที่</th>
-              <th scope="col">ประเภท</th>
-              <th scope="col">ความเร่งด่วน</th>
-              <th scope="col">สถานะ</th>
-              <th scope="col">วันที่แจ้ง</th>
-              <th scope="col"><span class="is-hidden">รายละเอียด</span></th>
-            </tr>
-          </thead>
-          <tbody id="request-table-body"></tbody>
-        </table>
-      </div>
-
-      <ul class="request-list is-hidden" id="request-list" aria-label="รายการคำร้อง"></ul>
-
-      <nav class="pagination is-hidden" id="pagination" aria-label="เปลี่ยนหน้ารายการคำร้อง">
-        <button class="pagination__button" id="previous-page-btn" type="button" data-page-action="previous" aria-label="หน้าก่อนหน้า">‹</button>
-        <div class="pagination__pages" id="page-list"></div>
-        <button class="pagination__button" id="next-page-btn" type="button" data-page-action="next" aria-label="หน้าถัดไป">›</button>
-        <p class="pagination__info" id="pagination-info">แสดง 0–0 จาก 0 รายการ</p>
+      <nav class="staff-mobilebar__nav" aria-label="เมนูหลัก">
+        <a class="staff-tab is-active" href="staff-requests.html" aria-current="page">รายการคำร้อง</a>
       </nav>
-    </section>
+    </header>
 
-    <aside class="notice notice--info">
-      คำร้องที่ผู้พักอาศัยระบุว่าเร่งด่วน จะมีป้ายเร่งด่วนตั้งแต่ส่งคำร้อง
+    <!-- ===== Desktop: แถบด้านข้าง ===== -->
+    <aside class="staff-sidebar">
+      <div>
+        <div class="staff-brand">
+          <p class="staff-brand__name">หอพักอุ่นใจ</p>
+          <p class="staff-brand__tag">ศูนย์บริการแจ้งซ่อม</p>
+        </div>
+        <p class="staff-sidebar__role">เจ้าหน้าที่หอพัก</p>
+        <nav class="staff-nav" aria-label="เมนูหลัก">
+          <a class="staff-nav__item is-active js-list-link" href="staff-requests.html" aria-current="page">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+            <span>รายการคำร้อง</span>
+          </a>
+        </nav>
+        <p class="staff-office">
+          สำนักงานหอพัก<br>
+          02-555-0180<br>
+          08:30–17:00 น.
+        </p>
+      </div>
+
+      <div class="staff-sidebar__bottom">
+        <div class="staff-user">
+          <p class="staff-user__org">หอพักอุ่นใจ • สำนักงาน</p>
+          <p class="staff-user__name js-user-name">เจ้าหน้าที่</p>
+        </div>
+        <button class="staff-logout staff-logout--block js-logout" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          ออกจากระบบ
+        </button>
+      </div>
     </aside>
 
-    <footer class="footer-note">
-      หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180
-    </footer>
-  </main>
-  <!-- แม่แบบสำหรับ Mobile List -->
+    <!-- ===== เนื้อหาหลัก ===== -->
+    <div class="staff-main">
+      <div class="staff-topbar">
+        <div>
+          <p class="staff-topbar__title">ระบบบริการแจ้งซ่อมหอพัก</p>
+          <p class="staff-topbar__sub">ดูแลทุกคำร้องให้ถึงมือช่าง</p>
+        </div>
+        <div class="staff-topbar__chips">
+          <span class="staff-pill">เจ้าหน้าที่</span>
+          <span class="staff-pill staff-pill--soft js-user-name" id="header-name">เจ้าหน้าที่</span>
+        </div>
+      </div>
+
+      <main class="page staff-page">
+        <div class="page-header">
+          <p class="page-crumb">เจ้าหน้าที่หอพัก</p>
+          <h1 class="page-title">รายการคำร้อง</h1>
+          <p class="page-subtitle">
+            <span class="only-desktop">ดูคำร้องทั้งหมดจากผู้พักอาศัย เรียงคำร้องใหม่ล่าสุดก่อน แล้วกดเพื่อตรวจสอบรายละเอียด</span>
+            <span class="only-mobile">คำร้องใหม่ล่าสุดอยู่บนสุด กดเพื่อตรวจสอบ</span>
+          </p>
+        </div>
+
+        <!-- สรุปจำนวนคำร้อง -->
+        <section class="summary-grid" aria-label="สรุปจำนวนคำร้อง">
+          <article class="summary-box summary-box--pending">
+            <div class="summary-box__top">
+              <span class="summary-box__count" id="count-pending">–</span>
+              <svg class="summary-box__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <span class="summary-box__label">รอรับเรื่อง</span>
+          </article>
+
+          <article class="summary-box summary-box--in-progress">
+            <div class="summary-box__top">
+              <span class="summary-box__count" id="count-in-progress">–</span>
+              <svg class="summary-box__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <span class="summary-box__label">กำลังดำเนินการ</span>
+          </article>
+
+          <article class="summary-box summary-box--completed">
+            <div class="summary-box__top">
+              <span class="summary-box__count" id="count-completed">–</span>
+              <svg class="summary-box__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>
+            </div>
+            <span class="summary-box__label">เสร็จสิ้น</span>
+          </article>
+
+          <article class="summary-box summary-box--urgent">
+            <div class="summary-box__top">
+              <span class="summary-box__count" id="count-urgent">–</span>
+              <svg class="summary-box__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <span class="summary-box__label">เร่งด่วน ยังไม่มอบหมาย</span>
+          </article>
+        </section>
+
+        <!-- รายการคำร้อง -->
+        <section class="card request-list-card" aria-labelledby="list-title">
+          <div class="request-list-card__header">
+            <h2 class="card__title" id="list-title">คำร้องทั้งหมด</h2>
+            <p class="card__subtitle" id="result-count" aria-live="polite">กำลังโหลดรายการคำร้อง</p>
+          </div>
+
+          <div class="request-toolbar">
+            <div class="request-search">
+              <label class="is-hidden" for="search-input">ค้นหาคำร้อง</label>
+              <svg class="request-search__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input class="request-search__input" id="search-input" type="search" placeholder="ค้นหาเลขคำร้อง ชื่อผู้แจ้ง หรือห้อง" autocomplete="off">
+            </div>
+
+            <div class="chip-group" id="status-filter" role="group" aria-label="กรองตามสถานะ">
+              <button class="chip is-active" type="button" data-status="ALL" aria-pressed="true">ทั้งหมด (<span data-field="count">–</span>)</button>
+              <button class="chip" type="button" data-status="PENDING" aria-pressed="false">รอรับเรื่อง (<span data-field="count">–</span>)</button>
+              <button class="chip" type="button" data-status="IN_PROGRESS" aria-pressed="false">กำลังดำเนินการ (<span data-field="count">–</span>)</button>
+              <button class="chip" type="button" data-status="COMPLETED" aria-pressed="false">เสร็จสิ้น (<span data-field="count">–</span>)</button>
+            </div>
+          </div>
+
+          <div class="request-state" id="loading-state" role="status">กำลังโหลดรายการคำร้อง...</div>
+
+          <div class="notice notice--danger is-hidden" id="error-state" role="alert">
+            <p id="error-message">ไม่สามารถโหลดรายการคำร้องได้</p>
+            <button class="request-retry" id="retry-btn" type="button">ลองอีกครั้ง</button>
+          </div>
+
+          <div class="request-state is-hidden" id="empty-state">
+            <h3 class="request-state__title">ไม่พบคำร้อง</h3>
+            <p class="request-state__description">ลองเปลี่ยนคำค้นหาหรือตัวกรองสถานะ</p>
+          </div>
+
+          <!-- Desktop -->
+          <div class="request-table-wrap is-hidden" id="request-table-wrap">
+            <table class="request-table">
+              <thead>
+                <tr>
+                  <th scope="col">เลขที่</th>
+                  <th scope="col">เรื่องที่แจ้ง / สถานที่</th>
+                  <th scope="col">ประเภท</th>
+                  <th scope="col">ความเร่งด่วน</th>
+                  <th scope="col">สถานะ</th>
+                  <th scope="col">วันที่แจ้ง</th>
+                  <th scope="col"><span class="is-hidden">รายละเอียด</span></th>
+                </tr>
+              </thead>
+              <tbody id="request-table-body"></tbody>
+            </table>
+          </div>
+          <p class="request-table-hint is-hidden" id="table-hint">กดแถวเพื่อเปิดรายละเอียดคำร้อง</p>
+
+          <!-- Mobile -->
+          <ul class="request-list is-hidden" id="request-list" aria-label="รายการคำร้อง"></ul>
+
+          <nav class="pagination is-hidden" id="pagination" aria-label="เปลี่ยนหน้ารายการคำร้อง">
+            <p class="pagination__info" id="pagination-info">แสดง 0–0 จาก 0 รายการ</p>
+            <div class="pagination__controls">
+              <button class="pagination__button pagination__button--nav" id="previous-page-btn" type="button" data-page-action="previous" aria-label="หน้าก่อนหน้า">
+                <span aria-hidden="true">‹</span><span class="pagination__text">ก่อนหน้า</span>
+              </button>
+              <div class="pagination__pages" id="page-list"></div>
+              <button class="pagination__button pagination__button--nav" id="next-page-btn" type="button" data-page-action="next" aria-label="หน้าถัดไป">
+                <span class="pagination__text">ถัดไป</span><span aria-hidden="true">›</span>
+              </button>
+            </div>
+          </nav>
+        </section>
+
+        <aside class="notice notice--info notice--icon request-info-notice">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span>คำร้องที่ผู้พักอาศัยติ๊ก "แจ้งว่าเร่งด่วน" จะมีป้ายเร่งด่วนตั้งแต่ส่งคำร้อง เจ้าหน้าที่ยืนยันหรือเปลี่ยนได้ในหน้ารายละเอียด</span>
+        </aside>
+
+        <footer class="footer-note">
+          หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <!-- แม่แบบ Mobile -->
   <template id="request-item-template">
     <li>
       <a class="request-item" data-field="link" href="staff-request-detail.html">
@@ -152,26 +210,15 @@
           <p class="request-item__meta" data-field="meta"></p>
           <p class="request-item__date" data-field="date"></p>
         </div>
-        <template id="request-item-template">
-  <li>
-    <a class="request-item" data-field="link" href="staff-request-detail.html">
-      <div class="request-item__content">
-        <div class="request-item__badges" data-field="badges"></div>
-        <h3 class="request-item__title" data-field="title"></h3>
-        <p class="request-item__meta" data-field="meta"></p>
-        <p class="request-item__date" data-field="date"></p>
-      </div>
-    </a>
-  </li>
-</template>
+        <span class="request-item__chevron" aria-hidden="true">›</span>
       </a>
     </li>
   </template>
 
-  <!-- แม่แบบสำหรับ Desktop Table Row -->
+  <!-- แม่แบบ Desktop -->
   <template id="request-row-template">
     <tr class="request-row">
-      <td data-field="code"></td>
+      <td class="request-row__code" data-field="code"></td>
       <td>
         <a class="request-row__link" data-field="link" href="staff-request-detail.html">
           <strong data-field="title"></strong>
@@ -181,12 +228,13 @@
       <td data-field="category"></td>
       <td><span class="badge" data-field="urgency"></span></td>
       <td><span class="badge" data-field="status"></span></td>
-      <td data-field="created-at"></td>
+      <td class="request-row__date" data-field="created-at"></td>
       <td>
         <a class="request-row__detail-link" data-field="detail-link" href="staff-request-detail.html" aria-label="เปิดรายละเอียดคำร้อง">›</a>
       </td>
     </tr>
   </template>
+
   <script src="../js/common.js"></script>
   <script src="../js/api-client.js"></script>
   <script src="../js/staff-requests.js"></script>
