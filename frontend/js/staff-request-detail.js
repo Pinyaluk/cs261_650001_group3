@@ -1,9 +1,7 @@
 // js/staff-request-detail.js
 // หน้ารายละเอียดคำร้อง + มอบหมายช่าง (เจ้าหน้าที่)
-// ดึงข้อมูลผ่าน apiFetch (api-client.js) — ไม่มีข้อมูลตัวอย่างในไฟล์นี้
  
 window.__staffDetailLoaded = true;
-window.__staffDetailStage = "script-loaded";
  
 try {
   if (typeof requireRole === "function") requireRole("STAFF");
@@ -14,76 +12,42 @@ try {
 (function () {
   "use strict";
  
-  /* ========================================
-     ⚠️ ตั้งค่า endpoint — ตรวจให้ตรงกับ docs/api-spec-sprint2.md
-  ======================================== */
- 
   const API = {
-    list: "/api/staff/repair-requests",                                  // 2.1
-    detail: (id) => `/api/staff/repair-requests/${encodeURIComponent(id)}`, // 2.3
-    technicians: (query) => `/api/staff/technicians?${query}`,           // 2.5  ?category=&date=&slot=
-    assign: (id) => `/api/staff/repair-requests/${encodeURIComponent(id)}/assign`, // 2.4
+    detail: (id) => `/api/staff/repair-requests/${encodeURIComponent(id)}`,
+    technicians: (query) => `/api/staff/technicians?${query}`,
+    assign: (id) => `/api/staff/repair-requests/${encodeURIComponent(id)}/assign`,
     assignMethod: "PUT",
-    listPageSize: 50,
-    listMaxPages: 100,
   };
  
-  // แสดงข้อผิดพลาด JavaScript บนหน้าจอ แทนที่จะค้างที่ "กำลังโหลด"
   window.addEventListener("error", (e) => {
-    console.error("Global JS Error:", e);
     showPageError(`JavaScript error: ${e.message}`, false);
   });
   window.addEventListener("unhandledrejection", (e) => {
     const r = e.reason;
-    console.error("Unhandled Promise Rejection:", r);
     showPageError(`เกิดข้อผิดพลาด: ${(r && r.message) || r}`, true);
   });
  
-  /* ---------- API layer ---------- */
- 
   function apiGet(path) {
     if (typeof apiFetch !== "function") {
-      return Promise.reject(new Error("ไม่พบ apiFetch — ตรวจว่า ../js/api-client.js โหลดก่อน staff-request-detail.js"));
+      return Promise.reject(new Error("ไม่พบ apiFetch — ตรวจว่า api-client.js โหลดก่อนหน้านี้"));
     }
-    console.info("[detail] GET", path);
     return apiFetch(path);
   }
- 
-  function isAuthError(error) {
-    const status = error && (error.status || error.statusCode);
-    return status === 401 || status === 403 || /\b(401|403)\b/.test((error && error.message) || "");
+
+  function apiSend(path, method, body) {
+    if (typeof apiFetch !== "function") {
+      return Promise.reject(new Error("ไม่พบ apiFetch — ตรวจว่า api-client.js โหลดก่อนหน้านี้"));
+    }
+    return apiFetch(path, {
+      method: method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
   }
  
   async function fetchRequestDetail(id) {
-    try {
-      const data = await apiGet(API.detail(id));
-      if (data && typeof data === "object" && !Array.isArray(data)) {
-        console.info("[detail] source = detail endpoint");
-        return data;
-      }
-    } catch (error) {
-      if (isAuthError(error)) throw error;
-      console.warn("[detail] detail endpoint ใช้ไม่ได้ จะค้นหาจากรายการแทน:", error);
-    }
- 
-    for (let page = 0; page < API.listMaxPages; page += 1) {
-      const query = new URLSearchParams({ page: String(page), size: String(API.listPageSize) });
-      const data = await apiGet(`${API.list}?${query.toString()}`);
-      const content = data && Array.isArray(data.content) ? data.content : [];
-      const found = content.find((r) => String(firstDefined(r.requestId, r.id, r.request_id)) === String(id));
-      if (found) {
-        console.info("[detail] source = list endpoint (page " + page + ")");
-        return found;
-      }
-      const total = Number(data && data.totalCount);
-      if (content.length < API.listPageSize || (Number.isFinite(total) && (page + 1) * API.listPageSize >= total)) break;
-    }
-    throw new Error(`ไม่พบคำร้องเลขที่ ${id} ในฐานข้อมูล`);
+    return await apiGet(API.detail(id));
   }
- 
-  /* ========================================
-     ค่าคงที่
-  ======================================== */
  
   const LIST_PAGE = "staff-requests.html";
  
@@ -127,12 +91,7 @@ try {
  
   const $ = (id) => document.getElementById(id);
  
-  /* ========================================
-     เริ่มทำงาน
-  ======================================== */
- 
   document.addEventListener("DOMContentLoaded", () => {
-    window.__staffDetailStage = "dom-ready";
     state.id = new URLSearchParams(window.location.search).get("id");
     
     const loadingEl = $("detail-loading");
@@ -184,16 +143,34 @@ try {
  
   function showUserName() {
     let name = "";
-    ["getCurrentUser", "getSessionUser", "getUser"].some((fn) => {
+
+    
+    ["getCurrentUser", "getSessionUser", "getUser", "getAuthUser"].some((fn) => {
       if (typeof window[fn] !== "function") return false;
       try {
         const u = window[fn]();
-        name = (u && (u.fullName || u.name || u.displayName)) || "";
+        if (u) {
+          name = u.fullName || u.name || u.displayName || u.username || u.firstname || "";
+        }
       } catch (_) { name = ""; }
       return Boolean(name);
     });
-    if (!name) return;
-    document.querySelectorAll(".js-user-name").forEach((el) => { el.textContent = name; });
+
+    if (!name) {
+      try {
+        const rawUser = localStorage.getItem("user") || sessionStorage.getItem("user") || 
+                        localStorage.getItem("currentUser") || sessionStorage.getItem("currentUser");
+        if (rawUser) {
+          const u = JSON.parse(rawUser);
+          name = u.fullName || u.name || u.displayName || u.username || u.firstname || "";
+        }
+      } catch (_) {}
+    }
+
+    const displayName = name || "ผู้ใช้งาน";
+    document.querySelectorAll(".js-user-name").forEach((el) => {
+      el.textContent = displayName;
+    });
   }
  
   const firstDefined = (...v) => v.find((x) => x !== undefined && x !== null && x !== "");
@@ -240,7 +217,7 @@ try {
   function formatDateTimeLong(value) {
     const p = value ? bangkokParts(value) : null;
     if (!p) return "";
-    return `${Number(p.day)} ${TH_MONTHS[Number(p.month) - 1]} ${thaiYear(Number(p.year))} เวลา ${p.hour}:${p.minute} น.`;
+    return `${Number(p.day)} ${TH_MONTHS[Number(p.month) - 1]} ${thaiYear(Number(p.year))} • ${p.hour}:${p.minute} น.`;
   }
  
   function todayIso() {
@@ -308,8 +285,12 @@ try {
   }
  
   function resolveAssetUrl(url) {
-    const text = String(url || "");
-    if (!text || /^(https?:)?\/\//i.test(text) || text.startsWith("data:")) return text;
+    if (!url) return "";
+    if (typeof imageUrl === "function") {
+      return imageUrl(url);
+    }
+    const text = String(url);
+    if (/^(https?:)?\/\//i.test(text) || text.startsWith("data:")) return text;
     let base = "";
     try { if (typeof API_BASE_URL === "string") base = API_BASE_URL; } catch (_) {}
     if (!base && typeof window.API_BASE_URL === "string") base = window.API_BASE_URL;
@@ -320,6 +301,16 @@ try {
  
   function normalizePhotos(r) {
     const list = firstDefined(r.images, r.photos, r.attachments, r.imageUrls) || [];
+    if (!Array.isArray(list)) return [];
+    return list
+      .map((p) => (typeof p === "string"
+        ? { url: resolveAssetUrl(p), caption: "" }
+        : { url: resolveAssetUrl(firstDefined(p.url, p.imageUrl, p.path, p.src, "")), caption: firstDefined(p.caption, p.description, p.name, "") }))
+      .filter((p) => p.url);
+  }
+
+  function normalizeAfterPhotos(r) {
+    const list = firstDefined(r.afterImageUrls, r.afterImages, r.afterPhotos) || [];
     if (!Array.isArray(list)) return [];
     return list
       .map((p) => (typeof p === "string"
@@ -358,9 +349,6 @@ try {
  
   function normalizeRequest(raw) {
     const r = (raw && (raw.data || raw.request)) || raw || {};
-    
-    console.log("🔍 ข้อมูลดิบคำร้องจาก API:", r);
-
     const id = firstDefined(r.requestId, r.id, r.request_id);
     const room = firstDefined(r.roomNo, r.room, r.roomNumber);
     const building = firstDefined(r.building, r.buildingName);
@@ -378,15 +366,18 @@ try {
       location: buildLocation(r) || "-",
       category: categoryLabel(category),
       categoryRaw: String(category),
-      equipment: firstDefined(r.equipment, r.equipmentName, r.deviceName, r.itemName, "-"),
       detail: firstDefined(r.description, r.detail, r.details, "-"),
       createdAt: firstDefined(r.createdAt, r.created_at),
       photos: normalizePhotos(r),
+      afterPhotos: normalizeAfterPhotos(r),
       slots: normalizeSlots(r),
       reporterName: String(firstDefined(r.reporterName, r.requesterName, r.residentName, "")),
       reporterRoom: reporterRoomLabel(r, building, room),
       reporterPhone: String(firstDefined(r.reporterPhone, r.phone, "")),
       reporterLine: String(firstDefined(r.reporterLineId, r.reporterLine, r.lineId, "")),
+      repairResult: firstDefined(r.repairResult, r.result, "-"),
+      completedAt: firstDefined(r.completedAt, r.finishedAt),
+      statusHistory: Array.isArray(r.statusHistory) ? r.statusHistory : [],
       assigned: {
         technicianName: firstDefined(
           r.technicianName, 
@@ -413,7 +404,6 @@ try {
   }
  
   async function loadRequest() {
-    console.info("[detail] เริ่มโหลดคำร้อง ID:", state.id);
     setHidden($("detail-error"), true);
     setHidden($("detail-content"), true);
     setHidden($("success-view"), true);
@@ -421,11 +411,7 @@ try {
     setHidden($("detail-loading"), false);
  
     try {
-      window.__staffDetailStage = "กำลังเรียก API";
       const data = await fetchRequestDetail(state.id);
-      window.__staffDetailStage = "ได้ข้อมูลแล้ว กำลังแสดงผล";
-      console.info("[detail] ได้ข้อมูลคำร้อง:", data);
- 
       state.req = normalizeRequest(data);
       renderRequest();
       setHidden($("detail-loading"), true);
@@ -486,11 +472,10 @@ try {
     if ($("fact-area-type")) $("fact-area-type").textContent = r.areaType;
     if ($("fact-location")) $("fact-location").textContent = r.location;
     if ($("fact-category")) $("fact-category").textContent = r.category || "-";
-    if ($("fact-equipment")) $("fact-equipment").textContent = r.equipment;
     if ($("fact-detail")) $("fact-detail").textContent = r.detail;
  
     if ($("fact-location-m")) $("fact-location-m").textContent = r.areaType && r.areaType !== "-" ? `${r.location} (${r.areaType})` : r.location;
-    if ($("fact-problem-m")) $("fact-problem-m").textContent = [r.category, r.equipment !== "-" ? r.equipment : ""].filter(Boolean).join(" • ") || "-";
+    if ($("fact-problem-m")) $("fact-problem-m").textContent = r.category || "-";
     if ($("fact-detail-m")) $("fact-detail-m").textContent = r.detail;
  
     renderPhotos();
@@ -849,104 +834,215 @@ try {
     setFieldMessage(`${inputId}-error`, "");
   }
 
-  function showReadOnly() {
-    setHidden($("assign-form"), true);
-    setHidden($("assigned-card"), false);
-    setHidden($("readonly-banner"), false);
-    const r = state.req.assigned;
-    
-    console.log("🛠️ ข้อมูลช่างที่นำมาแสดงผลใน ReadOnly:", r);
+  function validateAssignment() {
+    let valid = true;
+    setFieldMessage("tech-select-error", "");
 
-    const assignedFacts = $("assigned-facts");
-    if (assignedFacts) {
-      assignedFacts.replaceChildren();
+    if (state.slotChoice === "CUSTOM") {
+      const customDateEl = $("custom-date");
+      const customNoteEl = $("custom-note");
+      const dateVal = customDateEl ? customDateEl.value : "";
+      const noteVal = customNoteEl ? customNoteEl.value.trim() : "";
 
-      const wrapName = el("div");
-      wrapName.appendChild(el("dt", "", "ช่างผู้รับผิดชอบ"));
-      wrapName.appendChild(el("dd", "", r.technicianName || "ไม่ระบุชื่อช่าง"));
-      assignedFacts.appendChild(wrapName);
-
-      if (r.technicianPhone) {
-        const wrapPhone = el("div");
-        wrapPhone.appendChild(el("dt", "", "เบอร์โทรศัพท์ช่าง"));
-        wrapPhone.appendChild(el("dd", "", r.technicianPhone));
-        assignedFacts.appendChild(wrapPhone);
+      if (!dateVal) {
+        if (customDateEl) customDateEl.classList.add("is-invalid");
+        setFieldMessage("custom-date-error", "กรุณาระบุวันนัดหมาย");
+        valid = false;
+      } else {
+        clearFieldError("custom-date");
       }
 
-      if (r.date) {
-        const wrapDate = el("div");
-        wrapDate.appendChild(el("dt", "", "วันนัดหมาย"));
-        wrapDate.appendChild(el("dd", "", `${formatDate(r.date)} ${periodLabel(r.period)}`.trim()));
-        assignedFacts.appendChild(wrapDate);
-      }
-
-      if (r.note) {
-        const wrapNote = el("div");
-        wrapNote.appendChild(el("dt", "", "หมายเหตุการนัดหมาย"));
-        wrapNote.appendChild(el("dd", "", r.note));
-        assignedFacts.appendChild(wrapNote);
-      }
-
-      const metaText = [r.assignedBy && `โดย ${r.assignedBy}`, r.assignedAt && `เมื่อ ${formatDateTimeLong(r.assignedAt)}`].filter(Boolean).join(" • ");
-      if (metaText) {
-        const wrapMeta = el("div");
-        wrapMeta.appendChild(el("dt", "", "ข้อมูลการมอบหมาย"));
-        wrapMeta.appendChild(el("dd", "", metaText));
-        assignedFacts.appendChild(wrapMeta);
+      if (!noteVal) {
+        if (customNoteEl) customNoteEl.classList.add("is-invalid");
+        setFieldMessage("custom-note-error", "กรุณาระบุเหตุผล/หมายเหตุที่เลื่อนวันนัด");
+        valid = false;
+      } else {
+        clearFieldError("custom-note");
       }
     }
+
+    if (!state.technicianId) {
+      setFieldMessage("tech-select-error", "กรุณาเลือกช่างผู้รับผิดชอบ");
+      valid = false;
+    }
+
+    return valid;
   }
 
   async function submitAssignment() {
-    if (!state.technicianId) {
-      setFieldMessage("tech-select-error", "กรุณาเลือกช่างผู้รับผิดชอบ");
-      return;
-    }
-    const appt = currentAppointment();
-    if (!appt || !appt.date || !appt.period) {
-      alert("กรุณาระบุวันและช่วงเวลานัดหมายให้ครบถ้วน");
-      return;
-    }
+    if (state.submitting) return;
+    if (!validateAssignment()) return;
 
-    setHidden($("assign-submit-error"), true);
-    const submitBtn = $("assign-submit-btn");
+    const appt = currentAppointment();
+    const payload = {
+      technicianId: isNaN(state.technicianId) ? state.technicianId : Number(state.technicianId),
+      urgency: state.urgency,
+      appointmentDate: appt ? appt.date : null,
+      appointmentPeriod: appt ? appt.period : null,
+      appointmentNote: state.slotChoice === "CUSTOM" && $("custom-note") ? $("custom-note").value.trim() : "",
+    };
+
+    const submitBtn = $("submit-btn");
+    state.submitting = true;
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.textContent = "กำลังบันทึก...";
     }
 
     try {
-      const payload = {
-        technicianId: state.technicianId,
-        urgency: state.urgency,
-        appointmentDate: appt.date,
-        appointmentSlot: appt.period,
-        note: $("custom-note") ? $("custom-note").value : "",
-      };
-
-      if (typeof apiFetch === "function") {
-        await apiFetch(API.assign(state.id), {
-          method: API.assignMethod || "PUT",
-          body: JSON.stringify(payload),
-        });
-      } else {
-        throw new Error("ไม่พบฟังก์ชัน apiFetch สำหรับส่งข้อมูล");
-      }
-
-      setHidden($("assign-form"), true);
-      setHidden($("success-view"), false);
-      setHidden($("back-link"), true);
+      await apiSend(API.assign(state.id), API.assignMethod, payload);
+      renderSuccessView(payload);
     } catch (error) {
-      console.error("Failed to assign technician:", error);
-      const errMsg = $("assign-submit-error-msg");
-      if (errMsg) errMsg.textContent = friendlyMessage(error, "บันทึกการมอบหมายไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
-      setHidden($("assign-submit-error"), false);
+      console.error("Assignment failed:", error);
+      alert(friendlyMessage(error, "มอบหมายงานไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"));
     } finally {
+      state.submitting = false;
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.textContent = "ยืนยันการมอบหมายงาน";
+        submitBtn.textContent = "ยืนยันมอบหมายงาน";
       }
     }
   }
 
+  function renderSuccessView(payload) {
+    setHidden($("detail-content"), true);
+    setHidden($("back-link"), true);
+    setHidden($("success-view"), false);
+
+    const tech = state.technicians.find((t) => String(t.id) === String(state.technicianId));
+    const techName = tech ? tech.name : "ช่างผู้รับผิดชอบ";
+    
+    if ($("success-tech")) $("success-tech").textContent = techName;
+    if ($("success-date")) {
+      $("success-date").textContent = `${formatDate(payload.appointmentDate)} ${periodLabel(payload.appointmentPeriod)}`.trim();
+    }
+  }
+
+  function showReadOnly() {
+    setHidden($("assign-form"), true);
+    setHidden($("assigned-card"), false);
+    setHidden($("readonly-banner"), false);
+
+    const subTitle = $("page-subtitle");
+    if (subTitle) {
+      subTitle.textContent = "ตรวจสอบรายละเอียดคำร้องและสถานะการดำเนินการ";
+    }
+
+    const r = state.req;
+    const assignedFacts = $("assigned-facts");
+    if (assignedFacts) {
+      assignedFacts.replaceChildren();
+
+      // 1. ข้อมูลช่างและวันนัด
+      if (r.assigned.technicianName) {
+        const wrapName = el("div");
+        wrapName.appendChild(el("dt", "", "ช่างผู้รับผิดชอบ"));
+        wrapName.appendChild(el("dd", "", r.assigned.technicianName));
+        assignedFacts.appendChild(wrapName);
+      }
+
+      if (r.assigned.technicianPhone) {
+        const wrapPhone = el("div");
+        wrapPhone.appendChild(el("dt", "", "เบอร์โทรศัพท์ช่าง"));
+        wrapPhone.appendChild(el("dd", "", r.assigned.technicianPhone));
+        assignedFacts.appendChild(wrapPhone);
+      }
+
+      if (r.assigned.date) {
+        const wrapDate = el("div");
+        wrapDate.appendChild(el("dt", "", "วันนัดหมาย"));
+        wrapDate.appendChild(el("dd", "", `${formatDate(r.assigned.date)} ${periodLabel(r.assigned.period)}`.trim()));
+        assignedFacts.appendChild(wrapDate);
+      }
+
+      if (r.assigned.note) {
+        const wrapNote = el("div");
+        wrapNote.appendChild(el("dt", "", "หมายเหตุการนัดหมาย"));
+        wrapNote.appendChild(el("dd", "", r.assigned.note));
+        assignedFacts.appendChild(wrapNote);
+      }
+
+      // 2. ข้อมูลเมื่อสถานะเป็น COMPLETED
+      if (r.status === "COMPLETED") {
+        if (r.repairResult && r.repairResult !== "-") {
+          const wrapResult = el("div");
+          wrapResult.appendChild(el("dt", "", "ผลการซ่อม"));
+          wrapResult.appendChild(el("dd", "", r.repairResult));
+          assignedFacts.appendChild(wrapResult);
+        }
+
+        if (r.completedAt) {
+          const wrapCompDate = el("div");
+          wrapCompDate.appendChild(el("dt", "", "วันที่เสร็จสิ้น"));
+          wrapCompDate.appendChild(el("dd", "", formatDateTimeLong(r.completedAt)));
+          assignedFacts.appendChild(wrapCompDate);
+        }
+
+        if (r.afterPhotos && r.afterPhotos.length > 0) {
+          const wrapAfterImg = el("div", "detail-facts__wide");
+          wrapAfterImg.appendChild(el("dt", "", "รูปหลังซ่อม"));
+          const imgGrid = el("ul", "photo-grid");
+          r.afterPhotos.forEach((p, idx) => {
+            const li = el("li");
+            const frame = el("button", "photo-grid__frame");
+            frame.type = "button";
+            const img = document.createElement("img");
+            img.src = p.url;
+            img.alt = `รูปหลังซ่อมที่ ${idx + 1}`;
+            frame.appendChild(img);
+            frame.addEventListener("click", () => window.open(p.url, "_blank", "noopener"));
+            li.appendChild(frame);
+            imgGrid.appendChild(li);
+          });
+          wrapAfterImg.appendChild(imgGrid);
+          assignedFacts.appendChild(wrapAfterImg);
+        }
+      }
+
+      // 3. ประวัติสถานะ (Custom Timeline)
+      if (r.statusHistory && r.statusHistory.length > 0) {
+        const wrapTimeline = el("div", "detail-facts__wide");
+        wrapTimeline.appendChild(el("dt", "", "ประวัติสถานะ"));
+        
+        const timelineContainer = el("div", "custom-timeline");
+        
+        r.statusHistory.forEach((h, index) => {
+          const itemEl = el("div", "custom-timeline__item");
+          
+          // จุดไอคอนวงกลมเขียวและเส้นเชื่อมแนวตั้ง
+          const nodeEl = el("div", "custom-timeline__node");
+          nodeEl.appendChild(el("span", "custom-timeline__dot"));
+          if (index < r.statusHistory.length - 1) {
+            nodeEl.appendChild(el("span", "custom-timeline__line"));
+          }
+          itemEl.appendChild(nodeEl);
+
+          // รายละเอียดเนื้อหา
+          const contentEl = el("div", "custom-timeline__content");
+          const stMeta = STATUS_META[normalizeStatus(h.status)] || { label: h.status };
+          
+          const titleEl = el("h4", "custom-timeline__title", stMeta.label);
+          contentEl.appendChild(titleEl);
+
+          if (h.changedAt) {
+            contentEl.appendChild(el("p", "custom-timeline__time", formatDateTimeLong(h.changedAt)));
+          }
+
+          const descParts = [];
+          if (h.note) descParts.push(h.note);
+          if (h.changedByName) descParts.push(`โดย ${h.changedByName}`);
+          
+          if (descParts.length > 0) {
+            contentEl.appendChild(el("p", "custom-timeline__desc", descParts.join(" • ")));
+          }
+
+          itemEl.appendChild(contentEl);
+          timelineContainer.appendChild(itemEl);
+        });
+
+        wrapTimeline.appendChild(timelineContainer);
+        assignedFacts.appendChild(wrapTimeline);
+      }
+    }
+  }
 })();

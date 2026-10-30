@@ -1,8 +1,6 @@
 // js/staff-requests.js
 // หน้ารายการคำร้อง (เจ้าหน้าที่) — ดึงข้อมูลจริงจาก GET /api/staff/repair-requests ผ่าน apiFetch (api-client.js)
-// ไม่มีข้อมูลตัวอย่างในไฟล์นี้
  
-// ตรวจสิทธิ์: เข้าได้เฉพาะ STAFF (เรียกครั้งเดียว)
 window.__staffListLoaded = true;
  
 try {
@@ -101,7 +99,6 @@ try {
   }
  
   function bindEvents() {
-    // ออกจากระบบ (ทั้งปุ่มมือถือและ sidebar)
     document.querySelectorAll(".js-logout").forEach((btn) => {
       btn.addEventListener("click", () => {
         if (typeof logoutStaff === "function") logoutStaff();
@@ -109,7 +106,6 @@ try {
       });
     });
  
-    // ค้นหา (debounce)
     let timer = null;
     els.search.addEventListener("input", () => {
       clearTimeout(timer);
@@ -123,7 +119,6 @@ try {
       if (e.key === "Enter") e.preventDefault();
     });
  
-    // กรองสถานะ
     els.chips.forEach((chip) => {
       chip.addEventListener("click", () => {
         const status = chip.dataset.status || "ALL";
@@ -135,7 +130,6 @@ try {
       });
     });
  
-    // แบ่งหน้า
     els.prev.addEventListener("click", () => goToPage(state.page - 1));
     els.next.addEventListener("click", () => goToPage(state.page + 1));
     els.pageList.addEventListener("click", (e) => {
@@ -143,20 +137,17 @@ try {
       if (btn) goToPage(Number(btn.dataset.page));
     });
  
-    // ลองใหม่ (ดึงจากฐานข้อมูลอีกครั้ง)
     els.retry.addEventListener("click", () => {
       state.clientRows = null;
       loadRequests();
     });
  
-    // คลิกทั้งแถวในตาราง
     els.tableBody.addEventListener("click", (e) => {
       if (e.target.closest("a")) return;
       const row = e.target.closest("tr[data-href]");
       if (row) window.location.href = row.dataset.href;
     });
  
-    // เปลี่ยนขนาดจอ → เปลี่ยนจำนวนต่อหน้า และคงรายการแรกของหน้าไว้
     const onViewportChange = () => {
       const newSize = currentPageSize();
       if (newSize === state.pageSize) return;
@@ -180,10 +171,6 @@ try {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
  
-  /* ========================================
-     ผู้ใช้ที่ล็อกอิน
-  ======================================== */
- 
   function showUserName() {
     let name = "";
     ["getCurrentUser", "getSessionUser", "getUser"].some((fn) => {
@@ -201,10 +188,6 @@ try {
       el.textContent = name;
     });
   }
- 
-  /* ========================================
-     URL state (ให้หน้ารายละเอียดกลับมาที่เดิมได้)
-  ======================================== */
  
   function readUrlState() {
     const params = new URLSearchParams(window.location.search);
@@ -241,10 +224,6 @@ try {
     return `${DETAIL_PAGE}?${params.toString()}`;
   }
  
-  /* ========================================
-     โหลดข้อมูล
-  ======================================== */
- 
   async function loadRequests() {
     const token = ++state.token;
     showLoading();
@@ -253,7 +232,6 @@ try {
       const result = await fetchPage();
       if (token !== state.token) return;
  
-      // หน้าเกินจำนวนหน้าจริง (เช่น ข้อมูลลดลง) → กลับไปหน้าสุดท้าย
       const totalPages = Math.max(1, Math.ceil(result.total / state.pageSize));
       if (state.page > totalPages) {
         state.page = totalPages;
@@ -270,11 +248,9 @@ try {
     }
   }
  
-  // GET /api/staff/repair-requests  (page เริ่มที่ 0, size 1–50, status ไม่ส่ง = ทั้งหมด)
-  // API ไม่มี search และ size สูงสุด 50 → โหลดทุกหน้ามาเก็บไว้ แล้วกรอง/ค้นหา/แบ่งหน้าที่หน้าเว็บ
   const API_PATH = "/api/staff/repair-requests";
   const API_PAGE_SIZE = 50;
-  const API_MAX_PAGES = 100; // กันวนไม่รู้จบ
+  const API_MAX_PAGES = 100;
  
   async function fetchPage() {
     if (!state.clientRows) {
@@ -330,15 +306,20 @@ try {
     const filtered = rows
       .filter((r) => state.status === "ALL" || r.status === state.status)
       .filter((r) => !keyword || r.searchText.includes(keyword))
-      .sort((a, b) => b.createdAtMs - a.createdAtMs);
+      .sort((a, b) => {
+
+  
+  if (a.urgent !== b.urgent) {
+    return a.urgent ? -1 : 1;
+  }
+
+  return b.createdAtMs - a.createdAtMs;
+
+});
  
     const start = (state.page - 1) * state.pageSize;
     return { items: filtered.slice(start, start + state.pageSize), total: filtered.length, counts };
   }
- 
-  /* ========================================
-     แปลงข้อมูลจากฐานข้อมูลให้เป็นรูปแบบเดียวกัน
-  ======================================== */
  
   function firstDefined(...values) {
     return values.find((v) => v !== undefined && v !== null);
@@ -356,13 +337,40 @@ try {
   }
  
   function isUrgent(r) {
-    const candidates = [r.isUrgent, r.is_urgent, r.urgent, r.urgency, r.urgencyLevel, r.priority];
-    return candidates.some((v) => {
-      if (v === true || v === 1) return true;
-      if (typeof v !== "string") return false;
-      return ["URGENT", "HIGH", "TRUE", "เร่งด่วน"].includes(v.trim().toUpperCase());
-    });
-  }
+  if (!r) return false;
+
+  const candidates = [
+    r.urgent,
+    r.isUrgent,
+    r.is_urgent,
+    r.urgency,
+    r.urgencyLevel,
+    r.priority,
+    r.reporterUrgent,
+    r.confirmedUrgency,
+    r.staffUrgency
+  ];
+
+  return candidates.some((value) => {
+    if (value === true || value === 1) return true;
+
+    if (typeof value === "string") {
+      const normalized = value.trim().toUpperCase();
+
+      return [
+        "URGENT",
+        "HIGH",
+        "CRITICAL",
+        "TRUE",
+        "1",
+        "เร่งด่วน",
+        "ด่วน"
+      ].includes(normalized);
+    }
+
+    return false;
+  });
+}
  
   function buildLocation(r) {
     const building = firstDefined(r.buildingName, r.building);
@@ -376,7 +384,6 @@ try {
     return parts.join(" • ");
   }
  
-  // category จาก API เป็นรหัสอังกฤษ (ELECTRICAL, PLUMBING ...) → แสดงเป็นภาษาไทย
   const CATEGORY_LABELS = {
     ELECTRIC: "ไฟฟ้า", ELECTRICAL: "ไฟฟ้า",
     PLUMBING: "ประปา", WATER: "ประปา",
@@ -401,6 +408,7 @@ try {
     const category = categoryLabel(firstDefined(r.categoryName, r.category, r.problemType, ""));
     const createdAt = firstDefined(r.createdAt, r.created_at, r.reportedAt, r.submittedAt);
     const createdAtMs = createdAt ? new Date(createdAt).getTime() || 0 : 0;
+    const urgentFlag = isUrgent(r);
  
     return {
       id,
@@ -412,7 +420,7 @@ try {
       createdAt,
       createdAtMs,
       status: normalizeStatus(firstDefined(r.status, r.statusCode)),
-      urgent: isUrgent(r),
+      urgent: urgentFlag,
       hasTechnician: Boolean(firstDefined(r.technicianId, r.assignedTo, r.technicianName, r.technician)),
       searchText: [rawCode, id, title, requester, location, category, r.detail, r.description]
         .filter((v) => v !== undefined && v !== null)
@@ -431,24 +439,6 @@ try {
     });
     return counts;
   }
- 
-  function normalizeCounts(c) {
-    if (!c || typeof c !== "object") return null;
-    const pending = Number(firstDefined(c.pending, c.PENDING, 0));
-    const inProgress = Number(firstDefined(c.inProgress, c.in_progress, c.IN_PROGRESS, 0));
-    const completed = Number(firstDefined(c.completed, c.COMPLETED, 0));
-    return {
-      pending,
-      inProgress,
-      completed,
-      all: Number(firstDefined(c.all, c.total, pending + inProgress + completed)),
-      urgentUnassigned: Number(firstDefined(c.urgentUnassigned, c.urgent_unassigned, c.urgent, 0)),
-    };
-  }
- 
-  /* ========================================
-     วันที่ (พ.ศ., เขตเวลา Asia/Bangkok)
-  ======================================== */
  
   function thaiDateParts(value) {
     const date = new Date(value);
@@ -476,12 +466,8 @@ try {
  
   function formatDateTime(value) {
     const p = value ? thaiDateParts(value) : null;
-    return p ? `${p.date} • ${p.time}` : "-";
+    return p ? `${p.date} ${p.time}` : "-";
   }
- 
-  /* ========================================
-     แสดงผล
-  ======================================== */
  
   function setHidden(el, hidden) {
     if (el) el.classList.toggle("is-hidden", hidden);
@@ -499,16 +485,17 @@ try {
   function showLoading() {
     hideAllResults();
     setHidden(els.loading, false);
-    els.resultCount.textContent = "กำลังโหลดรายการคำร้อง";
+    if (els.resultCount) els.resultCount.textContent = "กำลังโหลดรายการคำร้อง";
   }
  
   function showError(error) {
     hideAllResults();
     setHidden(els.loading, true);
-    els.errorMessage.textContent =
-      (error && error.message) ? `ไม่สามารถโหลดรายการคำร้องได้: ${error.message}` : "ไม่สามารถโหลดรายการคำร้องได้";
+    if (els.errorMessage) {
+      els.errorMessage.textContent = (error && error.message) ? `ไม่สามารถโหลดรายการคำร้องได้: ${error.message}` : "ไม่สามารถโหลดรายการคำร้องได้";
+    }
     setHidden(els.error, false);
-    els.resultCount.textContent = "โหลดรายการไม่สำเร็จ";
+    if (els.resultCount) els.resultCount.textContent = "โหลดรายการไม่สำเร็จ";
   }
  
   function render({ items, total }) {
@@ -517,9 +504,11 @@ try {
     renderSummary();
  
     const totalText = total.toLocaleString("th-TH");
-    els.resultCount.textContent = DESKTOP_QUERY.matches
-      ? `${totalText} รายการ • หน้าละ ${state.pageSize} รายการ • เรียงตามวันที่แจ้งล่าสุด`
-      : `${totalText} รายการ • เรียงตามวันที่แจ้งล่าสุด`;
+    if (els.resultCount) {
+      els.resultCount.textContent = DESKTOP_QUERY.matches
+        ? `${totalText} รายการ • หน้าละ ${state.pageSize} รายการ • เร่งด่วนก่อน แล้วเรียงตามวันที่แจ้งล่าสุด`
+        : `${totalText} รายการ • เร่งด่วนก่อน แล้วเรียงตามวันที่แจ้งล่าสุด`;
+    }
  
     if (items.length === 0) {
       setHidden(els.empty, false);
@@ -570,6 +559,7 @@ try {
   }
  
   function renderTable(items) {
+    if (!els.tableBody) return;
     els.tableBody.replaceChildren();
     const fragment = document.createDocumentFragment();
  
@@ -587,12 +577,12 @@ try {
  
       const urgency = q("urgency");
       urgency.textContent = req.urgent ? "เร่งด่วน" : "ปกติ";
-      urgency.classList.add(req.urgent ? "badge--urgent" : "badge--normal");
+      urgency.className = `badge ${req.urgent ? "badge--urgent" : "badge--normal"}`;
  
       const info = statusBadgeInfo(req.status);
       const status = q("status");
       status.textContent = info.label;
-      status.classList.add(info.className);
+      status.className = `badge ${info.className}`;
  
       q("created-at").textContent = formatDateTime(req.createdAt);
       q("detail-link").href = href;
@@ -604,6 +594,7 @@ try {
   }
  
   function renderMobileList(items) {
+    if (!els.list) return;
     els.list.replaceChildren();
     const fragment = document.createDocumentFragment();
  
@@ -629,10 +620,6 @@ try {
     els.list.appendChild(fragment);
   }
  
-  /* ========================================
-     Pagination: ‹ ก่อนหน้า 1 2 3 … 15 ถัดไป ›
-  ======================================== */
- 
   function pageNumbers(current, last) {
     const set = new Set([1, last, current - 1, current, current + 1]);
     if (current <= 3) { set.add(2); set.add(3); }
@@ -648,35 +635,39 @@ try {
   }
  
   function renderPagination(total) {
+    if (!els.pagination) return;
     const last = Math.max(1, Math.ceil(total / state.pageSize));
     const start = (state.page - 1) * state.pageSize + 1;
     const end = Math.min(state.page * state.pageSize, total);
  
-    els.info.textContent = `แสดง ${start.toLocaleString("th-TH")}–${end.toLocaleString("th-TH")} จาก ${total.toLocaleString("th-TH")} รายการ`;
-    els.prev.disabled = state.page <= 1;
-    els.next.disabled = state.page >= last;
+    if (els.info) {
+      els.info.textContent = `แสดง ${start.toLocaleString("th-TH")}–${end.toLocaleString("th-TH")} จาก ${total.toLocaleString("th-TH")} รายการ`;
+    }
+    if (els.prev) els.prev.disabled = state.page <= 1;
+    if (els.next) els.next.disabled = state.page >= last;
  
-    els.pageList.replaceChildren();
-    pageNumbers(state.page, last).forEach((p) => {
-      if (p === "…") {
-        const gap = document.createElement("span");
-        gap.className = "pagination__ellipsis";
-        gap.textContent = "…";
-        gap.setAttribute("aria-hidden", "true");
-        els.pageList.appendChild(gap);
-        return;
-      }
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "pagination__button" + (p === state.page ? " is-active" : "");
-      btn.dataset.page = String(p);
-      btn.textContent = String(p);
-      btn.setAttribute("aria-label", `หน้า ${p}`);
-      if (p === state.page) btn.setAttribute("aria-current", "page");
-      els.pageList.appendChild(btn);
-    });
+    if (els.pageList) {
+      els.pageList.replaceChildren();
+      pageNumbers(state.page, last).forEach((p) => {
+        if (p === "…") {
+          const gap = document.createElement("span");
+          gap.className = "pagination__ellipsis";
+          gap.textContent = "…";
+          gap.setAttribute("aria-hidden", "true");
+          els.pageList.appendChild(gap);
+          return;
+        }
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "pagination__button" + (p === state.page ? " is-active" : "");
+        btn.dataset.page = String(p);
+        btn.textContent = String(p);
+        btn.setAttribute("aria-label", `หน้า ${p}`);
+        if (p === state.page) btn.setAttribute("aria-current", "page");
+        els.pageList.appendChild(btn);
+      });
+    }
  
     setHidden(els.pagination, false);
   }
 })();
- 
