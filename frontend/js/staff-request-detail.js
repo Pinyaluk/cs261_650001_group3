@@ -167,7 +167,7 @@ try {
       } catch (_) {}
     }
 
-    const displayName = name || "ผู้ใช้งาน";
+    const displayName = name || localStorage.getItem("fullName") || "ผู้ใช้งาน";
     document.querySelectorAll(".js-user-name").forEach((el) => {
       el.textContent = displayName;
     });
@@ -878,11 +878,11 @@ try {
       technicianId: isNaN(state.technicianId) ? state.technicianId : Number(state.technicianId),
       urgency: state.urgency,
       appointmentDate: appt ? appt.date : null,
-      appointmentPeriod: appt ? appt.period : null,
+      appointmentSlot: appt ? appt.period : null,
       appointmentNote: state.slotChoice === "CUSTOM" && $("custom-note") ? $("custom-note").value.trim() : "",
     };
 
-    const submitBtn = $("submit-btn");
+    const submitBtn = $("assign-btn");
     state.submitting = true;
     if (submitBtn) {
       submitBtn.disabled = true;
@@ -914,7 +914,7 @@ try {
     
     if ($("success-tech")) $("success-tech").textContent = techName;
     if ($("success-date")) {
-      $("success-date").textContent = `${formatDate(payload.appointmentDate)} ${periodLabel(payload.appointmentPeriod)}`.trim();
+      $("success-date").textContent = `${formatDate(payload.appointmentDate)} ${periodLabel(payload.appointmentSlot)}`.trim();
     }
   }
 
