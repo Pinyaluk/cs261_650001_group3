@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>รายการคำร้อง | เจ้าหน้าที่</title>
   <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/staff-requests.css">
+  
 </head>
 <body class="has-desktop-shell">
   <header class="app-header">
@@ -20,7 +22,18 @@
   </header>
 
   <nav class="tab-nav">
-    <button class="btn sidebar-logout" id="logout-btn" type="button">ออกจากระบบ</button>
+    <div class="tab-nav__top">
+      <a href="staff-requests.html" class="tab-btn is-active">
+        <svg class="tab-btn__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+        </svg>
+        <span class="tab-btn__label">รายการคำร้อง</span>
+      </a>
+    </div>
+
+      <button class="btn sidebar-logout" id="logout-btn" type="button">ออกจากระบบ</button>
+    
   </nav>
 
   <main class="page">
@@ -28,10 +41,154 @@
       <h1 class="page-title">รายการคำร้องแจ้งซ่อม (เจ้าหน้าที่)</h1>
       <p class="page-subtitle">หน้ารายการคำร้องทั้งหมดสำหรับเจ้าหน้าที่ตรวจสอบและมอบหมายงาน</p>
     </div>
-  </main>
+    <!-- 1.1 กล่องสรุปจำนวนคำร้อง -->
+    <section class="summary-grid" aria-label="สรุปจำนวนคำร้อง">
+      <article class="summary-box summary-box--pending">
+        <span class="summary-box__count" id="count-pending">0</span>
+        <span class="summary-box__label">รอรับเรื่อง</span>
+      </article>
 
-  <script src="../js/api-client.js"></script>
+      <article class="summary-box summary-box--in-progress">
+        <span class="summary-box__count" id="count-in-progress">0</span>
+        <span class="summary-box__label">กำลังดำเนินการ</span>
+      </article>
+
+      <article class="summary-box summary-box--completed">
+        <span class="summary-box__count" id="count-completed">0</span>
+        <span class="summary-box__label">เสร็จสิ้น</span>
+      </article>
+
+      <article class="summary-box summary-box--urgent">
+        <span class="summary-box__count" id="count-urgent">0</span>
+        <span class="summary-box__label">เร่งด่วน ยังไม่มอบหมาย</span>
+      </article>
+    </section>
+
+    <!-- 1.2 รายการคำร้อง (ค้นหา, กรอง, โหลด, ตาราง Desktop, รายการ Mobile, Pagination) -->
+    <section class="card request-list-card">
+      <div class="request-list-card__header">
+        <div>
+          <h2 class="card__title">คำร้องทั้งหมด</h2>
+          <p class="card__subtitle" id="result-count">กำลังโหลดรายการคำร้อง</p>
+        </div>
+      </div>
+
+      <div class="request-toolbar">
+        <div class="form-group request-search">
+          <label class="form-label is-hidden" for="search-input">ค้นหาคำร้อง</label>
+          <input class="form-control" id="search-input" type="search" placeholder="ค้นหาเลขคำร้อง ชื่อผู้แจ้ง หรือห้อง" autocomplete="off">
+        </div>
+
+        <div class="chip-group" id="status-filter" aria-label="กรองตามสถานะ">
+          <button class="chip is-active" type="button" data-status="ALL">
+            ทั้งหมด <span data-field="count">0</span>
+          </button>
+          <button class="chip" type="button" data-status="PENDING">
+            รอรับเรื่อง <span data-field="count">0</span>
+          </button>
+          <button class="chip" type="button" data-status="IN_PROGRESS">
+            กำลังดำเนินการ <span data-field="count">0</span>
+          </button>
+          <button class="chip" type="button" data-status="COMPLETED">
+            เสร็จสิ้น <span data-field="count">0</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="request-state" id="loading-state" role="status">กำลังโหลดรายการคำร้อง...</div>
+
+      <div class="notice notice--danger is-hidden" id="error-state" role="alert">
+        <p id="error-message">ไม่สามารถโหลดรายการคำร้องได้</p>
+        <button class="btn btn-outline" id="retry-btn" type="button">ลองอีกครั้ง</button>
+      </div>
+
+      <div class="request-state is-hidden" id="empty-state">
+        <h3 class="request-state__title">ไม่พบคำร้อง</h3>
+        <p class="request-state__description">ลองเปลี่ยนคำค้นหาหรือตัวกรองสถานะ</p>
+      </div>
+
+      <div class="request-table-wrap is-hidden" id="request-table-wrap">
+        <table class="request-table">
+          <thead>
+            <tr>
+              <th scope="col">เลขที่</th>
+              <th scope="col">เรื่องที่แจ้ง / สถานที่</th>
+              <th scope="col">ประเภท</th>
+              <th scope="col">ความเร่งด่วน</th>
+              <th scope="col">สถานะ</th>
+              <th scope="col">วันที่แจ้ง</th>
+              <th scope="col"><span class="is-hidden">รายละเอียด</span></th>
+            </tr>
+          </thead>
+          <tbody id="request-table-body"></tbody>
+        </table>
+      </div>
+
+      <ul class="request-list is-hidden" id="request-list" aria-label="รายการคำร้อง"></ul>
+
+      <nav class="pagination is-hidden" id="pagination" aria-label="เปลี่ยนหน้ารายการคำร้อง">
+        <button class="pagination__button" id="previous-page-btn" type="button" data-page-action="previous" aria-label="หน้าก่อนหน้า">‹</button>
+        <div class="pagination__pages" id="page-list"></div>
+        <button class="pagination__button" id="next-page-btn" type="button" data-page-action="next" aria-label="หน้าถัดไป">›</button>
+        <p class="pagination__info" id="pagination-info">แสดง 0–0 จาก 0 รายการ</p>
+      </nav>
+    </section>
+
+    <aside class="notice notice--info">
+      คำร้องที่ผู้พักอาศัยระบุว่าเร่งด่วน จะมีป้ายเร่งด่วนตั้งแต่ส่งคำร้อง
+    </aside>
+
+    <footer class="footer-note">
+      หอพักอุ่นใจ • สำนักงานหอพัก 02-555-0180
+    </footer>
+  </main>
+  <!-- แม่แบบสำหรับ Mobile List -->
+  <template id="request-item-template">
+    <li>
+      <a class="request-item" data-field="link" href="staff-request-detail.html">
+        <div class="request-item__content">
+          <div class="request-item__badges" data-field="badges"></div>
+          <h3 class="request-item__title" data-field="title"></h3>
+          <p class="request-item__meta" data-field="meta"></p>
+          <p class="request-item__date" data-field="date"></p>
+        </div>
+        <template id="request-item-template">
+  <li>
+    <a class="request-item" data-field="link" href="staff-request-detail.html">
+      <div class="request-item__content">
+        <div class="request-item__badges" data-field="badges"></div>
+        <h3 class="request-item__title" data-field="title"></h3>
+        <p class="request-item__meta" data-field="meta"></p>
+        <p class="request-item__date" data-field="date"></p>
+      </div>
+    </a>
+  </li>
+</template>
+      </a>
+    </li>
+  </template>
+
+  <!-- แม่แบบสำหรับ Desktop Table Row -->
+  <template id="request-row-template">
+    <tr class="request-row">
+      <td data-field="code"></td>
+      <td>
+        <a class="request-row__link" data-field="link" href="staff-request-detail.html">
+          <strong data-field="title"></strong>
+          <span data-field="location"></span>
+        </a>
+      </td>
+      <td data-field="category"></td>
+      <td><span class="badge" data-field="urgency"></span></td>
+      <td><span class="badge" data-field="status"></span></td>
+      <td data-field="created-at"></td>
+      <td>
+        <a class="request-row__detail-link" data-field="detail-link" href="staff-request-detail.html" aria-label="เปิดรายละเอียดคำร้อง">›</a>
+      </td>
+    </tr>
+  </template>
   <script src="../js/common.js"></script>
+  <script src="../js/api-client.js"></script>
   <script src="../js/staff-requests.js"></script>
 </body>
 </html>
