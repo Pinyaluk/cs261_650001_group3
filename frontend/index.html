@@ -4,9 +4,18 @@
   <meta charset="UTF-8">
   <title>แจ้งซ่อมหอพัก</title>
   <script>
-    // มี token แล้ว = ล็อกอินอยู่ ไปหน้าแรกเลย / ยังไม่มี = ไปหน้า login
+    // มี token แล้ว = ล็อกอินอยู่ ไปหน้าแรกตาม role / ยังไม่มี = ไปหน้า login
     const token = localStorage.getItem("token");
-    window.location.replace(token ? "pages/home.html" : "pages/login.html");
+    const role = localStorage.getItem("role");
+    let target = "pages/login.html";
+
+    if (token) {
+      if (role === "STAFF") target = "pages/staff-requests.html";
+      else if (role === "TECHNICIAN") target = "pages/technician-tasks.html";
+      else target = "pages/home.html";
+    }
+
+    window.location.replace(target);
   </script>
 </head>
 <body></body>

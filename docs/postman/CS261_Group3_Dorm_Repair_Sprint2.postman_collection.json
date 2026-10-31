@@ -1638,6 +1638,962 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "U8 ช่างส่งมอบงาน",
+      "description": "POST /api/technician/repair-requests/{id}/complete (ข้อ 2.7)\n\nรันทั้งโฟลเดอร์ได้ (33-36 login ให้เอง) แต่ทุก request ที่แนบรูป (afterImages) ต้องเลือกไฟล์รูปจากเครื่องก่อน เหมือน U1: รูป .jpg/.png ไม่เกิน 5MB (เคส 42 เลือก 4 รูป, เคส 43 เลือกไฟล์ใหญ่กว่า 5MB)\n\nเคส 47 ทำให้ 1019 เป็น COMPLETED ถาวร รันซ้ำไม่ได้ ต้อง reset DB ก่อน: docker compose down -v แล้ว docker compose up -d --build",
+      "item": [
+        {
+          "name": "33 Login staff01 (U8)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"role = STAFF\", () => pm.expect(j.role).to.eql(\"STAFF\"));",
+                  "pm.collectionVariables.set(\"staffToken\", j.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login เจ้าหน้าที่ ใช้ดูรายละเอียดหลังส่งมอบ",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"staff01\", \"password\": \"password123\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "34 Login resident01 (U8)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"role = RESIDENT\", () => pm.expect(j.role).to.eql(\"RESIDENT\"));",
+                  "pm.collectionVariables.set(\"residentToken\", j.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login ผู้พักอาศัย ใช้เทส 403",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"resident01\", \"password\": \"password123\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "35 Login tech03 (U8 เจ้าของ 1019, 1020)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"role = TECHNICIAN\", () => pm.expect(j.role).to.eql(\"TECHNICIAN\"));",
+                  "pm.collectionVariables.set(\"techToken\", j.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login tech03 เก็บใน techToken",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"tech03\", \"password\": \"password123\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "36 Login tech04 (U8 ช่างคนอื่น)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"role = TECHNICIAN\", () => pm.expect(j.role).to.eql(\"TECHNICIAN\"));",
+                  "pm.collectionVariables.set(\"tech04Token\", j.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login tech04 เก็บใน tech04Token ใช้เทสงานที่ไม่ใช่ของตน",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"tech04\", \"password\": \"password123\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "37 ส่งมอบ ไม่ส่ง token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "repairResult",
+                  "value": "เปลี่ยนท่อน้ำทิ้งใหม่ ใช้งานได้ปกติ",
+                  "type": "text"
+                },
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "เลือกรูป .jpg หรือ .png 1 รูป (≤5MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/1020/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "technician",
+                "repair-requests",
+                "1020",
+                "complete"
+              ]
+            },
+            "description": "ไม่มี token → 401",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "38 ส่งมอบ ด้วย token ผู้พักอาศัย",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "repairResult",
+                  "value": "เปลี่ยนท่อน้ำทิ้งใหม่ ใช้งานได้ปกติ",
+                  "type": "text"
+                },
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "เลือกรูป .jpg หรือ .png 1 รูป (≤5MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/1020/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "technician",
+                "repair-requests",
+                "1020",
+                "complete"
+              ]
+            },
+            "description": "ไม่ใช่ TECHNICIAN → 403",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{residentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "39 ไม่มีผลการซ่อม",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "เลือกรูป .jpg หรือ .png 1 รูป (≤5MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/1020/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "technician",
+                "repair-requests",
+                "1020",
+                "complete"
+              ]
+            },
+            "description": "TC: ไม่ส่ง repairResult → 400",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{techToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "40 ผลการซ่อมเป็นช่องว่างล้วน",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "repairResult",
+                  "value": "   ",
+                  "type": "text"
+                },
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "เลือกรูป .jpg หรือ .png 1 รูป (≤5MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/1020/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "technician",
+                "repair-requests",
+                "1020",
+                "complete"
+              ]
+            },
+            "description": "TC: trim แล้วว่าง → 400",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{techToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "41 ไม่มีรูป",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "repairResult",
+                  "value": "เปลี่ยนท่อน้ำทิ้งใหม่ ใช้งานได้ปกติ",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/1020/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "technician",
+                "repair-requests",
+                "1020",
+                "complete"
+              ]
+            },
+            "description": "TC: ไม่แนบ afterImages → 400",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{techToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "42 แนบ 4 รูป (เกิน 3)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "repairResult",
+                  "value": "เปลี่ยนท่อน้ำทิ้งใหม่ ใช้งานได้ปกติ",
+                  "type": "text"
+                },
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "รูปที่ 1 จาก 4: เลือกรูป .jpg หรือ .png (≤5MB)"
+                },
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "รูปที่ 2 จาก 4: เลือกรูป .jpg หรือ .png (≤5MB)"
+                },
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "รูปที่ 3 จาก 4: เลือกรูป .jpg หรือ .png (≤5MB)"
+                },
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "รูปที่ 4 จาก 4: เลือกรูป .jpg หรือ .png (≤5MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/1020/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "technician",
+                "repair-requests",
+                "1020",
+                "complete"
+              ]
+            },
+            "description": "TC: เกิน 3 รูป → 400",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{techToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "43 รูปเกิน 5MB",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "repairResult",
+                  "value": "เปลี่ยนท่อน้ำทิ้งใหม่ ใช้งานได้ปกติ",
+                  "type": "text"
+                },
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "เลือกไฟล์รูป .jpg ที่ใหญ่กว่า 5MB (เช่น 6MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/1020/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "technician",
+                "repair-requests",
+                "1020",
+                "complete"
+              ]
+            },
+            "description": "TC: รูปใหญ่กว่า 5MB (5MB + 1 ไบต์) → 400",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{techToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "44 ช่างไม่ใช่เจ้าของงาน (tech04 ส่ง 1020)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "repairResult",
+                  "value": "เปลี่ยนท่อน้ำทิ้งใหม่ ใช้งานได้ปกติ",
+                  "type": "text"
+                },
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "เลือกรูป .jpg หรือ .png 1 รูป (≤5MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/1020/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "technician",
+                "repair-requests",
+                "1020",
+                "complete"
+              ]
+            },
+            "description": "TC: 1020 เป็นงานของ tech03 → 400 (ตามสเปค 2.7)",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tech04Token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "45 งาน PENDING (1024)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "repairResult",
+                  "value": "เปลี่ยนท่อน้ำทิ้งใหม่ ใช้งานได้ปกติ",
+                  "type": "text"
+                },
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "เลือกรูป .jpg หรือ .png 1 รูป (≤5MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/1024/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "technician",
+                "repair-requests",
+                "1024",
+                "complete"
+              ]
+            },
+            "description": "TC: ยังไม่ถูกมอบหมาย / ไม่ใช่ IN_PROGRESS → 400",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{techToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "46 ไม่พบคำร้อง",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "repairResult",
+                  "value": "เปลี่ยนท่อน้ำทิ้งใหม่ ใช้งานได้ปกติ",
+                  "type": "text"
+                },
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "เลือกรูป .jpg หรือ .png 1 รูป (≤5MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/999999/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "technician",
+                "repair-requests",
+                "999999",
+                "complete"
+              ]
+            },
+            "description": "404",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{techToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "47 ส่งมอบสำเร็จ 1019 (2 รูป)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"สถานะเปลี่ยนเป็น COMPLETED\", () => { pm.expect(j.requestId).to.eql(1019); pm.expect(j.status).to.eql(\"COMPLETED\"); });",
+                  "pm.test(\"ได้ผลการซ่อมที่ส่งไป\", () => pm.expect(j.repairResult).to.eql(\"เปลี่ยนท่อน้ำทิ้งใหม่ ใช้งานได้ปกติ\"));",
+                  "pm.test(\"ได้ URL รูปหลังซ่อม 2 รูป\", () => pm.expect(j.afterImageUrls).to.eql([\"/uploads/1019-after-1.jpg\", \"/uploads/1019-after-2.jpg\"]));",
+                  "pm.test(\"มี completedAt\", () => pm.expect(j.completedAt).to.be.a(\"string\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "repairResult",
+                  "value": "เปลี่ยนท่อน้ำทิ้งใหม่ ใช้งานได้ปกติ",
+                  "type": "text"
+                },
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "รูปที่ 1 จาก 2: เลือกรูป .jpg หรือ .png (≤5MB)"
+                },
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "รูปที่ 2 จาก 2: เลือกรูป .jpg หรือ .png (≤5MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/1019/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "technician",
+                "repair-requests",
+                "1019",
+                "complete"
+              ]
+            },
+            "description": "TC: IN_PROGRESS + ผลซ่อม + รูป 2 รูป → COMPLETED (ทำได้ครั้งเดียวต่อ DB)",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{techToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "48 รายละเอียด 1019 หลังส่งมอบ (เจ้าหน้าที่)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"สถานะ COMPLETED\", () => pm.expect(j.status).to.eql(\"COMPLETED\"));",
+                  "pm.test(\"มีผลการซ่อมและเวลาส่งมอบ\", () => { pm.expect(j.repairResult).to.eql(\"เปลี่ยนท่อน้ำทิ้งใหม่ ใช้งานได้ปกติ\"); pm.expect(j.completedAt).to.be.a(\"string\"); });",
+                  "pm.test(\"มีรูปหลังซ่อม 2 รูป\", () => pm.expect(j.afterImageUrls).to.eql([\"/uploads/1019-after-1.jpg\", \"/uploads/1019-after-2.jpg\"]));",
+                  "pm.test(\"ประวัติสถานะล่าสุดเป็น COMPLETED\", () => { const h = j.statusHistory; pm.expect(h[h.length - 1].status).to.eql(\"COMPLETED\"); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests/1019",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests",
+                "1019"
+              ]
+            },
+            "description": "ตรวจว่าผลการซ่อม รูป และประวัติสถานะถูกบันทึกจากเคส 47",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "49 ส่งมอบ 1019 ซ้ำ (COMPLETED แล้ว)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "repairResult",
+                  "value": "เปลี่ยนท่อน้ำทิ้งใหม่ ใช้งานได้ปกติ",
+                  "type": "text"
+                },
+                {
+                  "key": "afterImages",
+                  "type": "file",
+                  "src": [],
+                  "description": "เลือกรูป .jpg หรือ .png 1 รูป (≤5MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/1019/complete",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "technician",
+                "repair-requests",
+                "1019",
+                "complete"
+              ]
+            },
+            "description": "TC: COMPLETED ไปแล้วส่งซ้ำไม่ได้ → 400",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{techToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "variable": [
@@ -1655,6 +2611,10 @@
     },
     {
       "key": "techToken",
+      "value": ""
+    },
+    {
+      "key": "tech04Token",
       "value": ""
     }
   ]

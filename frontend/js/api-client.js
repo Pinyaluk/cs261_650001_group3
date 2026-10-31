@@ -22,6 +22,26 @@ function requireLogin() {
     window.location.replace("login.html");
   }
 }
+/** คืนค่าชื่อไฟล์หน้าแรกตามบทบาท (Staff / Technician / Resident) */
+function homePageFor(role) {
+  if (role === "STAFF") return "staff-requests.html";
+  if (role === "TECHNICIAN") return "technician-tasks.html";
+  return "home.html";
+}
+
+/** ป้องกันไม่ให้ role อื่นเปิดหน้าที่ไม่มีสิทธิ์ */
+function requireRole(...allowedRoles) {
+  if (!getToken()) {
+    window.location.replace("login.html");
+    return;
+  }
+
+  const currentRole = localStorage.getItem("role");
+  if (!allowedRoles.includes(currentRole)) {
+    alert("คุณไม่มีสิทธิ์เข้าถึงหน้านี้");
+    window.location.replace(homePageFor(currentRole));
+  }
+}
 
 /** แปลง path รูปจาก API (/uploads/1019-1.jpg) เป็น URL เต็มสำหรับ <img src> */
 function imageUrl(path) {

@@ -1,7 +1,7 @@
 // js/history.js
 // หน้าประวัติคำร้อง: ดึงรายการ → แสดง (มือถือ = การ์ด, จอคอม = ตาราง) → ค้นหา + กรอง
 
-requireLogin();
+requireRole("RESIDENT");
 
 const requestList = document.getElementById("request-list");
 const itemTemplate = document.getElementById("request-item-template");

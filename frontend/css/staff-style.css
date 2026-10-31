@@ -1,0 +1,507 @@
+/* ========================================
+   staff-style.css
+   สไตล์กลางของฝั่งเจ้าหน้าที่: base + โครงหน้า (sidebar/topbar/แถบมือถือ)
+   + องค์ประกอบที่ใช้ร่วมทุกหน้า (badge, notice, state, หัวข้อหน้า)
+   โหลดเป็นไฟล์แรก ก่อน staff-requests.css / staff-request-detail.css
+======================================== */
+ 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+ 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+ 
+body {
+  margin: 0;
+  font-family: "IBM Plex Sans Thai", "Noto Sans Thai", "Sarabun", system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+ 
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+ 
+h1, h2, h3, h4, p, dl, dd, ul {
+  margin-top: 0;
+}
+ 
+a {
+  color: inherit;
+}
+ 
+.is-hidden {
+  display: none !important;
+}
+ 
+/* ========================================
+   Staff shell — ใช้ร่วมทุกหน้าของเจ้าหน้าที่
+   Mobile/Tablet < 1024px : แถบบน + แท็บ
+   Desktop >= 1024px      : Sidebar ซ้าย + Topbar
+======================================== */
+ 
+:root {
+  --staff-sidebar-w: 244px;
+  --staff-bg: #f2f6f6;
+  --staff-surface: #fff;
+  --staff-border: #dfe8ea;
+  --staff-text: #18343b;
+  --staff-muted: #64777d;
+  --staff-primary: #087f78;
+  --staff-primary-light: #e8f5f2;
+  --staff-danger: #b7473a;
+}
+ 
+.staff-body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--staff-bg);
+  color: var(--staff-text);
+}
+ 
+.staff-app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+ 
+.staff-main {
+  min-width: 0;
+  flex: 1;
+}
+ 
+.staff-sidebar,
+.staff-topbar {
+  display: none;
+}
+ 
+ 
+/* ---------- Mobile bar ---------- */
+ 
+.staff-mobilebar {
+  background: var(--staff-surface);
+  border-bottom: 1px solid var(--staff-border);
+}
+ 
+.staff-mobilebar__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--staff-border);
+}
+ 
+.staff-mobilebar__brand {
+  margin: 0;
+  color: var(--staff-text);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+ 
+.staff-mobilebar__role {
+  margin: 2px 0 0;
+  color: var(--staff-muted);
+  font-size: 12px;
+  line-height: 1.3;
+}
+ 
+.staff-mobilebar__nav {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px;
+  overflow-x: auto;
+}
+ 
+.staff-tab {
+  padding: 9px 16px;
+  border-radius: 10px;
+  color: var(--staff-primary);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+ 
+.staff-tab.is-active {
+  background: var(--staff-primary);
+  color: #fff;
+}
+ 
+ 
+/* ---------- ปุ่มออกจากระบบ ---------- */
+ 
+.staff-logout {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 14px;
+  border: 1px solid var(--staff-danger);
+  border-radius: 10px;
+  background: #fff3f0;
+  color: var(--staff-danger);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+}
+ 
+.staff-logout:hover {
+  background: #ffe6e1;
+}
+ 
+.staff-logout:focus-visible {
+  outline: 3px solid rgb(183 71 58 / 25%);
+  outline-offset: 2px;
+}
+ 
+.staff-logout--block {
+  width: 100%;
+}
+ 
+ 
+/* ---------- Desktop ---------- */
+ 
+@media (min-width: 1024px) {
+  .staff-app {
+    display: grid;
+    grid-template-columns: var(--staff-sidebar-w) minmax(0, 1fr);
+    min-height: 100vh;
+  }
+ 
+  .staff-mobilebar {
+    display: none;
+  }
+ 
+  /* ----- Sidebar ----- */
+ 
+  .staff-sidebar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 28px 24px 32px;
+    border-right: 1px solid var(--staff-border);
+    background: var(--staff-surface);
+  }
+ 
+  .staff-brand__name {
+    margin: 0;
+    color: var(--staff-primary);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+ 
+  .staff-brand__tag {
+    margin: 2px 0 0;
+    color: var(--staff-muted);
+    font-size: 11px;
+    line-height: 1.4;
+  }
+ 
+  .staff-sidebar__role {
+    margin: 30px 0 16px;
+    color: var(--staff-text);
+    font-size: 14px;
+    font-weight: 700;
+  }
+ 
+  .staff-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+ 
+  .staff-nav__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    color: var(--staff-text);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+ 
+  .staff-nav__item:hover {
+    background: var(--staff-primary-light);
+  }
+ 
+  .staff-nav__item.is-active {
+    background: var(--staff-primary-light);
+    color: var(--staff-primary);
+  }
+ 
+  .staff-nav__item:focus-visible {
+    outline: 3px solid rgb(8 127 120 / 25%);
+    outline-offset: 2px;
+  }
+ 
+  .staff-office {
+    margin: 28px 0 0;
+    color: var(--staff-muted);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+ 
+  .staff-sidebar__bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+ 
+  .staff-user {
+    padding-top: 16px;
+    border-top: 1px solid var(--staff-border);
+  }
+ 
+  .staff-user__org {
+    margin: 0;
+    color: var(--staff-muted);
+    font-size: 11px;
+    line-height: 1.5;
+  }
+ 
+  .staff-user__name {
+    margin: 2px 0 0;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+ 
+  .staff-logout--block {
+    min-height: 46px;
+    border-radius: 10px;
+    background: #fff3f0;
+    font-size: 14px;
+  }
+ 
+  .staff-logout--block:hover {
+    background: #ffe6e1;
+  }
+ 
+  /* ----- Topbar ----- */
+ 
+  .staff-topbar {
+    display: flex;
+    min-height: 76px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 36px;
+    border-bottom: 1px solid var(--staff-border);
+    background: var(--staff-surface);
+  }
+ 
+  .staff-topbar__title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+ 
+  .staff-topbar__sub {
+    margin: 0;
+    color: var(--staff-muted);
+    font-size: 11px;
+  }
+ 
+  .staff-topbar__chips {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+ 
+  .staff-pill {
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--staff-primary-light);
+    color: var(--staff-primary);
+    font-size: 12px;
+    font-weight: 700;
+  }
+ 
+  .staff-pill--soft {
+    padding: 0;
+    background: transparent;
+    color: var(--staff-primary);
+  }
+}
+ 
+ 
+/* ========================================
+   เนื้อหาหน้า / หัวข้อหน้า
+======================================== */
+ 
+.staff-page {
+  max-width: none;
+  padding: 20px 20px 32px;
+  margin: 0;
+}
+ 
+.page-header {
+  margin-bottom: 20px;
+}
+ 
+.page-crumb {
+  margin: 0 0 4px;
+  color: var(--staff-muted);
+  font-size: 12px;
+}
+ 
+.page-title {
+  margin: 0;
+  color: var(--staff-text);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+ 
+.page-subtitle {
+  margin: 4px 0 0;
+  color: var(--staff-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+ 
+.footer-note {
+  margin-top: 24px;
+  color: var(--staff-muted, #64777d);
+  font-size: 11px;
+  line-height: 1.6;
+}
+ 
+@media (min-width: 1024px) {
+  .staff-page {
+    padding: 36px 36px 40px;
+  }
+ 
+  .page-header {
+    margin-bottom: 24px;
+  }
+ 
+  .page-title {
+    font-size: 32px;
+  }
+}
+ 
+ 
+/* ========================================
+   สถานะโหลด / แจ้งเตือน
+======================================== */
+ 
+.request-state {
+  padding: 32px 16px;
+  color: var(--staff-muted, #64777d);
+  font-size: 13px;
+  text-align: center;
+}
+ 
+.notice {
+  font-size: 12px;
+  line-height: 1.6;
+}
+ 
+.notice--danger {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #fff0ed;
+  color: #b7473a;
+}
+ 
+.notice--danger p {
+  margin: 0;
+}
+ 
+.notice--info {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #e8f5f2;
+  color: #075b57;
+}
+ 
+.request-retry {
+  padding: 6px 14px;
+  border: 1px solid #b7473a;
+  border-radius: 8px;
+  background: #fff;
+  color: #b7473a;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+}
+ 
+ 
+/* ========================================
+   Badges (สถานะ / ความเร่งด่วน)
+======================================== */
+ 
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+ 
+.badge--pending { background: #fff4d6; color: #8a5a00; }
+.badge--in-progress { background: #edf3ff; color: #3765a5; }
+.badge--completed { background: #e8f5f2; color: #075b57; }
+.badge--urgent { background: #fff0ed; color: #b7473a; }
+.badge--normal { background: #eef3f4; color: #64777d; }
+ 
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+ 
+ 
+/* ========================================
+   Utilities: สลับข้อความ/ส่วนประกอบระหว่างมือถือกับ desktop
+======================================== */
+ 
+@media (max-width: 1023px) {
+  .only-desktop {
+    display: none !important;
+  }
+}
+ 
+@media (min-width: 1024px) {
+  .only-mobile {
+    display: none !important;
+  }
+}
+ 
+.notice--icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+ 
+.notice--icon svg {
+  flex: 0 0 auto;
+}
+ 
