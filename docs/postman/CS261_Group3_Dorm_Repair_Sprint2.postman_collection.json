@@ -2594,6 +2594,378 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "U7 งานของช่าง (Task48)",
+      "description": "GET /api/technician/repair-requests/assigned (ข้อ 2.2) และ /completed (ข้อ 2.6)\n\nรันหลัง request 33-34 (ใช้ residentToken ทดสอบ 403) ข้อมูลตั้งต้น: tech01 มีงาน 1019 (URGENT) และ 1020 (NORMAL) ที่ IN_PROGRESS, tech03 มีงาน 1003 ที่ COMPLETED\nถ้ารัน U8 (request 47) ไปแล้ว งาน 1019 จะเปลี่ยนเป็น COMPLETED ให้ reset DB ก่อน: docker compose down -v แล้ว docker compose up -d --build",
+      "item": [
+        {
+          "name": "50 Login tech03 (U7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"role = TECHNICIAN\", () => pm.expect(j.role).to.eql(\"TECHNICIAN\"));",
+                  "pm.collectionVariables.set(\"tech03Token\", j.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login ช่าง tech03",
+            "auth": { "type": "noauth" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"tech03\", \"password\": \"password123\"}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "51 Login tech05 (U7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"role = TECHNICIAN\", () => pm.expect(j.role).to.eql(\"TECHNICIAN\"));",
+                  "pm.collectionVariables.set(\"tech05Token\", j.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login ช่าง tech05 (มีงาน COMPLETED 1 งาน ไม่มีงาน IN_PROGRESS)",
+            "auth": { "type": "noauth" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"tech05\", \"password\": \"password123\"}",
+              "options": { "raw": { "language": "json" } }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "52 assigned tech03 (U7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"เป็น array\", () => pm.expect(j).to.be.an(\"array\"));",
+                  "pm.test(\"has 2 jobs and 1019 first\", () => { pm.expect(j.length).to.eql(2); pm.expect(j[0].requestId).to.eql(1019); });",
+                  "pm.test(\"เห็นเฉพาะงานของตนเอง (1019, 1020)\", () => j.forEach(x => pm.expect([1019, 1020]).to.include(x.requestId)));",
+                  "pm.test(\"งานเร่งด่วนเรียงก่อนงานปกติ\", () => {",
+                  "  const u = j.map(x => x.urgency);",
+                  "  const firstNormal = u.indexOf(\"NORMAL\");",
+                  "  if (firstNormal !== -1) pm.expect(u.slice(firstNormal)).to.not.include(\"URGENT\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/assigned",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "technician", "repair-requests", "assigned"]
+            },
+            "description": "TC: ช่างเห็นเฉพาะงานที่มอบหมายให้ตนเอง และงานเร่งด่วนเรียงก่อนงานปกติ",
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{tech03Token}}", "type": "string" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "53 completed tech03 (U7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"มี content/page/size/totalCount/totalPages\", () => {",
+                  "  pm.expect(j.content).to.be.an(\"array\");",
+                  "  pm.expect(j).to.have.keys(\"content\", \"page\", \"size\", \"totalCount\", \"totalPages\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/completed?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "technician", "repair-requests", "completed"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            },
+            "description": "งานที่เสร็จแล้วของ tech03 (seed: ยังไม่มี content เป็น [])",
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{tech03Token}}", "type": "string" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "54 assigned tech05 ว่าง (U7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"ช่างที่ยังไม่มีงานได้รายการว่าง []\", () => pm.expect(pm.response.json()).to.eql([]));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/assigned",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "technician", "repair-requests", "assigned"]
+            },
+            "description": "TC: ช่างที่ยังไม่มีงานได้รายการว่าง []",
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{tech05Token}}", "type": "string" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "55 completed tech05 (U7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"มีงาน 1003 พร้อม completedAt\", () => {",
+                  "  pm.expect(j.totalCount).to.eql(1);",
+                  "  pm.expect(j.content[0].requestId).to.eql(1003);",
+                  "  pm.expect(j.content[0].completedAt).to.not.be.null;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/completed?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "technician", "repair-requests", "completed"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            },
+            "description": "งานที่เสร็จแล้วของ tech05 (seed: 1003)",
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{tech05Token}}", "type": "string" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "56 completed ค้นหา keyword ตรง (U7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"พบงาน 1003\", () => pm.expect(pm.response.json().content.map(x => x.requestId)).to.include(1003));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/completed?keyword=แอร์",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "technician", "repair-requests", "completed"],
+              "query": [{ "key": "keyword", "value": "แอร์" }]
+            },
+            "description": "ค้นหาด้วย keyword ในหัวข้อ/อาคาร/สถานที่/ชื่อผู้แจ้ง",
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{tech05Token}}", "type": "string" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "57 completed ค้นหา keyword ไม่ตรง (U7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"ไม่พบรายการ\", () => {",
+                  "  pm.expect(pm.response.json().content).to.eql([]);",
+                  "  pm.expect(pm.response.json().totalCount).to.eql(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/completed?keyword=zzzzzz",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "technician", "repair-requests", "completed"],
+              "query": [{ "key": "keyword", "value": "zzzzzz" }]
+            },
+            "description": "keyword ที่ไม่มีใครตรง ต้องได้ content ว่าง",
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{tech05Token}}", "type": "string" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "58 assigned ไม่มี token (U7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/assigned",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "technician", "repair-requests", "assigned"]
+            },
+            "description": "TC: ไม่มี token ต้องได้ 401",
+            "auth": { "type": "noauth" }
+          },
+          "response": []
+        },
+        {
+          "name": "59 assigned ด้วย RESIDENT (U7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/assigned",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "technician", "repair-requests", "assigned"]
+            },
+            "description": "TC: ไม่ใช่ TECHNICIAN ต้องได้ 403",
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{residentToken}}", "type": "string" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "60 completed size=0 (U7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/completed?page=0&size=0",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "technician", "repair-requests", "completed"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "0" }
+              ]
+            },
+            "description": "TC: size ไม่ถูกต้อง ต้องได้ 400",
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{tech05Token}}", "type": "string" }]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "variable": [
@@ -2615,6 +2987,14 @@
     },
     {
       "key": "tech04Token",
+      "value": ""
+    },
+    {
+      "key": "tech03Token",
+      "value": ""
+    },
+    {
+      "key": "tech05Token",
       "value": ""
     }
   ]
