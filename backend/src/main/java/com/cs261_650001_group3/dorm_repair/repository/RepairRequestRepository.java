@@ -52,8 +52,12 @@ public interface RepairRequestRepository extends JpaRepository<RepairRequest, Lo
     @Query("SELECT r FROM RepairRequest r WHERE r.technician.userId = :technicianId "
             + "AND r.status = com.cs261_650001_group3.dorm_repair.entity.RequestStatus.IN_PROGRESS "
             + "ORDER BY CAST(r.appointmentDateTime AS LocalDate) ASC, r.urgency DESC, r.appointmentDateTime ASC")
+        
     List<RepairRequest> findAssignedJobs(@Param("technicianId") Long technicianId);
 
     /** U7 / Task48: ดึงงานตามสถานะของช่าง พร้อมแบ่งหน้า (เช่น งาน COMPLETED) */
     Page<RepairRequest> findByTechnicianUserIdAndStatus(Long technicianId, RequestStatus status, Pageable pageable);
+
+    @Query("SELECT r FROM RepairRequest r ORDER BY CASE WHEN r.urgency = 'URGENT' THEN 0 ELSE 1 END, r.createdAt")
+    Page<RepairRequest> findAllOrdered(Pageable pageable);
 }
