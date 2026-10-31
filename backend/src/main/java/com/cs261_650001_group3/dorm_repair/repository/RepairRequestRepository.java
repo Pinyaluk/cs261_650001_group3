@@ -56,4 +56,16 @@ public interface RepairRequestRepository extends JpaRepository<RepairRequest, Lo
 
     /** U7 / Task48: ดึงงานตามสถานะของช่าง พร้อมแบ่งหน้า (เช่น งาน COMPLETED) */
     Page<RepairRequest> findByTechnicianUserIdAndStatus(Long technicianId, RequestStatus status, Pageable pageable);
+
+    /** U7 / Task48: ค้นหางานที่เสร็จแล้วของช่างด้วย keyword (ชื่อคำร้อง, สถานที่ หรือชื่อผู้แจ้ง) */
+    @Query("SELECT r FROM RepairRequest r WHERE r.technician.userId = :technicianId "
+            + "AND r.status = com.cs261_650001_group3.dorm_repair.entity.RequestStatus.COMPLETED "
+            + "AND (LOWER(r.title) LIKE LOWER(CONCAT('%', :keyword, '%')) "
+            + "OR LOWER(r.building) LIKE LOWER(CONCAT('%', :keyword, '%')) "
+            + "OR LOWER(r.locationDetail) LIKE LOWER(CONCAT('%', :keyword, '%')) "
+            + "OR LOWER(r.resident.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    Page<RepairRequest> findCompletedJobsByKeyword(
+            @Param("technicianId") Long technicianId,
+            @Param("keyword") String keyword,
+            Pageable pageable);
 }

@@ -22,6 +22,8 @@ import com.cs261_650001_group3.dorm_repair.dto.PageResponseDTO;
 import com.cs261_650001_group3.dorm_repair.dto.StaffRequestDetailDTO;
 import com.cs261_650001_group3.dorm_repair.dto.StaffRequestSummaryDTO;
 import com.cs261_650001_group3.dorm_repair.dto.StatusHistoryDTO;
+import com.cs261_650001_group3.dorm_repair.dto.TechnicianAssignedJobDTO;
+import com.cs261_650001_group3.dorm_repair.dto.TechnicianCompletedJobDTO;
 import com.cs261_650001_group3.dorm_repair.entity.ImageType;
 import com.cs261_650001_group3.dorm_repair.entity.RepairRequest;
 import com.cs261_650001_group3.dorm_repair.entity.RequestImage;
@@ -358,6 +360,90 @@ public class RepairRequestService {
                 imageUrls,
                 history,
                 r.getCreatedAt()
+        );
+    }
+
+    // ---------- U7: ช่างดูงานของตนเอง (Task48) ----------
+
+    /**
+     * GET /api/technician/repair-requests/assigned
+     * ดึงงาน IN_PROGRESS ที่ได้รับมอบหมาย เรียงตามวันนัด งานเร่งด่วนขึ้นก่อน
+     */
+    @Transactional(readOnly = true)
+    public List<TechnicianAssignedJobDTO> getTechnicianAssignedJobs(Long technicianId) {
+        return repairRequestRepository.findAssignedJobs(technicianId)
+                .stream()
+                .map(this::toAssignedJob)
+                .toList();
+    }
+
+    /**
+     * GET /api/technician/repair-requests/completed
+     * ดึงงาน COMPLETED ของช่าง แบ่งหน้า ค้นหาด้วย keyword ได้
+     */
+    @Transactional(readOnly = true)
+    public PageResponseDTO<TechnicianCompletedJobDTO> getTechnicianCompletedJobs(
+            Long technicianId, String keyword, int page, int size) {
+        if (page < 0 || size < 1 || size > MAX_PAGE_SIZE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "page ต้องไม่ติดลบ และ size ต้องอยู่ระหว่าง 1-" + MAX_PAGE_SIZE);
+        }
+        Pageable pageable = PageRequest.of(page, size,
+                Sort.by(Sort.Order.desc("appointmentDateTime")));
+
+        Page<RepairRequest> result = (keyword == null || keyword.isBlank())
+                ? repairRequestRepository.findByTechnicianUserIdAndStatus(
+                        technicianId, RequestStatus.COMPLETED, pageable)
+                : repairRequestRepository.findCompletedJobsByKeyword(
+                        technicianId, keyword.trim(), pageable);
+
+        return PageResponseDTO.of(result.map(this::toCompletedJob));
+    }
+
+    private TechnicianAssignedJobDTO toAssignedJob(RepairRequest r) {
+        LocalDateTime appt = r.getAppointmentDateTime();
+        LocalDate appointmentDate = (appt != null) ? appt.toLocalDate() : null;
+        String appointmentSlot = (appt == null) ? null
+                : (appt.getHour() < 12 ? TimeSlot.MORNING : TimeSlot.AFTERNOON).name();
+        User resident = r.getResident();
+        return new TechnicianAssignedJobDTO(
+                r.getRequestId(),
+                r.getTitle(),
+                r.getCategory().name(),
+                r.getLocationType().name(),
+                r.getBuilding(),
+                r.getLocationDetail(),
+                resident.getFullName(),
+                reporterPhone(r),
+                r.getUrgency().name(),
+                appointmentDate,
+                appointmentSlot,
+                r.getAppointmentNote()
+        );
+    }
+
+    private TechnicianCompletedJobDTO toCompletedJob(RepairRequest r) {
+        LocalDateTime appt = r.getAppointmentDateTime();
+        LocalDate appointmentDate = (appt != null) ? appt.toLocalDate() : null;
+        String appointmentSlot = (appt == null) ? null
+                : (appt.getHour() < 12 ? TimeSlot.MORNING : TimeSlot.AFTERNOON).name();
+        // completedAt = changedAt ของประวัติสถานะ COMPLETED ล่าสุด
+        LocalDateTime completedAt = null;
+        for (RequestStatusHistory h : r.getStatusHistory()) {
+            if (h.getStatus() == RequestStatus.COMPLETED) {
+                completedAt = h.getChangedAt();
+            }
+        }
+        return new TechnicianCompletedJobDTO(
+                r.getRequestId(),
+                r.getTitle(),
+                r.getCategory().name(),
+                r.getLocationType().name(),
+                r.getBuilding(),
+                r.getLocationDetail(),
+                appointmentDate,
+                appointmentSlot,
+                completedAt
         );
     }
 }
