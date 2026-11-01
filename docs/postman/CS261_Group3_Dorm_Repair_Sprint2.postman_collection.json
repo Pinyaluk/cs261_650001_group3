@@ -2964,6 +2964,68 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "61 completed ค้นหาเลขงาน (U7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"พบงาน 1003\", () => pm.expect(pm.response.json().content.map(x => x.requestId)).to.include(1003));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/completed?keyword=1003",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "technician", "repair-requests", "completed"],
+              "query": [{ "key": "keyword", "value": "1003" }]
+            },
+            "description": "ค้นหาด้วยเลขงาน (requestId) ของ tech05",
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{tech05Token}}", "type": "string" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "62 completed ค้นหา #เลขงาน (U7)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"พบงาน 1003\", () => pm.expect(pm.response.json().content.map(x => x.requestId)).to.include(1003));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/technician/repair-requests/completed?keyword=%231003",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "technician", "repair-requests", "completed"],
+              "query": [{ "key": "keyword", "value": "%231003" }]
+            },
+            "description": "ค้นหาด้วย #เลขงาน (%23 คือ # ใน URL) ของ tech05",
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{tech05Token}}", "type": "string" }]
+            }
+          },
+          "response": []
         }
       ]
     }

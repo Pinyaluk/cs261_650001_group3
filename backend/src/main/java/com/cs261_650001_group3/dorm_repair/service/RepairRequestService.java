@@ -395,7 +395,7 @@ public class RepairRequestService {
                 ? repairRequestRepository.findByTechnicianUserIdAndStatus(
                         technicianId, RequestStatus.COMPLETED, pageable)
                 : repairRequestRepository.findCompletedJobsByKeyword(
-                        technicianId, keyword.trim(), pageable);
+                        technicianId, keyword.trim().replace("#", ""), pageable);
 
         return PageResponseDTO.of(result.map(this::toCompletedJob));
     }

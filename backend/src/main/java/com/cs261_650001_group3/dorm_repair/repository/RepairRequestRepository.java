@@ -63,7 +63,8 @@ public interface RepairRequestRepository extends JpaRepository<RepairRequest, Lo
             + "AND (LOWER(r.title) LIKE LOWER(CONCAT('%', :keyword, '%')) "
             + "OR LOWER(r.building) LIKE LOWER(CONCAT('%', :keyword, '%')) "
             + "OR LOWER(r.locationDetail) LIKE LOWER(CONCAT('%', :keyword, '%')) "
-            + "OR LOWER(r.resident.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+            + "OR LOWER(r.resident.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) "
+            + "OR CAST(r.requestId AS String) LIKE CONCAT('%', :keyword, '%'))")
     Page<RepairRequest> findCompletedJobsByKeyword(
             @Param("technicianId") Long technicianId,
             @Param("keyword") String keyword,
