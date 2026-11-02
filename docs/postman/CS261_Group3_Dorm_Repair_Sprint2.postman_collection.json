@@ -3028,6 +3028,333 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "U5 ความเร่งด่วน (Task44)",
+      "item": [
+        {
+          "name": "63 Login staff01 (U5)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"role = STAFF\", () => pm.expect(j.role).to.eql(\"STAFF\"));",
+                  "pm.collectionVariables.set(\"staffToken\", j.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Login staff01 เก็บ token ไว้ใน staffToken",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"staff01\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "64 รายการคำร้อง งานเร่งด่วนขึ้นก่อน",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const list = pm.response.json().content;",
+                  "pm.test(\"งาน URGENT อยู่ก่อนงาน NORMAL ทั้งหมด\", () => {",
+                  "  const firstNormal = list.findIndex(r => r.urgency === \"NORMAL\");",
+                  "  const lastUrgent = list.map(r => r.urgency).lastIndexOf(\"URGENT\");",
+                  "  pm.expect(firstNormal === -1 || lastUrgent < firstNormal).to.be.true;",
+                  "});",
+                  "pm.test(\"ในความเร่งด่วนเดียวกัน คำร้องใหม่ขึ้นก่อน (createdAt มากไปน้อย)\", () => {",
+                  "  for (let i = 1; i < list.length; i++) {",
+                  "    if (list[i].urgency === list[i-1].urgency) pm.expect(list[i-1].createdAt >= list[i].createdAt).to.be.true;",
+                  "  }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests?page=0&size=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "API 2.1 เรียงงาน URGENT ก่อน แล้วคำร้องใหม่ก่อน",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "65 รายละเอียด 1024 ก่อนมอบหมาย (ผู้แจ้งไม่ได้ระบุเร่งด่วน)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"status = PENDING\", () => pm.expect(j.status).to.eql(\"PENDING\"));",
+                  "pm.test(\"urgency = NORMAL ตามที่ผู้แจ้งส่งมา\", () => pm.expect(j.urgency).to.eql(\"NORMAL\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests/1024",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests",
+                "1024"
+              ]
+            },
+            "description": "ค่าเริ่มต้นความเร่งด่วน = ค่าที่ผู้พักอาศัยส่งมา",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "66 มอบหมาย 1024 พร้อมเปลี่ยนเป็น URGENT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"urgency = URGENT (เจ้าหน้าที่เปลี่ยนจาก NORMAL)\", () => pm.expect(j.urgency).to.eql(\"URGENT\"));",
+                  "pm.test(\"status = IN_PROGRESS\", () => pm.expect(j.status).to.eql(\"IN_PROGRESS\"));",
+                  "pm.test(\"technicianId = 5 (tech01 ช่างไฟฟ้า)\", () => pm.expect(j.technicianId).to.eql(5));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests/1024/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests",
+                "1024",
+                "assign"
+              ]
+            },
+            "description": "ความเร่งด่วนบันทึกพร้อมการมอบหมาย (ไม่มี API บันทึกแยก) ใช้ช่วงที่ 1 ที่ผู้แจ้งเสนอ 30/11/2569 ช่วงเช้า",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"technicianId\": 5,\n  \"urgency\": \"URGENT\",\n  \"appointmentDate\": \"2026-11-30\",\n  \"appointmentSlot\": \"MORNING\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "67 รายละเอียด 1024 หลังมอบหมาย",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"urgency = URGENT ถูกบันทึกแล้ว\", () => pm.expect(j.urgency).to.eql(\"URGENT\"));",
+                  "pm.test(\"status = IN_PROGRESS\", () => pm.expect(j.status).to.eql(\"IN_PROGRESS\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests/1024",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests",
+                "1024"
+              ]
+            },
+            "description": "ตรวจว่าความเร่งด่วนที่เปลี่ยนถูกบันทึกลงฐานข้อมูล",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "68 รายการคำร้องหลังเปลี่ยน 1024 เป็น URGENT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"ได้ 200\", () => pm.response.to.have.status(200));",
+                  "const list = pm.response.json().content;",
+                  "pm.test(\"งาน URGENT อยู่ก่อนงาน NORMAL ทั้งหมด\", () => {",
+                  "  const firstNormal = list.findIndex(r => r.urgency === \"NORMAL\");",
+                  "  const lastUrgent = list.map(r => r.urgency).lastIndexOf(\"URGENT\");",
+                  "  pm.expect(firstNormal === -1 || lastUrgent < firstNormal).to.be.true;",
+                  "});",
+                  "pm.test(\"ในความเร่งด่วนเดียวกัน คำร้องใหม่ขึ้นก่อน (createdAt มากไปน้อย)\", () => {",
+                  "  for (let i = 1; i < list.length; i++) {",
+                  "    if (list[i].urgency === list[i-1].urgency) pm.expect(list[i-1].createdAt >= list[i].createdAt).to.be.true;",
+                  "  }",
+                  "});",
+                  "pm.test(\"1024 ย้ายขึ้นไปอยู่ในกลุ่ม URGENT\", () => {",
+                  "  const i1024 = list.findIndex(r => r.requestId === 1024);",
+                  "  const firstNormal = list.findIndex(r => r.urgency === \"NORMAL\");",
+                  "  pm.expect(i1024).to.be.above(-1);",
+                  "  pm.expect(firstNormal === -1 || i1024 < firstNormal).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/repair-requests?page=0&size=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "staff",
+                "repair-requests"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "หลังเปลี่ยนความเร่งด่วน รายการต้องเรียง 1024 ไว้ก่อนงาน NORMAL",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{staffToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "variable": [
