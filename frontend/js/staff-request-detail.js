@@ -459,7 +459,12 @@ try {
     const badges = $("info-badges");
     if (badges) {
       badges.replaceChildren(statusBadge(r.status));
-      if (r.reporterUrgent) badges.appendChild(el("span", "badge badge--urgent", "เร่งด่วน (ผู้แจ้งระบุ)"));
+      if (r.reporterUrgent) {
+        const label = r.status === "PENDING"
+          ? "เร่งด่วน (ผู้แจ้งระบุ)"
+          : "เร่งด่วน (เจ้าหน้าที่ยืนยัน)";
+        badges.appendChild(el("span", "badge badge--urgent", label));
+      }
     }
  
     if ($("req-title")) $("req-title").textContent = r.title;
