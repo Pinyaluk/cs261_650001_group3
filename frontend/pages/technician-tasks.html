@@ -1,37 +1,41 @@
 <!doctype html>
 <html lang="th">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <title>งานของฉัน | ช่างซ่อมบำรุง</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/technician.css">
 </head>
-<body class="has-desktop-shell">
-  <header class="app-header">
-    <div class="app-header__identity">
-      <div>
-        <p class="app-header__brand">หอพักอุ่นใจ</p>
-        <p class="app-header__role">ช่างซ่อมบำรุง</p>
-      </div>
-    </div>
-    <div class="app-header__user">
-      <span class="app-header__name" id="header-name">ช่างซ่อมบำรุง</span>
-    </div>
+<body class="tech-body">
+<div class="tech-app">
+  <aside class="tech-sidebar">
+    <div class="tech-brand"><strong>หอพักอุ่นใจ</strong><span>ระบบจัดการงานซ่อมบำรุง · ช่าง</span></div>
+    <nav class="tech-nav" aria-label="เมนูหลัก">
+      <a class="active" href="technician-tasks.html">▦ <span>งานของฉัน</span></a>
+      <a href="technician-completed.html">✓ <span>งานที่เสร็จแล้ว</span></a>
+    </nav>
+    <div class="tech-sidebar-bottom"><button class="tech-logout" id="logout-btn" type="button">ออกจากระบบ</button></div>
+  </aside>
+  <header class="tech-mobilebar">
+    <div class="tech-mobilebar__top"><div class="tech-brand-mobile"><strong>หอพักอุ่นใจ</strong><span>ช่างซ่อมบำรุง</span></div><button class="tech-mobile-logout" id="logout-btn-mobile" type="button">ออกจากระบบ</button></div>
+    <nav class="tech-mobile-nav"><a class="active" href="technician-tasks.html">งานของฉัน</a><a href="technician-completed.html">งานที่เสร็จแล้ว</a></nav>
   </header>
-
-  <nav class="tab-nav">
-    <button class="btn sidebar-logout" id="logout-btn" type="button">ออกจากระบบ</button>
-  </nav>
-
-  <main class="page">
-    <div class="page-header">
-      <h1 class="page-title">งานของฉัน (ช่าง)</h1>
-      <p class="page-subtitle">รายการงานซ่อมบำรุงที่ได้รับมอบหมาย</p>
-    </div>
+  <main class="tech-main">
+    <div class="tech-topline"><div><p class="tech-breadcrumb">หน้าหลัก › งานของฉัน</p><h1 class="tech-title">งานของฉัน</h1><p class="tech-subtitle">รายการงานซ่อมบำรุงที่ได้รับมอบหมาย</p></div><span class="tech-user" id="header-name">ช่างซ่อมบำรุง</span></div>
+    <section class="tech-stats" aria-label="สรุปงาน">
+      <article class="tech-card tech-stat"><span>งานทั้งหมด</span><strong id="stat-total">—</strong><small>งานที่ได้รับมอบหมาย</small></article>
+      <article class="tech-card tech-stat"><span>งานวันนี้</span><strong id="stat-today">—</strong><small>ตามกำหนดนัดหมาย</small></article>
+      <article class="tech-card tech-stat"><span>งานเร่งด่วน</span><strong id="stat-urgent">—</strong><small>ต้องให้ความสำคัญ</small></article>
+      <article class="tech-card tech-stat"><span>กำลังดำเนินการ</span><strong id="stat-progress">—</strong><small>งานที่ยังไม่ส่งมอบ</small></article>
+    </section>
+    <nav class="tech-tabs"><a class="active" href="technician-tasks.html">งานที่ต้องทำ</a><a href="technician-completed.html">งานที่เสร็จแล้ว</a></nav>
+    <div class="tech-toolbar"><div class="tech-search"><input id="task-search" type="search" placeholder="ค้นหาชื่องาน เลขที่งาน หรือสถานที่" aria-label="ค้นหางาน"></div><select class="tech-filter" id="task-filter" aria-label="กรองประเภทงาน"><option value="all">ทุกประเภทงาน</option><option value="ELECTRICAL">ไฟฟ้า</option><option value="PLUMBING">ประปา</option><option value="AIR_CONDITIONER">เครื่องปรับอากาศ</option><option value="FURNITURE">เฟอร์นิเจอร์</option><option value="OTHER">อื่น ๆ</option></select></div>
+    <div class="tech-notice warning" id="api-notice">หน้าจอพร้อมแล้ว · รอ API รายการงานจาก Task48 เพื่อแสดงข้อมูลงานจริง</div>
+    <section class="tech-section"><h2 class="tech-section-heading">วันนี้ <span class="tech-count" id="today-count">—</span></h2><div class="tech-task-list" id="today-list"><div class="tech-empty"><strong>รอข้อมูลจากระบบ</strong>รายการงานวันนี้จะแสดงเมื่อ API พร้อมใช้งาน
+<a class="tech-link tech-preview-link" href="technician-job-detail.html?id=preview" aria-label="เปิดหน้ารายละเอียดงานเพื่อทดสอบการเชื่อมหน้า">ทดสอบเปิดหน้ารายละเอียดงาน ›</a></div></div></section>
+    <section class="tech-section"><h2 class="tech-section-heading">พรุ่งนี้ <span class="tech-count" id="tomorrow-count">—</span></h2><div class="tech-task-list" id="tomorrow-list"><div class="tech-empty">รอข้อมูลรายการงาน</div></div></section>
+    <section class="tech-section"><h2 class="tech-section-heading">ถัดไป <span class="tech-count" id="upcoming-count">—</span></h2><div class="tech-task-list" id="upcoming-list"><div class="tech-empty">รอข้อมูลรายการงาน</div></div></section>
+    <p class="tech-footer">หอพักอุ่นใจ · ระบบจัดการงานซ่อมบำรุง</p>
   </main>
-
-  <script src="../js/api-client.js"></script>
-  <script src="../js/common.js"></script>
-  <script src="../js/technician-tasks.js"></script>
-</body>
-</html>
+</div>
+<script src="../js/api-client.js"></script><script src="../js/common.js"></script><script src="../js/technician-tasks.js"></script>
+</body></html>
