@@ -952,7 +952,9 @@ try {
       } else {
         dd.textContent = value;
       }
-      dl.append(dt, dd);
+        const row = el("div", "success-card__row");
+         row.append(dt, dd);
+         dl.append(row);
     });
   }
 
