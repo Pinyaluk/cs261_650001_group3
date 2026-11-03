@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ส่งมอบงาน | ช่างซ่อม</title>
+  <link rel="stylesheet" href="../css/technician-submit.css">
+</head>
+<body>
+  <header class="top-bar">
+    <strong class="top-bar__brand">ระบบแจ้งซ่อม · ช่างซ่อม</strong>
+    <div class="top-bar__user">
+      <span id="tech-name">ช่าง</span>
+      <button type="button" class="btn btn--ghost" id="logout-btn">ออกจากระบบ</button>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <!-- ===== โหลดข้อมูลงานไม่ได้ ===== -->
+    <section id="page-error" class="page-error is-hidden" role="alert">
+      <p id="page-error-message"></p>
+      <a class="btn btn--ghost" id="page-error-back" href="technician-tasks.html">กลับรายการงาน</a>
+    </section>
+
+    <!-- ===== หน้าส่งมอบงาน (ฟอร์ม) ===== -->
+    <div id="submit-view">
+      <a class="back-link" id="back-link" href="technician-task-detail.html">‹ กลับรายละเอียดงาน</a>
+      <h1 class="page-title">ส่งมอบงาน</h1>
+      <p class="page-subtitle">กรอกผลการซ่อมและแนบรูปหลังซ่อม แล้วกดยืนยันส่งมอบงาน</p>
+
+      <div class="layout">
+        <!-- ซ้าย: ฟอร์ม -->
+        <form id="submit-form" class="card" novalidate>
+          <div class="form-group">
+            <label for="repair-result" class="label">ผลการซ่อม <span class="req">*</span></label>
+            <textarea id="repair-result" rows="6" placeholder="เช่น เปลี่ยนเต้ารับไฟฟ้าใหม่เรียบร้อยแล้ว"></textarea>
+            <p class="error-msg" id="repair-result-error"></p>
+          </div>
+
+          <div class="form-group">
+            <label for="images" class="label">รูปหลังซ่อม <span class="req">*</span></label>
+            <p class="hint">แนบได้ 1–3 รูป รูปละไม่เกิน 5MB (jpg / png)</p>
+            <label class="upload-btn" for="images">+ แนบรูปหลังซ่อม</label>
+            <input type="file" id="images" accept="image/jpeg,image/png" multiple hidden>
+            <p class="image-count" id="image-count">แนบรูปแล้ว 0 จาก 3 รูป</p>
+            <div class="preview" id="image-preview"></div>
+            <p class="error-msg" id="images-error"></p>
+          </div>
+
+          <p class="form-error" id="form-error" role="alert"></p>
+
+          <div class="actions">
+            <a class="btn btn--ghost" id="cancel-link" href="technician-task-detail.html">ยกเลิก</a>
+            <button type="submit" class="btn btn--primary" id="submit-btn">ยืนยันส่งมอบงาน</button>
+          </div>
+        </form>
+
+        <!-- ขวา: ข้อมูลงาน -->
+        <aside class="card info" id="job-info">
+          <h2 class="card__title">ข้อมูลงาน</h2>
+          <p class="muted" id="job-loading">กำลังโหลดข้อมูลงาน...</p>
+          <dl class="facts is-hidden" id="job-facts">
+            <div><dt>ชื่องาน</dt><dd id="job-title">-</dd></div>
+            <div><dt>สถานที่</dt><dd id="job-location">-</dd></div>
+            <div><dt>วันนัดหมาย</dt><dd id="job-appointment">-</dd></div>
+            <div><dt>ผู้แจ้ง</dt><dd id="job-reporter">-</dd></div>
+          </dl>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ===== ส่งมอบงานสำเร็จ ===== -->
+    <section id="success-view" class="card success is-hidden">
+      <div class="success__icon" aria-hidden="true">✓</div>
+      <h1 class="page-title">ส่งมอบงานสำเร็จ</h1>
+      <p class="page-subtitle">สถานะงานเปลี่ยนเป็น <span class="badge badge--completed">เสร็จสิ้น</span> แล้ว</p>
+
+      <dl class="facts">
+        <div><dt>งาน</dt><dd id="success-title">-</dd></div>
+        <div><dt>ผลการซ่อม</dt><dd id="success-result">-</dd></div>
+        <div><dt>ส่งมอบเมื่อ</dt><dd id="success-time">-</dd></div>
+      </dl>
+      <div class="preview" id="success-images"></div>
+
+      <div class="actions actions--center">
+        <a class="btn btn--ghost" id="success-detail-link" href="technician-task-detail.html">ดูรายละเอียดงาน</a>
+        <a class="btn btn--primary" href="technician-tasks.html">กลับรายการงาน</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- แม่แบบรูปตัวอย่าง (เหมือนฟอร์มแจ้งซ่อม U1) -->
+  <template id="image-thumb-template">
+    <figure class="thumb">
+      <img data-field="img" alt="">
+      <figcaption data-field="caption"></figcaption>
+    </figure>
+  </template>
+
+  <script src="../js/api-client.js"></script>
+  <script src="../js/common.js"></script>
+  <script src="../js/technician-submit.js"></script>
+</body>
+</html>
