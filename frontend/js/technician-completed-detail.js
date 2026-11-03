@@ -8,10 +8,8 @@ requireRole("TECHNICIAN");
   const mobileLogout = $("logout-btn-mobile");
   if (mobileLogout) mobileLogout.addEventListener("click", logout);
 
-  if (!id || id === "preview") {
-    if (notice) notice.textContent = id === "preview"
-      ? "ลิงก์นี้เป็นตัวอย่างสำหรับทดสอบการเปิดหน้า กรุณาเลือกงานจริงจากประวัติงานที่เสร็จแล้ว"
-      : "ยังไม่ได้ระบุเลขที่งาน · กลับไปเลือกงานจากรายการงานที่เสร็จแล้ว";
+    if (!id) {
+    if (notice) notice.textContent = "ยังไม่ได้ระบุเลขที่งาน · กลับไปเลือกงานจากรายการงานที่เสร็จแล้ว";
     return;
   }
 
@@ -81,7 +79,7 @@ requireRole("TECHNICIAN");
       setText("completed-request-id", `เลขที่งาน #${job.requestId}`);
       setText("completed-title", job.title, "รายละเอียดคำร้อง");
       setText("completed-meta", `#${job.requestId} · ${categoryText(job.category)} · เสร็จสิ้น`);
-      setText("completed-location", [job.building ? `อาคาร ${job.building}` : "", job.locationDetail || ""].filter(Boolean).join(" · "));
+      setText("completed-location", [job.building || "", job.locationDetail || ""].filter(Boolean).join(" · "));
       setText("completed-category", categoryText(job.category));
       setText("completed-equipment", job.title);
       setText("completed-date", dateText(job.completedAt));

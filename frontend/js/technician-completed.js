@@ -33,7 +33,7 @@ requireRole("TECHNICIAN");
   }
 
   function locationText(job) {
-    return [job.building ? `อาคาร ${job.building}` : "", job.locationDetail || ""].filter(Boolean).join(" · ") || "-";
+    return [   job.building || "", job.locationDetail || ""].filter(Boolean).join(" · ") || "-";
   }
 
   function setNotice(message, warning = false) {

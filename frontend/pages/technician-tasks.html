@@ -29,13 +29,13 @@
     </section>
     <nav class="tech-tabs"><a class="active" href="technician-tasks.html">งานที่ต้องทำ</a><a href="technician-completed.html">งานที่เสร็จแล้ว</a></nav>
     <div class="tech-toolbar"><div class="tech-search"><input id="task-search" type="search" placeholder="ค้นหาชื่องาน เลขที่งาน หรือสถานที่" aria-label="ค้นหางาน"></div><select class="tech-filter" id="task-filter" aria-label="กรองประเภทงาน"><option value="all">ทุกประเภทงาน</option><option value="ELECTRICAL">ไฟฟ้า</option><option value="PLUMBING">ประปา</option><option value="AIR_CONDITIONER">เครื่องปรับอากาศ</option><option value="FURNITURE">เฟอร์นิเจอร์</option><option value="OTHER">อื่น ๆ</option></select></div>
-    <div class="tech-notice warning" id="api-notice">หน้าจอพร้อมแล้ว · รอ API รายการงานจาก Task48 เพื่อแสดงข้อมูลงานจริง</div>
+    <div class="tech-notice warning" id="api-notice">กำลังโหลดข้อมูล…</div>
     <section class="tech-section"><h2 class="tech-section-heading">วันนี้ <span class="tech-count" id="today-count">—</span></h2><div class="tech-task-list" id="today-list"><div class="tech-empty"><strong>รอข้อมูลจากระบบ</strong>รายการงานวันนี้จะแสดงเมื่อ API พร้อมใช้งาน
-<a class="tech-link tech-preview-link" href="technician-job-detail.html?id=preview" aria-label="เปิดหน้ารายละเอียดงานเพื่อทดสอบการเชื่อมหน้า">ทดสอบเปิดหน้ารายละเอียดงาน ›</a></div></div></section>
+</div></div></section>
     <section class="tech-section"><h2 class="tech-section-heading">พรุ่งนี้ <span class="tech-count" id="tomorrow-count">—</span></h2><div class="tech-task-list" id="tomorrow-list"><div class="tech-empty">รอข้อมูลรายการงาน</div></div></section>
     <section class="tech-section"><h2 class="tech-section-heading">ถัดไป <span class="tech-count" id="upcoming-count">—</span></h2><div class="tech-task-list" id="upcoming-list"><div class="tech-empty">รอข้อมูลรายการงาน</div></div></section>
     <p class="tech-footer">หอพักอุ่นใจ · ระบบจัดการงานซ่อมบำรุง</p>
   </main>
 </div>
-<script src="../js/api-client.js"></script><script src="../js/common.js"></script><script src="../js/technician-tasks.js"></script>
+<script src="../js/api-client.js"></script><script src="../js/technician-api.js"></script><script src="../js/common.js"></script><script src="../js/technician-tasks.js"></script>
 </body></html>

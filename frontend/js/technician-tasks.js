@@ -51,7 +51,7 @@ requireRole("TECHNICIAN");
   }
 
   function locationText(job) {
-    return [job.building ? `อาคาร ${job.building}` : "", job.locationDetail || ""].filter(Boolean).join(" · ") || "ไม่ระบุสถานที่";
+    return [   job.building || "", job.locationDetail || ""].filter(Boolean).join(" · ") || "ไม่ระบุสถานที่";
   }
 
   function filteredJobs() {

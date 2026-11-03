@@ -8,10 +8,8 @@ requireRole("TECHNICIAN");
   const mobileLogout = $("logout-btn-mobile");
   if (mobileLogout) mobileLogout.addEventListener("click", logout);
 
-  if (!id || id === "preview") {
-    if (notice) notice.textContent = id === "preview"
-      ? "ลิงก์นี้เป็นตัวอย่างสำหรับทดสอบการเปิดหน้า กรุณาเลือกงานจริงจากรายการงานของฉัน"
-      : "ยังไม่ได้ระบุเลขที่งาน · กลับไปเลือกงานจากรายการงานของฉัน";
+    if (!id) {
+    if (notice) notice.textContent = "ยังไม่ได้ระบุเลขที่งาน · กลับไปเลือกงานจากรายการงานของฉัน";
     return;
   }
 
@@ -85,9 +83,9 @@ requireRole("TECHNICIAN");
       const job = await getTechnicianJobDetail(id);
       setText("detail-request-id", `เลขที่งาน #${job.requestId}`);
       setText("detail-title", job.title, "รายละเอียดคำร้อง");
-      setText("detail-meta", `#${job.requestId} · ${categoryText(job.category)} · ${job.status}`);
+      setText("detail-meta", `#${job.requestId} · ${categoryText(job.category)} · ${(STATUS[job.status] || {}).text || job.status}`);
       setText("detail-area-type", locationTypeText(job.locationType));
-      setText("detail-location", [job.building ? `อาคาร ${job.building}` : "", job.locationDetail || ""].filter(Boolean).join(" · "));
+      setText("detail-location", [   job.building || "", job.locationDetail || ""].filter(Boolean).join(" · "));
       setText("detail-category", categoryText(job.category));
       setText("detail-equipment", job.title);
       setText("detail-description", job.description);
@@ -97,6 +95,11 @@ requireRole("TECHNICIAN");
       setText("detail-contact-phone", job.reporterPhone);
       const statusPill = document.querySelector(".tech-task-tags .tech-pill.status");
       if (statusPill) statusPill.textContent = job.status === "COMPLETED" ? "เสร็จสิ้น" : "กำลังดำเนินการ";
+            const handover = $("handover-btn");
+      if (handover) {
+        handover.href = "technician-submit.html?id=" + encodeURIComponent(job.requestId);
+        handover.hidden = job.status === "COMPLETED";
+      }
       renderPhotos($("request-photos"), job.imageUrls, "ไม่มีรูปภาพประกอบ");
       renderTimeline(job.statusHistory);
       if (notice) {
