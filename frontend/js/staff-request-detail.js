@@ -839,6 +839,14 @@ try {
     setFieldMessage(`${inputId}-error`, "");
   }
 
+  function showSubmitError(message) {
+    const box = $("submit-error");
+    const text = $("submit-error-message");
+    if (!box || !text) return;
+    text.textContent = message || "";
+    setHidden(box, !message);
+  }
+
   function validateAssignment() {
     let valid = true;
     setFieldMessage("tech-select-error", "");
@@ -875,6 +883,7 @@ try {
   }
 
   async function submitAssignment() {
+    showSubmitError("");
     if (state.submitting) return;
     if (!validateAssignment()) return;
 
@@ -888,39 +897,63 @@ try {
     };
 
     const submitBtn = $("assign-btn");
-    state.submitting = true;
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = "กำลังบันทึก...";
-    }
+      const btnLabel = $("assign-btn-label");
+      state.submitting = true;
+      if (submitBtn) submitBtn.disabled = true;
+      if (btnLabel) btnLabel.textContent = "กำลังบันทึก...";
 
     try {
-      await apiSend(API.assign(state.id), API.assignMethod, payload);
-      renderSuccessView(payload);
+      const result = await apiSend(API.assign(state.id), API.assignMethod, payload);
+      renderSuccessView({ ...payload, ...(result || {}) });
     } catch (error) {
       console.error("Assignment failed:", error);
-      alert(friendlyMessage(error, "มอบหมายงานไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"));
+      showSubmitError(friendlyMessage(error, "มอบหมายงานไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"));
     } finally {
       state.submitting = false;
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "ยืนยันมอบหมายงาน";
-      }
+      if (submitBtn) submitBtn.disabled = false;
+      if (btnLabel) btnLabel.textContent = "มอบหมายงานให้ช่าง";
     }
   }
+  
 
-  function renderSuccessView(payload) {
+    function renderSuccessView(data) {
     setHidden($("detail-content"), true);
     setHidden($("back-link"), true);
     setHidden($("success-view"), false);
 
-    const tech = state.technicians.find((t) => String(t.id) === String(state.technicianId));
+    const techId = data.technicianId ?? state.technicianId;
+    const tech = state.technicians.find((t) => String(t.id) === String(techId));
     const techName = tech ? tech.name : "ช่างผู้รับผิดชอบ";
-    
-    if ($("success-tech")) $("success-tech").textContent = techName;
-    if ($("success-date")) {
-      $("success-date").textContent = `${formatDate(payload.appointmentDate)} ${periodLabel(payload.appointmentSlot)}`.trim();
-    }
+    const techPhone = tech && tech.phone ? ` • ${tech.phone}` : "";
+
+    const dateText = `${formatDate(data.appointmentDate)} ${periodLabel(data.appointmentSlot)}`.trim();
+
+    const u = String(data.urgency || "").toLowerCase();
+    const isUrgent = u === "urgent" || u === "เร่งด่วน";
+
+    const reqText = state.req ? `${state.req.code} ${state.req.title}` : "";
+
+    const rows = [
+      ["คำร้อง", reqText],
+      ["ช่างผู้รับผิดชอบ", `${techName}${techPhone}`],
+      ["วันนัด", dateText.replace(/ (ช่วง)/, " • $1")],
+      ["ความเร่งด่วน", { pill: isUrgent ? "เร่งด่วน" : "ปกติ", cls: isUrgent ? "badge--urgent" : "badge--normal" }],
+      ["สถานะ", { pill: "กำลังดำเนินการ", cls: "badge--in-progress" }],
+    ];
+
+    const dl = $("success-rows");
+    dl.replaceChildren();
+    rows.forEach(([label, value]) => {
+      const dt = document.createElement("dt");
+      dt.textContent = label;
+      const dd = document.createElement("dd");
+      if (typeof value === "object") {
+        dd.appendChild(el("span", `badge ${value.cls}`, value.pill));
+      } else {
+        dd.textContent = value;
+      }
+      dl.append(dt, dd);
+    });
   }
 
   function showReadOnly() {
