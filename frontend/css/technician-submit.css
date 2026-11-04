@@ -1,0 +1,80 @@
+/* css/technician-submit.css
+   หน้าช่างส่งมอบงาน (U8) — ใช้คู่กับ technician.css (โครงหน้า เมนู สีหลัก)
+   ไฟล์นี้มีเฉพาะส่วนฟอร์มส่งมอบงานและหน้าสำเร็จ สีดึงจากตัวแปร --tech-* ของ technician.css */
+:root {
+  --primary: var(--tech-primary);
+  --primary-dark: var(--tech-primary-dark);
+  --danger: #c45e53;
+  --danger-bg: #fff3f1;
+  --success: var(--tech-primary-dark);
+  --success-bg: var(--tech-soft);
+  --text: var(--tech-ink);
+  --muted: var(--tech-muted);
+  --border: var(--tech-line);
+}
+
+/* ----- โครงหน้า: คอมพิวเตอร์ ซ้าย=ฟอร์ม ขวา=ข้อมูลงาน ----- */
+.layout { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; margin-top: 20px; }
+.card { padding: 22px; }
+.card__title { margin: 0 0 12px; font-size: 16px; color: var(--text); }
+
+/* ----- ฟอร์ม ----- */
+.form-group { margin-bottom: 20px; }
+.label { display: block; margin-bottom: 6px; font-weight: 650; color: var(--text); }
+.req { color: var(--danger); }
+.hint, .muted { color: var(--muted); font-size: 13px; margin: 0 0 8px; }
+
+textarea { width: 100%; padding: 10px 12px; font: inherit; color: var(--text); border: 1px solid var(--border); border-radius: 9px; resize: vertical; }
+textarea:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+.form-group.is-invalid textarea { border-color: var(--danger); background: var(--danger-bg); }
+
+.upload-btn { display: inline-block; padding: 10px 16px; border: 1px dashed var(--primary); color: var(--primary); border-radius: 9px; cursor: pointer; font-weight: 650; }
+.upload-btn:hover { background: var(--tech-soft); }
+.image-count { margin: 8px 0; color: var(--muted); font-size: 13px; }
+
+.preview { display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0; }
+.thumb { margin: 0; width: 110px; }
+.thumb img { width: 110px; height: 110px; object-fit: cover; border-radius: 9px; border: 1px solid var(--border); display: block; }
+.thumb figcaption { margin-top: 4px; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ข้อความเตือนสีแดง: ซ่อนไว้จนกว่ากลุ่มจะเป็น is-invalid */
+.error-msg { display: none; margin: 6px 0 0; color: var(--danger); font-size: 13px; }
+.form-group.is-invalid .error-msg { display: block; }
+.form-error { display: none; margin: 0 0 16px; padding: 10px 14px; border: 1px solid #f0c6c0; border-radius: 9px; background: var(--danger-bg); color: var(--danger); }
+.form-error.is-visible { display: block; }
+
+/* ----- ปุ่ม (สีเดียวกับ .tech-btn) ----- */
+.actions { display: flex; justify-content: flex-end; gap: 12px; }
+.actions--center { justify-content: center; margin-top: 20px; }
+.btn { display: inline-flex; justify-content: center; align-items: center; padding: 11px 18px; font: inherit; font-weight: 700; border-radius: 9px; border: 1px solid transparent; cursor: pointer; text-decoration: none; }
+.btn--primary { background: var(--primary); color: #fff; }
+.btn--primary:hover:not(:disabled) { background: var(--primary-dark); }
+.btn--primary:disabled { background: #a9bcba; cursor: not-allowed; }
+.btn--ghost { background: #fff; color: var(--text); border-color: var(--border); }
+
+/* ----- ข้อมูลงาน ----- */
+.facts { margin: 0; }
+.facts > div { margin-bottom: 12px; }
+.facts dt { color: var(--muted); font-size: 12px; }
+.facts dd { margin: 3px 0 0; font-weight: 650; color: var(--text); white-space: pre-line; }
+
+/* ----- หน้าสำเร็จ ----- */
+.success { max-width: 640px; margin: 24px auto; text-align: center; }
+.success .tech-subtitle { margin: 6px 0 0; }
+.success .facts { text-align: left; margin-top: 18px; }
+.success .preview { justify-content: center; }
+.success__icon { width: 64px; height: 64px; margin: 0 auto 12px; border-radius: 50%; background: var(--success-bg); color: var(--success); font-size: 2rem; line-height: 64px; }
+.badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.badge--completed { background: var(--success-bg); color: var(--success); }
+
+.page-error { max-width: 560px; margin: 40px auto; padding: 20px; text-align: center; background: var(--danger-bg); border: 1px solid #f0c6c0; border-radius: 14px; color: var(--danger); }
+
+/* ----- มือถือ: ซ้อนกัน ข้อมูลงานขึ้นก่อน ปุ่มเต็มความกว้าง ----- */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .info { order: -1; }
+  .actions { flex-direction: column-reverse; }
+  .actions .btn { width: 100%; }
+  .thumb, .thumb img { width: 92px; }
+  .thumb img { height: 92px; }
+}

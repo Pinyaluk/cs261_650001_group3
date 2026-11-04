@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -19,10 +20,14 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cs261_650001_group3.dorm_repair.dto.CompleteRepairResponseDTO;
+import com.cs261_650001_group3.dorm_repair.dto.PageResponseDTO;
+import com.cs261_650001_group3.dorm_repair.dto.TechnicianAssignedJobDTO;
+import com.cs261_650001_group3.dorm_repair.dto.TechnicianCompletedJobDTO;
 import com.cs261_650001_group3.dorm_repair.entity.Role;
 import com.cs261_650001_group3.dorm_repair.entity.User;
 import com.cs261_650001_group3.dorm_repair.service.AuthService;
 import com.cs261_650001_group3.dorm_repair.service.RepairCompletionService;
+import com.cs261_650001_group3.dorm_repair.service.RepairRequestService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -36,11 +41,14 @@ public class TechnicianRepairRequestController {
 
     private final RepairCompletionService completionService;
     private final AuthService authService;
+    private final RepairRequestService repairRequestService;
 
     public TechnicianRepairRequestController(RepairCompletionService completionService,
-                                             AuthService authService) {
+                                             AuthService authService,
+                                             RepairRequestService repairRequestService) {
         this.completionService = completionService;
         this.authService = authService;
+        this.repairRequestService = repairRequestService;
     }
 
     /**
@@ -57,6 +65,34 @@ public class TechnicianRepairRequestController {
         return completionService.complete(id, repairResult, afterImages, technician);
     }
 
+
+    /**
+     * GET /api/technician/repair-requests/assigned
+     * ดึงงาน IN_PROGRESS ที่ได้รับมอบหมาย เรียงตามวันนัด งานเร่งด่วนขึ้นก่อน
+     * ไม่มี token -> 401 / ไม่ใช่ TECHNICIAN -> 403
+     */
+    @GetMapping("/assigned")
+    public List<TechnicianAssignedJobDTO> getAssignedJobs(
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        User technician = authService.requireRole(authHeader, Role.TECHNICIAN);
+        return repairRequestService.getTechnicianAssignedJobs(technician.getUserId());
+    }
+
+    /**
+     * GET /api/technician/repair-requests/completed?page=0&size=10&keyword=...
+     * ดึงงาน COMPLETED ของช่าง แบ่งหน้า ค้นหาด้วย keyword ได้
+     * ไม่มี token -> 401 / ไม่ใช่ TECHNICIAN -> 403
+     */
+    @GetMapping("/completed")
+    public PageResponseDTO<TechnicianCompletedJobDTO> getCompletedJobs(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "keyword", required = false) String keyword) {
+        User technician = authService.requireRole(authHeader, Role.TECHNICIAN);
+        return repairRequestService.getTechnicianCompletedJobs(
+                technician.getUserId(), keyword, page, size);
+    }
     /**
      * รูปใหญ่เกิน spring.servlet.multipart.max-file-size (5MB) Spring ตัดก่อนถึง Service จึงตอบ 413
      * เปลี่ยนเป็น 400 ตามกติการูปของ U8 (รูปละไม่เกิน 5MB) หน้าที่นี้เฉพาะ endpoint ในคลาสนี้
