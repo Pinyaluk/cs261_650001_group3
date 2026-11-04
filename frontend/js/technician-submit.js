@@ -29,7 +29,8 @@ requireRole("TECHNICIAN");
   const submitBtn = $("submit-btn");
 
   const requestId = new URLSearchParams(window.location.search).get("id");
-  const detailUrl = "technician-task-detail.html?id=" + encodeURIComponent(requestId || "");
+  const detailUrl = "technician-job-detail.html?id=" + encodeURIComponent(requestId || "");
+  const completedUrl = "technician-completed-detail.html?id=" + encodeURIComponent(requestId || "");
 
   let rejectedImagesMessage = ""; // เหตุผลที่รูปชุดล่าสุดถูกปฏิเสธ แสดงต่อตอนกดส่ง
   let previewUrls = [];           // เก็บไว้ revoke กัน memory รั่ว
@@ -74,7 +75,7 @@ requireRole("TECHNICIAN");
   function renderJob(job) {
     $("job-title").textContent = job.title || "-";
 
-    const place = [job.building && "อาคาร " + job.building, job.locationDetail].filter(Boolean).join(" • ");
+    const place = [job.building, job.locationDetail].filter(Boolean).join(" • ");
     $("job-location").textContent = place || "-";
 
     const appt = [formatDate(job.appointmentDate), SLOT_LABELS[job.appointmentSlot]].filter(Boolean).join(" ");
@@ -175,7 +176,7 @@ requireRole("TECHNICIAN");
     $("success-title").textContent = $("job-title").dataset.title || "#" + requestId;
     $("success-result").textContent = data.repairResult || resultInput.value.trim();
     $("success-time").textContent = formatDateTime(data.completedAt);
-    $("success-detail-link").href = detailUrl;
+    $("success-detail-link").href = completedUrl;
 
     const box = $("success-images");
     box.innerHTML = "";
@@ -239,8 +240,9 @@ requireRole("TECHNICIAN");
   });
 
   // ---------- เริ่มทำงาน ----------
-  $("tech-name").textContent = localStorage.getItem("fullName") || "ช่าง";
-  $("logout-btn").addEventListener("click", () => logout());
+  // ปุ่ม #logout-btn (จอคอม) common.js ผูกให้แล้ว ผูกเพิ่มเฉพาะปุ่มของมือถือ
+  const mobileLogout = $("logout-btn-mobile");
+  if (mobileLogout) mobileLogout.addEventListener("click", logout);
 
   if (!requestId) {
     showPageError("ไม่พบเลขงานใน URL (ต้องมี ?id=...)");

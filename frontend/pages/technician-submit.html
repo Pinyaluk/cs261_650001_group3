@@ -3,19 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ส่งมอบงาน | ช่างซ่อม</title>
+  <title>ส่งมอบงาน | ช่างซ่อมบำรุง</title>
+  <link rel="stylesheet" href="../css/technician.css">
   <link rel="stylesheet" href="../css/technician-submit.css">
 </head>
-<body>
-  <header class="top-bar">
-    <strong class="top-bar__brand">ระบบแจ้งซ่อม · ช่างซ่อม</strong>
-    <div class="top-bar__user">
-      <span id="tech-name">ช่าง</span>
-      <button type="button" class="btn btn--ghost" id="logout-btn">ออกจากระบบ</button>
+<body class="tech-body">
+<div class="tech-app">
+  <!-- เมนูซ้าย (จอคอม) เหมือนหน้าช่างหน้าอื่น -->
+  <aside class="tech-sidebar">
+    <div class="tech-brand"><strong>หอพักอุ่นใจ</strong><span>ระบบจัดการงานซ่อมบำรุง · ช่าง</span></div>
+    <nav class="tech-nav" aria-label="เมนูหลัก">
+      <a class="active" href="technician-tasks.html">▦ <span>งานของฉัน</span></a>
+      <a href="technician-completed.html">✓ <span>งานที่เสร็จแล้ว</span></a>
+    </nav>
+    <div class="tech-sidebar-bottom"><button class="tech-logout" id="logout-btn" type="button">ออกจากระบบ</button></div>
+  </aside>
+
+  <!-- แถบบน (มือถือ) -->
+  <header class="tech-mobilebar">
+    <div class="tech-mobilebar__top">
+      <div class="tech-brand-mobile"><strong>หอพักอุ่นใจ</strong><span>ช่างซ่อมบำรุง</span></div>
+      <button class="tech-mobile-logout" id="logout-btn-mobile" type="button">ออกจากระบบ</button>
     </div>
+    <nav class="tech-mobile-nav"><a class="active" href="technician-tasks.html">งานของฉัน</a><a href="technician-completed.html">งานที่เสร็จแล้ว</a></nav>
   </header>
 
-  <main class="page">
+  <main class="tech-main">
 
     <!-- ===== โหลดข้อมูลงานไม่ได้ ===== -->
     <section id="page-error" class="page-error is-hidden" role="alert">
@@ -25,13 +38,19 @@
 
     <!-- ===== หน้าส่งมอบงาน (ฟอร์ม) ===== -->
     <div id="submit-view">
-      <a class="back-link" id="back-link" href="technician-task-detail.html">‹ กลับรายละเอียดงาน</a>
-      <h1 class="page-title">ส่งมอบงาน</h1>
-      <p class="page-subtitle">กรอกผลการซ่อมและแนบรูปหลังซ่อม แล้วกดยืนยันส่งมอบงาน</p>
+      <a class="tech-back" id="back-link" href="technician-job-detail.html">‹ กลับรายละเอียดงาน</a>
+      <div class="tech-topline">
+        <div>
+          <p class="tech-breadcrumb">งานของฉัน › รายละเอียดงาน › ส่งมอบงาน</p>
+          <h1 class="tech-title">ส่งมอบงาน</h1>
+          <p class="tech-subtitle">กรอกผลการซ่อมและแนบรูปหลังซ่อม แล้วกดยืนยันส่งมอบงาน</p>
+        </div>
+        <span class="tech-user" id="header-name">ช่างซ่อมบำรุง</span>
+      </div>
 
       <div class="layout">
         <!-- ซ้าย: ฟอร์ม -->
-        <form id="submit-form" class="card" novalidate>
+        <form id="submit-form" class="tech-card card" novalidate>
           <div class="form-group">
             <label for="repair-result" class="label">ผลการซ่อม <span class="req">*</span></label>
             <textarea id="repair-result" rows="6" placeholder="เช่น เปลี่ยนเต้ารับไฟฟ้าใหม่เรียบร้อยแล้ว"></textarea>
@@ -51,13 +70,13 @@
           <p class="form-error" id="form-error" role="alert"></p>
 
           <div class="actions">
-            <a class="btn btn--ghost" id="cancel-link" href="technician-task-detail.html">ยกเลิก</a>
+            <a class="btn btn--ghost" id="cancel-link" href="technician-job-detail.html">ยกเลิก</a>
             <button type="submit" class="btn btn--primary" id="submit-btn">ยืนยันส่งมอบงาน</button>
           </div>
         </form>
 
         <!-- ขวา: ข้อมูลงาน -->
-        <aside class="card info" id="job-info">
+        <aside class="tech-card card info" id="job-info">
           <h2 class="card__title">ข้อมูลงาน</h2>
           <p class="muted" id="job-loading">กำลังโหลดข้อมูลงาน...</p>
           <dl class="facts is-hidden" id="job-facts">
@@ -71,10 +90,10 @@
     </div>
 
     <!-- ===== ส่งมอบงานสำเร็จ ===== -->
-    <section id="success-view" class="card success is-hidden">
+    <section id="success-view" class="tech-card card success is-hidden">
       <div class="success__icon" aria-hidden="true">✓</div>
-      <h1 class="page-title">ส่งมอบงานสำเร็จ</h1>
-      <p class="page-subtitle">สถานะงานเปลี่ยนเป็น <span class="badge badge--completed">เสร็จสิ้น</span> แล้ว</p>
+      <h1 class="tech-title">ส่งมอบงานสำเร็จ</h1>
+      <p class="tech-subtitle">สถานะงานเปลี่ยนเป็น <span class="badge badge--completed">เสร็จสิ้น</span> แล้ว</p>
 
       <dl class="facts">
         <div><dt>งาน</dt><dd id="success-title">-</dd></div>
@@ -84,22 +103,25 @@
       <div class="preview" id="success-images"></div>
 
       <div class="actions actions--center">
-        <a class="btn btn--ghost" id="success-detail-link" href="technician-task-detail.html">ดูรายละเอียดงาน</a>
+        <a class="btn btn--ghost" id="success-detail-link" href="technician-completed.html">ดูรายละเอียดงาน</a>
         <a class="btn btn--primary" href="technician-tasks.html">กลับรายการงาน</a>
       </div>
     </section>
+
+    <p class="tech-footer">หอพักอุ่นใจ · ระบบจัดการงานซ่อมบำรุง</p>
   </main>
+</div>
 
-  <!-- แม่แบบรูปตัวอย่าง (เหมือนฟอร์มแจ้งซ่อม U1) -->
-  <template id="image-thumb-template">
-    <figure class="thumb">
-      <img data-field="img" alt="">
-      <figcaption data-field="caption"></figcaption>
-    </figure>
-  </template>
+<!-- แม่แบบรูปตัวอย่าง (เหมือนฟอร์มแจ้งซ่อม U1) -->
+<template id="image-thumb-template">
+  <figure class="thumb">
+    <img data-field="img" alt="">
+    <figcaption data-field="caption"></figcaption>
+  </figure>
+</template>
 
-  <script src="../js/api-client.js"></script>
-  <script src="../js/common.js"></script>
-  <script src="../js/technician-submit.js"></script>
+<script src="../js/api-client.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/technician-submit.js"></script>
 </body>
 </html>
