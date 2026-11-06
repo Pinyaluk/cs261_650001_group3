@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cs261_650001_group3.dorm_repair.dto.CreateRepairRequestDTO;
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestResponseDTO;
 import com.cs261_650001_group3.dorm_repair.dto.RepairRequestSummaryDTO;
+import com.cs261_650001_group3.dorm_repair.entity.Role;
 import com.cs261_650001_group3.dorm_repair.service.AuthService;
 import com.cs261_650001_group3.dorm_repair.service.RepairRequestService;
 
@@ -58,7 +59,7 @@ public class RepairRequestController {
     public RepairRequestResponseDTO getById(
             @PathVariable("id") Long id,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
-        Long userId = authService.requireUserId(authHeader);
+        Long userId = authService.requireRole(authHeader, Role.RESIDENT).getUserId();
         return repairRequestService.getRequestDetail(id, userId);
     }
 }
