@@ -66,7 +66,7 @@ public class RepairCompletionService {
                     "ส่งมอบงานได้เฉพาะคำร้องที่สถานะกำลังดำเนินการ (IN_PROGRESS)");
         }
         if (r.getTechnician() == null || !r.getTechnician().getUserId().equals(technician.getUserId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "คุณไม่ใช่ช่างที่ได้รับมอบหมายงานนี้");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "คุณไม่ใช่ช่างที่ได้รับมอบหมายงานนี้");
         }
 
         List<String> urls = new ArrayList<>();
